@@ -1,0 +1,73 @@
+<script>
+
+	import { Element, Group } from '../svelte-aui/src/index.js'
+	import { goto } from '@sapper/app'
+
+	export let page = {};
+	export let data = [];
+
+	$: rel = ((file) => {
+		return (file.indexOf('.') != -1) ? 'external' : 'prefetch';
+	});
+
+	console.log('FILES!!!', data);
+
+
+	function convertFilePath( file, exts, str ) {
+		for (let i = 0; i < exts.length; i++) {
+			if (file.toLowerCase().indexOf('.'+exts[i]) !== -1) {
+				const idx = file.lastIndexOf('/');
+				return file.substr(0,idx) + str + file.substr(idx+1);
+			}
+		}
+		return file;
+	}
+
+	$: href = ( (file, prev ) => {
+		file = page.path + '/' + file;
+		if (prev) {
+			file = convertFilePath( file, ['png','jpg','jpeg','svg','tiff','bmp'], '?preview=' );
+			file = convertFilePath( file, ['mp4','mov','avi'], '?player=' );
+		}
+		return file;
+	});
+
+</script>
+
+<style lang="sass">
+	@import '../svelte-aui/src/Utils'
+	.overlay
+		+fix
+		+top-left(20px, 50%)
+		+width-height( 320px, 220px )
+		+translate( -50%, 0%)
+		background: black
+		video 
+			+fill
+		img
+			object-fit: fill
+		a
+			+abs
+			+top-right
+			z-index: 99
+</style>
+
+{#each data as file}
+	<Element>
+		<a rel={rel(file)} on:click={ e => goto( href(file, true) ) }>{file}</a>
+	</Element>
+{/each}
+
+{#if (page.query.player || page.query.preview) }
+
+<div class="overlay player preview">
+	<a href={page.path}>Close</a>
+	{#if page.query.player }
+		<video src={ href(page.query.player, false) } controls autoplay />
+	{/if}
+	{#if page.query.preview }
+		<img src={ href(page.query.preview, false) } />
+	{/if}
+</div>
+
+{/if}

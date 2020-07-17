@@ -1,0 +1,24 @@
+{
+	"audioRecordSettings":{
+		"codec": "aac",
+		"bitrate": "160k"
+	},
+	"videoRecordSettings":{
+		"width": 320,
+		"height": 240,
+		"codec": "h264",
+		"bitrate": "1600k",
+		"framerate": 30
+	},
+	"audioSteamSettings":{
+		"codec": "aac",
+		"bitrate": "128k"
+	},
+	"videoSteamSettings":{
+		"width": 320,
+		"height": 240,
+		"codec": "ht264",
+		"bitrate": "1600k",
+		"framerate": 30
+	}
+}
