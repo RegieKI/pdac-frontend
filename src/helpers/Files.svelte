@@ -1,6 +1,6 @@
 <script>
 
-	import { Element, Group } from '../svelte-aui/src/index.js'
+	import { Any, Group } from '../svelte-aui/src/index.js'
 	import { goto } from '@sapper/app'
 
 	export let page = {};
@@ -53,9 +53,9 @@
 </style>
 
 {#each data as file}
-	<Element>
+	<Any>
 		<a rel={rel(file)} on:click={ e => goto( href(file, true) ) }>{file}</a>
-	</Element>
+	</Any>
 {/each}
 
 {#if (page.query.player || page.query.preview) }

@@ -2,7 +2,7 @@
 	export let status;
 	export let error;
 
-	import { Element, Group, Defines as d } from '../svelte-aui/src/index.js'
+	import { Any, Group, Defines as d } from '../svelte-aui/src/index.js'
 	const dev = process.env.NODE_ENV === 'development';
 </script>
 
@@ -33,15 +33,15 @@
 </svelte:head>
 
 <Group>
-<Element>
+<Any>
 	<p>{status}</p>
 	<p>{error.message}</p>
-</Element>
-<Element><a href="/network">Network</a></Element>
-<Element a={{type: d.BTN}} on:trigger={ () => window.location = window.location } >Refresh</Element>
+</Any>
+<Any><a href="/network">Network</a></Any>
+<Any a={{type: d.BTN}} on:trigger={ () => window.location = window.location } >Refresh</Any>
 
 
 {#if dev && error.stack}
-	<Element><pre>{error.stack}</pre></Element>
+	<Any><pre>{error.stack}</pre></Any>
 {/if}
 </Group>

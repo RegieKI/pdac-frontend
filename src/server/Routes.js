@@ -9,6 +9,9 @@ export default {
 	'/network/list': {
 		GET: 'GetNetworkList'
 	},
+	'/network/connect': {
+		POST: 'ConnectToNetwork'
+	},
 	'/session': {
 		GET: 'SessionsList'
 	},

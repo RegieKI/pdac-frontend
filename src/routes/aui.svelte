@@ -1,10 +1,9 @@
 <script>
 	import { AUI } from '../svelte-aui/src/index.js'
 	import { Defines as d } from '../svelte-aui/src/index.js'
-	const json = {
+	const a = {
 
 		type: d.ROW,
-		collapse: "800px",
 		children: [
 		{
 			type: d.COL,
@@ -18,7 +17,7 @@
 					children: [
 						{ type: d.TOG },
 						{ type: d.BTN },
-						{ type: d.SLDR }
+						{ type: d.BTN }
 					]
 				},
 				{
@@ -63,7 +62,15 @@
 					type: d.SLDR
 				},
 				{
-					type: d.SLDR
+					type: d.COL,
+					children: [
+						{ type: d.BTN },
+						{ type: d.BTN },
+						{ type: d.BTN },
+						{ type: d.BTN },
+						{ type: d.BTN },
+						{ type: d.BTN }
+					]
 				},
 				{
 					type: d.SLDR
@@ -84,4 +91,4 @@
 	<title>PDAC</title>
 </svelte:head>
 
-<AUI {json} />
+<AUI {a} />

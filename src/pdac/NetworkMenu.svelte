@@ -1,12 +1,10 @@
 <script>
 
-	import { Element, Boolean, Defines as d } from '../svelte-aui/src/index.js'
+	import { Any, Boolean, Defines as d } from '../svelte-aui/src/index.js'
+	import { info } from './Store.js'
 	export let page = {};
 	export let data = {};
 
-	let params = {
-		hello: 'world'
-	}
 
 	function onDisconnect(e) {
 
@@ -29,6 +27,17 @@
 
 <style>
 </style>
-<Element a={{type: d.BTN}} on:updated={onDisconnect}>
-	<a href="/network/list">Connect</a>
-</Element>
+
+{#if $info.isConnected}
+	<p>Connected:</p>
+	<p>
+		SSID: {$info.connection.ssid} <br />
+		Frequency: {$info.connection.freq} <br />
+		Quality: {$info.connection.quality}%
+	</p>
+{:else}
+	NOPE	
+{/if}
+<Any a={{type: d.BTN}} on:updated={onDisconnect}>
+	<a href="/network/list"> { ($info.isConnected) ? "Reconnect" : "Connect" }</a>
+</Any>

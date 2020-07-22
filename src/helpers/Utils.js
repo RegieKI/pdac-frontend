@@ -1,17 +1,17 @@
 import UrlPattern from 'url-pattern'
 
-export const FindRoutesMatch = ( inputPath, routes ) => {
-
+export const FindRoutesMatch = ( inputPath, routes, inputType ) => {
+	if (inputType === undefined) inputType = "GET";
 	let route = null;
 	LoopRoutes( routes, ( url, func, type, index ) => {
 
 		const reg = new UrlPattern(url);
 		const clean = CleanJsonPath(inputPath);
 		const match = reg.match( clean );
-		const didMatch = match !== null;
+		const didMatch = ( match !== null && inputType.toLowerCase() === type.toLowerCase());
 		console.log( '[API]', didMatch ? `✅` : '🌀', inputPath, index, type, url );
 
-		if (didMatch) route = { url, func, match }
+		if (didMatch) route = { url, func, match, type }
 
 	});
 
@@ -69,7 +69,8 @@ export async function POST( url, params ) {
 			headers: {'Content-Type' : 'application/json'},
 			body: JSON.stringify( params )
 		});
-	return await r.json();
+	const json = await r.json();
+	return json;
 }
 
 export async function GET( url, params ) {

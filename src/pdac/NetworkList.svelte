@@ -1,7 +1,7 @@
 <script>
 
 	import { onMount } from 'svelte'
-	import { Element, Boolean, Defines as d } from '../svelte-aui/src/index.js'
+	import { Any, Boolean, Defines as d } from '../svelte-aui/src/index.js'
 	export let page = {};
 	export let data = {};
 
@@ -24,12 +24,11 @@
 
 {#each sorted as n}
 
-<Element>
+<Any>
 	<a href={`/network/connect?ssid=${n.ssid}`}>
 		{n.ssid} 
-		{ 100 + parseInt(n.signal_level)} 
-		{ freq(n.frequency) }
+		({ freq(n.frequency) })
 	</a>
-</Element>
+</Any>
 
 {/each}

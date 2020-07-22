@@ -21,6 +21,21 @@ export default {
 			}
 		});
 	},
+	ConnectToNetwork: async( req, res, params ) => {
+
+		return new Promise( (resolve, reject) => {
+			const pass = req.body.password
+			const ssid = req.query.ssid;
+			console.log(`[ConnectToNetwork] 🗝  ${ssid}/${pass}`	);
+			wifi.connect({ ssid: "ssid", password: "password" }, function(err) {
+			  if (err) {
+			  	console.error(`[ConnectToNetwork] 🗝  ${ssid} ${err}`);
+			  	return reject( {} );
+			  }
+			  return resolve({ ssid });
+			});
+		})
+	},
 	GetInfo: async ( req, res, params ) => {
 
 		return new Promise( (resolve, reject) => {

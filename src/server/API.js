@@ -20,7 +20,7 @@ wifi.init({
 const directus = new DirectusSDK({
   url: "https://api.sinnott.cc/public/",
   project: "pdac"
-});
+}); 
 
 
 
@@ -39,7 +39,7 @@ export const SetupStatic = ( polka ) => {
 }
 
 export const SendError = ( res, code, msg ) => {
-	console.log( '[API]', `✋ ${code} ${msg}` );
+	console.log( '[API]', `✋ ${code} { ${Object.keys(msg)} } ${msg}` );
 	res.statusCode = code;
 	return res.end();
 }
@@ -50,6 +50,7 @@ export const SendSuccess = ( res, data ) => {
 }
 
 export const API = ( req, res, next ) => {
+
 
 	let inp = req.path;
 
@@ -64,11 +65,12 @@ export const API = ( req, res, next ) => {
 
 
 	console.log( '[API]', `🌀 finding ${inp} match...`)
-	let route = FindRoutesMatch( inp, Routes );
+	let route = FindRoutesMatch( inp, Routes, req.method );
 
 	/*--------------- RETURN if no match ---------------*/
 	
 	if ( route === null ) return SendError( res, 404, `no route found for "${inp}"`)
+	if ( route.type !== req.method ) return SendError( res, 404, `mismatch of request methods: ${route.type}/${req.method}`);
 
 	if ( IsFilesPath( route.func ) ) {
 
@@ -102,7 +104,7 @@ export const API = ( req, res, next ) => {
 
 		console.log( '[API]', `🌐  using "${func.name}" endpoint` );
 
-		func( res, req, route.match ).then( data => {
+		func( req, res, route.match ).then( data => {
 			return SendSuccess( res, data );
 		}).catch( err => {
 			return SendError( res, 501, err );
