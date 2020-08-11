@@ -9,6 +9,7 @@
 	import Breadcrumb from '../helpers/Breadcrumb.svelte'
 	import WLAN from '../helpers/WLAN.svelte'
 	import SessionsList from './SessionsList.svelte'
+	import Session from './Session.svelte'
 	import NetworkList from './NetworkList.svelte'
 	import NetworkMenu from './NetworkMenu.svelte'
 	import NetworkConnect from './NetworkConnect.svelte'
@@ -85,10 +86,6 @@
 	<AUI>
 		{#if id === 'pdac-home'}
 			<MainMenu />
-		{:else}
-			<Any>
-				<a href={back()}>Back</a>
-			</Any>
 		{/if}
 		{#if id === 'pdac-network'}
 			<NetworkMenu {page} {data} />
@@ -111,7 +108,7 @@
 
 
 		{#if id.indexOf('pdac-session-') !== -1 }
-			<SessionsList {page} {data} />
+			<Session {page} {data} />
 		{/if}
 	</AUI>
 </div>

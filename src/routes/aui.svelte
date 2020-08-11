@@ -11,7 +11,7 @@
 			children: [
 				{ type: d.BTN },
 				{ type: d.RNG },
-				{ type: d.IDX },
+				{ type: d.DRP },
 				{ type: d.TXT },
 				{
 					type: d.ROW,

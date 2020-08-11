@@ -1,7 +1,5 @@
 <script context="module">
 
-	import Routes from '../server/Routes.js'
-
 	export async function preload( page ) {
 		const p = `${page.path}?as=json`;
 		console.log(`[Slug] 🌞 attempting JSON: ${p}`)

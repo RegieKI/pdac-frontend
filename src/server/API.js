@@ -19,7 +19,7 @@ wifi.init({
 });
 
 const directus = new DirectusSDK({
-  url: "https://api.sinnott.cc/public/",
+  url: "https://api.sinnott.cc/",
   project: "pdac"
 }); 
 

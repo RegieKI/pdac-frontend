@@ -6,8 +6,6 @@
 	
 </script>
 
-<style>
-</style>
 
 {#each data as d}
 <Any><a href={`/session/${d.url}`}>{d.title}</a></Any>

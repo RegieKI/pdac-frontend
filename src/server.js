@@ -1,7 +1,6 @@
 import sirv from 'sirv';
 import compression from 'compression';
 import * as sapper from '@sapper/server';
-import { json, urlencoded } from 'body-parser'
 
 import { AutoSetup } from './server/API.js'
 
@@ -9,9 +8,9 @@ import { AutoSetup } from './server/API.js'
 const { PORT, NODE_ENV } = process.env;
 const dev = NODE_ENV === 'development';
 
-AutoSetup({
+AutoSetup({ 
 	'/files': {
-		GET: 'files:/Users/gilbertsinnott/Google Drive/_Autr'
+		GET: 'files:../recordings'
 	},
 	'/info': { 
 		GET: 'GetInfo'
