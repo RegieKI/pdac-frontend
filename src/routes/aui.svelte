@@ -2,7 +2,8 @@
 	import { AUI } from '../svelte-aui/src/index.js'
 	import { Defines as d } from '../svelte-aui/src/index.js'
 	const a = {
-
+		width: "100vw",
+		height: "100vh",
 		type: d.ROW,
 		children: [
 		{
@@ -10,7 +11,7 @@
 			children: [
 				{ type: d.BTN },
 				{ type: d.RNG },
-				{ type: d.DRP },
+				{ type: d.IDX },
 				{ type: d.TXT },
 				{
 					type: d.ROW,
@@ -78,9 +79,34 @@
 				{
 					type: d.SLDR
 				},
-				{
-					type: d.SLDR
-				}
+				{ type: d.SLDR },
+				{ type: d.BTN },
+				{ type: d.SLDR },
+				{ type: d.BTN },
+				{ type: d.SLDR },
+				{ type: d.BTN },
+				{ type: d.SLDR },
+				{ type: d.BTN },
+				{ type: d.SLDR },
+				{ type: d.BTN },
+				{ type: d.SLDR },
+				{ type: d.BTN },
+				{ type: d.SLDR },
+				{ type: d.BTN },
+				{ type: d.SLDR },
+				{ type: d.BTN },
+				{ type: d.SLDR },
+				{ type: d.BTN },
+				{ type: d.SLDR },
+				{ type: d.BTN },
+				{ type: d.SLDR },
+				{ type: d.BTN },
+				{ type: d.SLDR },
+				{ type: d.BTN },
+				{ type: d.SLDR },
+				{ type: d.BTN },
+				{ type: d.SLDR },
+				{ type: d.BTN }
 			]
 		}
 		]

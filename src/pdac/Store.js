@@ -9,7 +9,7 @@ function createInfo() {
 
 		grab: async () => {
 
-			let data = await GET('/info.json');
+			let data = await GET('/info?as=json');
 			const mem = MEM( data.freemem );
 			data.memory = mem[mem.use] + mem.use;
 			data.isConnected = ( data.connections.length !== 0);

@@ -1,6 +1,6 @@
 
 export default {
-	'/files*': {
+	'/files': {
 		GET: 'files:/Users/gilbertsinnott/Google Drive/_Autr'
 	},
 	'/info': {
