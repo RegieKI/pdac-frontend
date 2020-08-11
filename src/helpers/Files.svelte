@@ -10,9 +10,6 @@
 		return (file.indexOf('.') != -1) ? 'external' : 'prefetch';
 	});
 
-	console.log('FILES!!!', data);
-
-
 	function convertFilePath( file, exts, str ) {
 		for (let i = 0; i < exts.length; i++) {
 			if (file.toLowerCase().indexOf('.'+exts[i]) !== -1) {
@@ -35,7 +32,7 @@
 </script>
 
 <style lang="sass">
-	@import '../svelte-aui/src/Utils'
+	@import '../svelte-aui/src/styles/Utils'
 	.overlay
 		+fix
 		+top-left(20px, 50%)
@@ -53,9 +50,9 @@
 </style>
 
 {#each data as file}
-	<Any>
+	<Group>
 		<a rel={rel(file)} on:click={ e => goto( href(file, true) ) }>{file}</a>
-	</Any>
+	</Group>
 {/each}
 
 {#if (page.query.player || page.query.preview) }

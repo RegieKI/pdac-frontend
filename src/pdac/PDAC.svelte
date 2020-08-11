@@ -52,7 +52,6 @@
 		await info.grab();
 	});
 
-	console.log(page);
 
 	$: id = ( page.path !== '/') ? 'pdac' + page.path.replace(/\//g, '-') : 'pdac-home';
 
@@ -61,7 +60,6 @@
 		if ( !page.params.slug ) return '/';
 		return '/' + page.params.slug.slice(0,page.params.slug.length-1).join('/')
 	});
-
 
 </script>
 
@@ -102,7 +100,7 @@
 			<NetworkConnect {page} {data} />
 		{/if}
 
-		{#if id === 'pdac-files' }
+		{#if id.indexOf( 'pdac-files' ) !== -1 }
 			<Files {page} {data} />
 		{/if}
 

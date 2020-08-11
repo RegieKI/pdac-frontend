@@ -82,7 +82,7 @@
 </script>
 
 <style lang="sass">
-	@import '../svelte-aui/src/Utils'
+	@import '../svelte-aui/src/styles/Utils'
 	.keyboard
 		+fix
 		+top-left( 240px, 50% )

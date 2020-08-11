@@ -1,23 +1,5 @@
 import UrlPattern from 'url-pattern'
 
-export const FindRoutesMatch = ( inputPath, routes, inputType ) => {
-	if (inputType === undefined) inputType = "GET";
-	let route = null;
-	LoopRoutes( routes, ( url, func, type, index ) => {
-
-		const reg = new UrlPattern(url);
-		const clean = CleanJsonPath(inputPath);
-		const match = reg.match( clean );
-		const didMatch = ( match !== null && inputType.toLowerCase() === type.toLowerCase());
-		console.log( '[API]', didMatch ? `✅` : '🌀', inputPath, index, type, url );
-
-		if (didMatch) route = { url, func, match, type }
-
-	});
-
-	return route;
-};
-
 
 export const Loop = ( object, callback ) => {
 	Object.keys(object).forEach( (key, i) => {
@@ -49,7 +31,7 @@ export function IsFilesPath( p ) {
 }
 
 export function IsJsonPath( p ) {
-	return p.substr( p.length - 5, p.length ) === '.json';
+	return p.indexOf('?as=json') !== -1;
 }
 
 export function CleanFilesPath( p ) {
@@ -59,7 +41,7 @@ export function CleanFilesPath( p ) {
 }
 export function CleanJsonPath( p ) {
 
-	if ( IsJsonPath(p) ) return p.substr(0, p.length - 5);
+	if ( IsJsonPath(p) ) return p.replace('?as=json', '');
 	return p;
 }
 
