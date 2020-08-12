@@ -7,7 +7,7 @@
 			const r = await this.fetch( p );
 			if (r.status !== 200) return this.error( r.status, r.statusText );
 			const data = await r.json();
-			console.log(`[...slug] ✅ 200 ${Object.keys(data)}`);
+			console.log(`[...slug] ✅ 200 ${Object.keys(data)}`, (process.browser) ? data : '');
 			return { conf: { data, page } };
 		} catch(err) {
 			console.log(`[...slug] ❌ 501 ${err}`);

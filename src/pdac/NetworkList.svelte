@@ -1,5 +1,6 @@
 <script>
 
+	import Back from './Back.svelte'
 	import { onMount } from 'svelte'
 	import { Any, Boolean, Defines as d } from '../svelte-aui/src/index.js'
 	export let page = {};
@@ -19,9 +20,7 @@
 	
 </script>
 
-<style>
-</style>
-
+<Back {page} />
 {#each sorted as n}
 
 <Any>

@@ -13,6 +13,7 @@
 	import NetworkList from './NetworkList.svelte'
 	import NetworkMenu from './NetworkMenu.svelte'
 	import NetworkConnect from './NetworkConnect.svelte'
+	import Hostname from './Hostname.svelte'
 	import MainMenu from './MainMenu.svelte'
 
 	import { info } from './Store.js'
@@ -97,13 +98,17 @@
 			<NetworkConnect {page} {data} />
 		{/if}
 
-		{#if id.indexOf( 'pdac-files' ) !== -1 }
+		{#if id.indexOf( 'pdac-recordings' ) !== -1 }
 			<Files {page} {data} />
 		{/if}
 
 
 		{#if id === 'pdac-session' }
 			<SessionsList {page} {data} />
+		{/if}
+
+		{#if id === 'pdac-hostname' }
+			<Hostname {page} {data} />
 		{/if}
 
 
@@ -126,16 +131,16 @@
 		height: $height
 		overflow: auto
 		position: relative
-		border: 2px solid black
 		box-sizing: border-box
 		background: #111
+		padding: 5px
 		padding-top: $topbar
 		font-size: 14px
 		color: white
-		input, button
+		input, button, select
 			font-size: 14px
 			color: white
-		input[type=text], input[type=password], input[type=email]
+		input[type=text], input[type=password], input[type=email], select
 			border: 1px solid white
 
 		a
@@ -156,10 +161,10 @@
 					justify-content: center
 		.header
 			position: fixed
-			width: $width - 20px
+			width: $width - 10px
 			height: $topbar
 			transform: translate( -50%, 0% )
-			padding: 0 10px
+			padding: 0 5px
 			top: 0
 			left: 50%
 			display: flex

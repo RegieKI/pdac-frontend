@@ -11,5 +11,11 @@
   
 </script>
 
+<style lang="sass">
+.back-button
+	position: relative
+	z-index: 9
+</style>
 
-<Any><a href={back()}>Back</a></Any>
+
+<a class="back-button" href={back()}>Back</a>

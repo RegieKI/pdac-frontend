@@ -1,5 +1,6 @@
 <script>
 
+	import Back from './Back.svelte'
 	import { Any, Boolean, Defines as d } from '../svelte-aui/src/index.js'
 	import { info } from './Store.js'
 	export let page = {};
@@ -25,9 +26,7 @@
 	
 </script>
 
-<style>
-</style>
-
+<Back {page} />
 {#if $info.isConnected}
 	<p>Connected:</p>
 	<p>

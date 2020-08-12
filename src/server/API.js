@@ -1,27 +1,15 @@
-import fs from 'fs'
+
 import path from 'path'
 import os from 'os'
 import send from '@polka/send-type'
 import wifi from 'node-wifi'
-import DirectusSDK from "@directus/sdk-js";
 import regexparam from 'regexparam'
 import UrlPattern from 'url-pattern'
 import { json, urlencoded } from 'body-parser'
 import polka from 'polka';
 
 import Sirv from './Sirv.js';
-import Endpoints from './Endpoints.js'
 import { Loop, LoopRoutes, RegExecute, IsFilesPath, IsJsonPath, CleanFilesPath, CleanJsonPath } from './../helpers/Utils.js'
-
-
-wifi.init({
-  iface: 'en0'
-});
-
-const directus = new DirectusSDK({
-  url: "https://api.sinnott.cc/",
-  project: "pdac"
-}); 
 
 
 
@@ -36,7 +24,7 @@ export const SendSuccess = ( res, data ) => {
 	return send( res, 200, data );
 }
 
-export const AutoSetup = ( Routes ) => {
+export const AutoSetup = ( Endpoints, Routes ) => {
 
 	let p = polka();
 	p.use( urlencoded() );
@@ -52,7 +40,7 @@ export const AutoSetup = ( Routes ) => {
 		} 
 	});
 
-	p.use( API( Routes ) );
+	p.use( API( Endpoints, Routes ) );
 
 	return p;
 }
@@ -75,9 +63,11 @@ const FindRoutesMatch = ( inputPath, Routes, inputType ) => {
 	return route;
 };
 
-export const API = ( Routes ) => {
+export const API = ( Endpoints, Routes ) => {
 
 	console.log('[AutoSetup] ✏️  ', 'adding API...');
+
+	let endpoints = Endpoints;
 
 	return ( req, res, next ) => {
 
@@ -89,12 +79,14 @@ export const API = ( Routes ) => {
 
 		/*--------------- RETURN if not JSON ---------------*/
 
-		if ( !isJson || isSys ) return next();
+		if ( !isJson || isSys ) {
+			console.log( '[API]', `✈️  skipping ${req.method} ${inp} because not JSON...`);
+			return next();
+		}
 
 		/*--------------- Find Match ---------------*/
 
-
-		console.log( '[API]', `🤖 finding ${inp} match...`, inp)
+		console.log( '[API]', `🤖 finding ${req.method} ${inp} match...`, inp, req.query)
 		let route = FindRoutesMatch( inp, Routes, req.method );
 
 		/*--------------- RETURN if no match ---------------*/
@@ -102,7 +94,8 @@ export const API = ( Routes ) => {
 		if ( route === null ) return SendSuccess( res, {})
 		if ( route.type !== req.method ) return SendError( res, 404, `mismatch of request methods: ${route.type}/${req.method}`);
 
-		const func = Endpoints[route.func];
+		const func = endpoints[route.func];
+
 		if ( func === undefined ) return SendError( res, 404, `no Directus endpoint found for ${route.func}`)
 
 		console.log( '[API]', `🌐  using "${func.name}" endpoint` );
@@ -117,9 +110,4 @@ export const API = ( Routes ) => {
 
 
 }
-
-export async function DirectusEndpoint( req, res, config ) {
-	console.log( '[API]', `🐇  finding "${config.type}" items from Directus...`);
-	return (await directus.getItems( config.type, config.args)).data;
-};
 

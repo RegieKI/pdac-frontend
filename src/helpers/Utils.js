@@ -1,5 +1,8 @@
 import UrlPattern from 'url-pattern'
 
+export const SessionID = ( session ) => {
+
+}
 
 export const Loop = ( object, callback ) => {
 	Object.keys(object).forEach( (key, i) => {
@@ -47,7 +50,8 @@ export function CleanJsonPath( p ) {
 
 export async function POST( url, params ) {
 	const r = await fetch( url, {
-			method: 'post',
+			type: 'POST',
+			method: 'POST',
 			headers: {'Content-Type' : 'application/json'},
 			body: JSON.stringify( params )
 		});

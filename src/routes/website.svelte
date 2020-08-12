@@ -40,7 +40,6 @@
 				flex-basis: 0
 				padding: 10px
 			img 
-				background: red
 				width: 100%
 				min-height: 100px
 				display: block

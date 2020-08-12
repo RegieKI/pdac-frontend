@@ -1,5 +1,6 @@
 <script>
 
+	import Back from '../pdac/Back.svelte'
 	import { Any, Group } from '../svelte-aui/src/index.js'
 	import { goto } from '@sapper/app'
 
@@ -39,6 +40,7 @@
 		+width-height( 320px, 220px )
 		+translate( -50%, 0%)
 		background: black
+		z-index: 99
 		video 
 			+fill
 		img
@@ -49,6 +51,7 @@
 			z-index: 99
 </style>
 
+<Back {page} />
 {#each data as file}
 	<Group>
 		<a rel={rel(file)} on:click={ e => goto( href(file, true) ) }>{file}</a>
@@ -58,7 +61,7 @@
 {#if (page.query.player || page.query.preview) }
 
 <div class="overlay player preview">
-	<a href={page.path}>Close</a>
+	<a on:click={ e => goto( page.path ) }>Close</a>
 	{#if page.query.player }
 		<video src={ href(page.query.player, false) } controls autoplay />
 	{/if}

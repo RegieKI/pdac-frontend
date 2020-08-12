@@ -1,6 +1,7 @@
 <script>
 
 
+	import {goto} from '@sapper/app';
 	import { Any, Button, Column } from '../svelte-aui/src/index.js'
 	export let page = {};
 	export let data = null;
@@ -12,7 +13,11 @@
 
 	let timeline = {
 		previousIndex: null,
-		timestamp: 0
+		timestamp: 0,
+		status: 0,
+		counter: -1,
+		human: -1,
+		percent: ''
 	};
 
 	$: session = data[0];
@@ -30,24 +35,55 @@
 		if (!query.exercise) return -1;
 
 		if (query.exercise != timeline.previousIndex) {
-			timeline.previousIndex = query.exercise;
-			timeline.timestamp = (new Date());
 			const e = session.exercises[query.exercise];
-			console.log('New exercise index', query.exercise, e);
-			if ( parseInt( query.exercise ) > 0 && window ) window.requestAnimationFrame(onFrame);
+			console.log('[PDAC] Starting process...', query.exercise, e);
+			if ( parseInt( query.exercise ) > 0 && process.browser === true ) {
+				for (var i = 1; i < 99999; i++) {
+				  window.clearInterval(i);
+				  window.cancelAnimationFrame(i);
+				}
+				window.requestAnimationFrame(onFrame);
+				timeline.status = 0;
+				timeline.counter = -1;
+				timeline.previousIndex = query.exercise;
+				timeline.timestamp = (new Date());
+			}
 		}
 
 		return query.exercise;
 	}
 
-	function onFrame() {
-		const t = Math.round( ((new Date()) - timeline.timestamp)/1000 );
-		console.log('Frame...', t, session.break_time, exercise.time);
+	const delay = time => new Promise(res=>setTimeout(res,time));
 
-		if (t < session.break_time + exercise.time) {
-			window.requestAnimationFrame(onFrame);
+	async function onFrame() {
+		const t = ((new Date()) - timeline.timestamp)/1000;
+		const abs = Math.round( t );
+
+		if ( abs != timeline.counter ) console.log('[PDAC] Counting...', abs);
+		timeline.counter = abs;
+		timeline.human = ( timeline.status == 0) ? session.break_time - t : exercise.time - t;
+		timeline.percent = ( timeline.status == 0) ? 100 - timeline.human/session.break_time*100 : 100 - timeline.human/exercise.time*100;
+
+
+		if (t >= session.break_time && timeline.status == 0) {
+			setTimeout( () => {
+
+				console.log('[PDAC] Begin recording...', exercise.time);
+				timeline.status = 1;
+				timeline.counter = -1;
+				timeline.timestamp = (new Date()); 
+				window.requestAnimationFrame(onFrame);
+			}, 2000);
+		} else if (t >= exercise.time && timeline.status == 1) {
+
+			setTimeout( () => {
+				console.log('[PDAC] Stop recording...');
+				timeline.status = 2;
+				goto(nextPath);
+
+			},2000);
 		} else {
-			console.log('STOP!!!');
+			window.requestAnimationFrame(onFrame);
 		}
 	}
 
@@ -59,33 +95,65 @@
 	$: nextPath = `${page.path}?exercise=${exerciseIndex + 1}`;
 
 
-
 </script>
 
 
-{#if exerciseIndex == -1 }
-<Back {page} />
-<div>{session.title}</div>
-<div>{session.exercises.length} exercise(s), {totalTime()} seconds in total</div>
-<div class="html">
-	{@html session.description}
+<div class={`recording-session status-${timeline.status}`}>
+	{#if exerciseIndex == -1 }
+	<Back {page} />
+	<div>{session.title}</div>
+	<div>{session.exercises.length} exercise(s), {totalTime()} seconds in total</div>
+	<div class="html">
+		{@html session.description}
+	</div>
+	<Button><a href={nextPath}>Start Session</a></Button>
+
+	{:else if exerciseIndex == 0}
+
+	<Back {page} />
+	<Viewer />
+	<Column a={{stretch: true, justify: 'flex-end'}}>
+	<Button style="margin-top:140px"><a href={nextPath}>OK, Begin</a></Button>
+	</Column>
+
+
+	{:else}
+
+	<div>{exercise.description}</div>
+	<div class="tags">
+	{#each exercise.tags as tag}
+	<span>{tag.tag_id.title}</span>  
+	{/each}
+	</div>
+	<div>
+		{#if timeline.status == 0}
+			Waiting
+		{:else if timeline.status == 1}
+			Recording
+		{/if}
+		<div class={`bar status-${timeline.status}`}>
+			<div class="inner" style={`width: ${timeline.percent}%`}></div>
+		</div>
+	</div>
+
+	{/if}
+
 </div>
-<Button><a href={nextPath}>Start Session</a></Button>
 
-{:else if exerciseIndex == 0}
+<style lang="sass">
+	.bar
+		width: 100%
+		height: 10px
+		position: relative
+		.inner
+			position: absolute
+			top: 0
+			left: 0
+			height: 100%
+			background: white
 
-<Back {page} />
-<Viewer />
-<Column a={{stretch: true, justify: 'flex-end'}}>
-<Button style="margin-top:140px"><a href={nextPath}>OK, Begin</a></Button>
-</Column>
-
-
-{:else}
-
-<div>{exercise.description} {$info.hostname}</div>
-
-{/if}
+	/*.recording-session*/
+</style>
 
 <!-- 
 
