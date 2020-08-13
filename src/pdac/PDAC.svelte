@@ -15,6 +15,7 @@
 	import NetworkConnect from './NetworkConnect.svelte'
 	import Hostname from './Hostname.svelte'
 	import MainMenu from './MainMenu.svelte'
+	import Camera from './Camera.svelte'
 
 	import { info } from './Store.js'
 
@@ -85,35 +86,59 @@
 		{/if}
 	</header>
 	<AUI>
+
+		<!-- main menu -->
+
 		{#if id === 'pdac-home'}
 			<MainMenu />
 		{/if}
+
+		<!-- network overview -->
+
 		{#if id === 'pdac-network'}
 			<NetworkMenu {page} {data} />
 		{/if}
+
+		<!-- network list -->
+
 		{#if id === 'pdac-network-list'}
 			<NetworkList {page} {data} />
 		{/if}
+
+		<!-- network connect -->
+
 		{#if id === 'pdac-network-connect'}
 			<NetworkConnect {page} {data} />
 		{/if}
+
+		<!-- view recordings -->
 
 		{#if id.indexOf( 'pdac-recordings' ) !== -1 }
 			<Files {page} {data} />
 		{/if}
 
+		<!-- session -->
 
 		{#if id === 'pdac-session' }
 			<SessionsList {page} {data} />
 		{/if}
 
+		<!-- session exercise -->
+
+		{#if id.indexOf('pdac-session-') !== -1 }
+			<Session {page} {data} />
+		{/if}
+
+		<!-- hostname -->
+
 		{#if id === 'pdac-hostname' }
 			<Hostname {page} {data} />
 		{/if}
 
+		<!-- camera -->
 
-		{#if id.indexOf('pdac-session-') !== -1 }
-			<Session {page} {data} />
+		{#if id === 'pdac-camera' }
+			<Camera {page} {data} />
 		{/if}
 	</AUI>
 </div>

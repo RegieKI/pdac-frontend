@@ -2,9 +2,13 @@ import sirv from 'sirv';
 import compression from 'compression';
 import * as sapper from '@sapper/server';
 
+import { POST, PUT, GET } from './helpers/Utils.js'
+
+import axios from 'axios'
 import { AutoSetup } from './server/API.js'
 import os from 'os'
-import wifi from 'node-wifi'
+import wifi from './../pi-wifi';
+
 import fs from 'fs'
 import DirectusSDK from "@directus/sdk-js"; 
 
@@ -16,10 +20,6 @@ const directus = new DirectusSDK({
   url: "https://api.sinnott.cc/",
   project: "pdac"
 }); 
-
-wifi.init({
-  iface: 'en0'
-});
 
 
 
@@ -67,19 +67,21 @@ AutoSetup(
 				const pass = req.body.password
 				const ssid = req.query.ssid;
 				console.log(`[ConnectToNetwork] 🗝  ${ssid}/${pass}`	);
-				wifi.connect({ ssid: "ssid", password: "password" }, function(err) {
-				  if (err) {
-				  	console.error(`[ConnectToNetwork] 🗝  ${ssid} ${err}`);
-				  	return reject( {} );
-				  }
-				  return resolve({ ssid });
-				});
-			})
+				resolve({});
+				// wifi.connect({ ssid: "ssid", password: "password" }, function(err) {
+				//   if (err) {
+				//   	console.error(`[ConnectToNetwork] 🗝  ${ssid} ${err}`);
+				//   	return reject( {} );
+				//   }
+				//   return resolve({ ssid });
+				// });
+			}) 
 		},
 		GetInfo: async ( req, res, params ) => {
 
 			return new Promise( (resolve, reject) => {
-				wifi.getCurrentConnections(function(err, connections) {
+				wifi.detectSupplicant(function(err, iface, supplicant) {
+					console.log('OIOI>>>', iface, supplicant);
 					if (err) return reject(err);
 					return resolve( {
 						hostname: os.hostname(),
@@ -88,7 +90,8 @@ AutoSetup(
 						totalmem: os.totalmem(),
 						freemem: os.freemem(),
 						uptime: os.uptime(),
-						connections
+						iface,
+						supplicant
 					} );
 				});
 			})
@@ -96,7 +99,7 @@ AutoSetup(
 		},
 		GetNetworkList: async ( req, res, params ) => {
 			return new Promise( (resolve, reject) => {
-				wifi.scan(function(err, data) {
+				wifi.listNetworks(function(err, data) {
 					if (err) return reject(err);
 					return resolve( data );
 				});
@@ -110,6 +113,28 @@ AutoSetup(
 			// 	console.log("Disconnected");
 			// 	return send(res, 200, { type: 'utility' } );
 			// });
+		},
+		Start: async(req, res, params) => {
+			return new Promise( (resolve, reject) => {
+				console.log('[Start] sending config:', req.body);
+				axios.post( 'http://localhost:8888/start/', req.body ).then( res => {
+					resolve(res);
+				}).catch( err => {
+					reject(err);
+				});
+
+			});
+		},
+		Stop: async(req, res, params) => {
+			return new Promise( (resolve, reject) => {
+				console.log('[Stop] sending:', req.body);
+				POST( 'http://localhost:8888/stop/', req.body ).then( res => {
+					resolve(res);
+				}).catch( err => {
+					reject(err);
+				});
+
+			});
 		}
 	}, { 
 		'/recordings': {
@@ -142,6 +167,12 @@ AutoSetup(
 		},
 		'/statistics': {
 			GET: 'Statistics'
+		},
+		'/start': {
+			POST: 'Start'
+		},
+		'/stop': {
+			POST: 'Stop'
 		}
 	})
 	.use(
