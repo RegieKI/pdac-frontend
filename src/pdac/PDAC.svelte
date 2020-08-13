@@ -85,7 +85,7 @@
 			</label>
 		{/if}
 	</header>
-	<AUI>
+	<AUI a={{stretch: true}} style="min-height: 100%" >
 
 		<!-- main menu -->
 
@@ -147,9 +147,11 @@
 	/*@font-face
 		font-family: 'pixel'
 		src: url('/Fonts/slkscr.ttf') format('woff')*/
-	$width: 320px
-	$height: 240px
-	$topbar: 15px
+	$width: 100%
+	$height: 100vh
+	$topbar: 20px
+	$fontsize: 18px 
+	$smallfontsize: 10px
 	#pdac
 		margin: 0 auto
 		width: $width
@@ -158,20 +160,22 @@
 		position: relative
 		box-sizing: border-box
 		background: #111
-		padding: 5px
 		padding-top: $topbar
-		font-size: 14px
+		padding: 15px
+		font-size: $fontsize
 		color: white
+		/*font-family: monospace*/
 		input, button, select
-			font-size: 14px
+			font-size: $fontsize
 			color: white
 		input[type=text], input[type=password], input[type=email], select
 			border: 1px solid white
-
+		*
+			font-smooth: never!important
+			-webkit-font-smoothing : none!important
 		a
 			text-decoration: none
 			display: flex
-			flex-grow: 1
 			align-items: center
 			justify-content: left
 			min-height: 30px
@@ -186,26 +190,25 @@
 					justify-content: center
 		.header
 			position: fixed
-			width: $width - 10px
+			width: $width
 			height: $topbar
-			transform: translate( -50%, 0% )
-			padding: 0 5px
 			top: 0
-			left: 50%
+			left: 0
 			display: flex
 			justify-content: space-between
 			background-color: rgba(0,0,0,0.9)
 			color: white
 			z-index: 99
-			font-size: 8px
+			font-size: $smallfontsize
+			padding: 0 10px
+			box-sizing: border-box
+			line-height: $topbar
 			/*font-family: pixel, monospace, sans-serif*/
 			label
 				display: flex
 
 		*
 			user-select: none
-		&.pdac-home > .aui
-			min-height: calc( 100% - #{$topbar} )
 
 </style>
 

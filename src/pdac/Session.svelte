@@ -98,7 +98,7 @@
 </script>
 
 
-<div class={`recording-session status-${timeline.status}`}>
+<!-- <div class={`recording-session status-${timeline.status}`}> -->
 	{#if exerciseIndex == -1 }
 	<Back {page} />
 	<div>{session.title}</div>
@@ -138,7 +138,7 @@
 
 	{/if}
 
-</div>
+<!-- </div> -->
 
 <style lang="sass">
 	.bar

@@ -11,7 +11,7 @@
 
 	let sessionId = { value: "test" };
 
-	let audioSettings = { value: true };
+	let audioSettings = { value: false };
 	let videoSettings = { value: true };
 	let heartRateSettings = { value: true };
 
