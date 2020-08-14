@@ -5,8 +5,6 @@
 	import { info } from './Store.js'
 	export let page = {};
 	export let data = {};
-
-
 	
 </script>
 

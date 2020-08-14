@@ -83,14 +83,16 @@ AutoSetup(
 
 			return new Promise( (resolve, reject) => {
 				const ssid = req.body.ssid;
-				const psk = req.body.psk
+				const psk = req.body.psk;
 				console.log(`[ConnectToNetwork] 🗝  ${ssid}/${psk}`	);
-				wifi.connect({ssid, psk}).then( res => {
+				
+				wifi.connectTo({ssid, psk}, function(err) {
+					if (err) {
+						console.log('[ConnectToNetwork] ❌🗝  error:', err );
+						return reject(err);
+					}
 					console.log(`[ConnectToNetwork] ✅🗝  success:`, res );
 					return resolve(res);
-				}).catch( err => {
-					console.log('[ConnectToNetwork] ❌🗝  error:', err );
-					return reject(err);
 				});
 			}) 
 		},
@@ -119,15 +121,6 @@ AutoSetup(
 					return resolve( data );
 				});
 			})
-		},
-		'UpdateNetwork': async ( req, res, params ) => {
-			// wifi.disconnect(function(err) {
-			// 	if (err) {
-			// 		console.log(err);
-			// 	}
-			// 	console.log("Disconnected");
-			// 	return send(res, 200, { type: 'utility' } );
-			// });
 		},
 		Start: async(req, res, params) => {
 			return new Promise( (resolve, reject) => {

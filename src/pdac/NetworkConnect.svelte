@@ -1,5 +1,6 @@
 <script>
 
+	import { goto } from '@sapper/app'
 	import axios from 'axios'
 	import { Any, Boolean, Group, Text, Defines as d } from '../svelte-aui/src/index.js'
 	import { POST, GET } from '../helpers/Utils.js'
@@ -78,6 +79,7 @@
 			psk: input.value 
 		}).then( res => {
 			console.log('[NetworkConnect] ✅🌐  successfully connected:', res);
+			goto( '/network' );
 		}).catch( err => {
 			console.log('[NetworkConnect] ❌🌐  errpr connecting:', err);
 		});

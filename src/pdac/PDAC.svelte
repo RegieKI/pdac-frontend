@@ -56,6 +56,8 @@
 	});
 
 
+	$: isPi = (process.browser) ? navigator.appVersion.indexOf('Linux armv7l') !== -1 : false;
+
 	$: id = ( page.path !== '/') ? 'pdac' + page.path.replace(/\//g, '-') : 'pdac-home';
 
 	$: back = ( () => {
@@ -74,7 +76,7 @@
 	on:mousemove={onMousemove}
 	on:mouseup={onMouseup}
 	/>
-<div bind:this={PdacEl} on:mousedown={onMousedown} id="pdac" class={id}>
+<div bind:this={PdacEl} on:mousedown={onMousedown} id="pdac" class={`${id} ${(isPi) ? 'hide-cursor' : ''}`}>
 	<header class="header">
 		{#if $info.active }
 			<label>{ $info.memory || "" }</label>
@@ -85,62 +87,63 @@
 			</label>
 		{/if}
 	</header>
-	<AUI a={{stretch: true}} style="min-height: 100%" >
+	<div class="aui container">
+		<Column a={{stretch: true}} className="pdac-main-column">
+			<!-- main menu -->
 
-		<!-- main menu -->
+			{#if id === 'pdac-home'}
+				<MainMenu />
+			{/if}
 
-		{#if id === 'pdac-home'}
-			<MainMenu />
-		{/if}
+			<!-- network overview -->
 
-		<!-- network overview -->
+			{#if id === 'pdac-network'}
+				<NetworkMenu {page} {data} />
+			{/if}
 
-		{#if id === 'pdac-network'}
-			<NetworkMenu {page} {data} />
-		{/if}
+			<!-- network list -->
 
-		<!-- network list -->
+			{#if id === 'pdac-network-list'}
+				<NetworkList {page} {data} />
+			{/if}
 
-		{#if id === 'pdac-network-list'}
-			<NetworkList {page} {data} />
-		{/if}
+			<!-- network connect -->
 
-		<!-- network connect -->
+			{#if id === 'pdac-network-connect'}
+				<NetworkConnect {page} {data} />
+			{/if}
 
-		{#if id === 'pdac-network-connect'}
-			<NetworkConnect {page} {data} />
-		{/if}
+			<!-- view recordings -->
 
-		<!-- view recordings -->
+			{#if id.indexOf( 'pdac-recordings' ) !== -1 }
+				<Files {page} {data} />
+			{/if}
 
-		{#if id.indexOf( 'pdac-recordings' ) !== -1 }
-			<Files {page} {data} />
-		{/if}
+			<!-- session -->
 
-		<!-- session -->
+			{#if id === 'pdac-session' }
+				<SessionsList {page} {data} />
+			{/if}
 
-		{#if id === 'pdac-session' }
-			<SessionsList {page} {data} />
-		{/if}
+			<!-- session exercise -->
 
-		<!-- session exercise -->
+			{#if id.indexOf('pdac-session-') !== -1 }
+				<Session {page} {data} />
+			{/if}
 
-		{#if id.indexOf('pdac-session-') !== -1 }
-			<Session {page} {data} />
-		{/if}
+			<!-- hostname -->
 
-		<!-- hostname -->
+			{#if id === 'pdac-hostname' }
+				<Hostname {page} {data} />
+			{/if}
 
-		{#if id === 'pdac-hostname' }
-			<Hostname {page} {data} />
-		{/if}
+			<!-- camera -->
 
-		<!-- camera -->
-
-		{#if id === 'pdac-camera' }
-			<Camera {page} {data} />
-		{/if}
-	</AUI>
+			{#if id === 'pdac-camera' }
+				<Camera {page} {data} />
+			{/if}
+		</Column>
+	</div>
 </div>
 
 <style lang="sass" global>
@@ -160,12 +163,19 @@
 		position: relative
 		box-sizing: border-box
 		background: #111
-		padding-top: $topbar
-		padding: 15px
 		font-size: $fontsize
 		color: white
-		padding-top: $topbar + 15px
-		/*font-family: monospace*/
+		.pdac-main-column
+			padding: 15px
+			padding-top: $topbar + 15px
+			padding-right: 30px
+		.pdac-main-column > *
+			flex-grow: 1
+			min-height: 60px
+		&.hide-cursor
+			cursor: none!important
+			*, a 
+				cursor: none!important
 		input, button, select
 			font-size: $fontsize
 			color: white
@@ -182,6 +192,9 @@
 			min-height: 30px
 			&:focus
 				background: rgba(255,255,255,0.2)
+		.container
+			display: flex
+			height: 100%
 		.aui-button
 			button
 				border: 1px solid white

@@ -15,6 +15,7 @@
 .back-button
 	position: relative
 	z-index: 9
+	flex-grow: 0!important
 </style>
 
 

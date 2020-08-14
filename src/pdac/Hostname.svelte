@@ -32,8 +32,6 @@
 </script>
 
 <Back {page} />
-<Column>
-	<p>Change PDAC hostname</p>
-	<Dropdown bind:a={dropdown} on:change={onChanged} />
-	<Button  style="margin-top: 5px" on:click={saveHostname}>Restart</Button>
-</Column>
+<p>Change PDAC hostname:</p>
+<Dropdown bind:a={dropdown} on:change={onChanged} />
+<Button  style="margin-top: 5px" on:click={saveHostname}>Restart</Button>

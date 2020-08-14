@@ -26,7 +26,7 @@
 		let t = 0;
 		session.exercises.forEach( e => {
 			const ex = e.exercise_id;
-			t += ex.time;
+			if (ex.time) t += ex.time;
 		})
 		return t;
 	});
@@ -34,6 +34,7 @@
 	function onExerciseChanged( query ) {
 		if (!query.exercise) return -1;
 
+		if ( parseInt(query.exercise) > session.exercises.length) return query.exercise;
 		if (query.exercise != timeline.previousIndex) {
 			const e = session.exercises[query.exercise];
 			console.log('[PDAC] Starting process...', query.exercise, e);
@@ -87,6 +88,9 @@
 		}
 	}
 
+	$: identifier = (exercise) ? `${session.title}_${exerciseIndex}_${exercise.tags.map( t => {
+		return t.tag_id.title;
+	})}` : 'none';
 
 	$: exerciseIndex = parseInt( onExerciseChanged( page.query ), 10);
 	$: exercise = (exerciseIndex <= session.exercises.length && exerciseIndex > 0) ? session.exercises[exerciseIndex-1].exercise_id : null;
@@ -98,43 +102,59 @@
 </script>
 
 
-<!-- <div class={`recording-session status-${timeline.status}`}> -->
 	{#if exerciseIndex == -1 }
-	<Back {page} />
-	<div>{session.title}</div>
-	<div>{session.exercises.length} exercise(s), {totalTime()} seconds in total</div>
-	<div class="html">
-		{@html session.description}
-	</div>
-	<Button><a href={nextPath}>Start Session</a></Button>
+		<Back {page} />
+		<div>
+			{session.title}: 
+			{session.exercises.length} exercise(s), 
+			{totalTime()} seconds in total
+		</div>
+		<div class="html">
+			<div>{@html session.description}</div>
+		</div>
+		<Button><a href={nextPath}>Start Session</a></Button>
 
-	{:else if exerciseIndex == 0}
+		{:else if exerciseIndex == 0}
 
-	<Back {page} />
-	<Viewer />
-	<Column a={{stretch: true, justify: 'flex-end'}}>
-	<Button style="margin-top:140px"><a href={nextPath}>OK, Begin</a></Button>
-	</Column>
+		<Back {page} />
+		<Viewer />
+		<Column a={{stretch: true, justify: 'flex-end'}}>
+		<Button style="margin-top:140px"><a href={nextPath}>OK, Begin</a></Button>
+		</Column>
 
+	{:else if exerciseIndex > session.exercises.length}
+		<div>
+			{session.title}: Completed
+		</div>
+		<Button><a href="/recordings">View Recordings</a></Button>
+		<Button><a href="/session">Back to Sessions</a></Button>
 
 	{:else}
-
-	<div>{exercise.description}</div>
-	<div class="tags">
-	{#each exercise.tags as tag}
-	<span>{tag.tag_id.title}</span>  
-	{/each}
-	</div>
-	<div>
-		{#if timeline.status == 0}
-			Waiting
-		{:else if timeline.status == 1}
-			Recording
-		{/if}
-		<div class={`bar status-${timeline.status}`}>
-			<div class="inner" style={`width: ${timeline.percent}%`}></div>
+		<div class={`circle ${ (timeline.status == 1) ? 'active' : '' }`} />
+		<div>
+			<div>
+				Exercise {exerciseIndex}/{session.exercises.length}: 
+				{exercise.description}
+			</div>
+			<div>Identifier: {identifier}</div>
+			<div>
+				Tags:
+				{#each exercise.tags as tag}
+					<span>{tag.tag_id.title}</span>  
+				{/each}
+			</div>
 		</div>
-	</div>
+		<div>
+			{#if timeline.status == 0}
+				Countdown:
+			{:else if timeline.status == 1}
+				Recording:
+			{/if}
+			<div class={`bar status-${timeline.status}`}>
+				<div class="inner" style={`width: ${timeline.percent}%`}></div>
+			</div>
+		</div>
+		<Button><a href={nextPath}>Skip</a></Button>
 
 	{/if}
 
@@ -143,14 +163,35 @@
 <style lang="sass">
 	.bar
 		width: 100%
-		height: 10px
+		height: 5px
 		position: relative
+		margin-top: 10px
+		border-radius: 5px
+		&.status-0 .inner
+			background: lightgreen
+		&.status-1 .inner
+			background: tomato
 		.inner
 			position: absolute
 			top: 0
 			left: 0
 			height: 100%
 			background: white
+			max-width: 100%
+	.circle
+		$size: 30px
+		width: $size
+		height: $size
+		border-radius: $size
+		position: absolute
+		top: 40px
+		right: 40px
+		background: tomato
+		min-height: 0px!important
+		z-index: 0
+		opacity: 0
+		&.active
+			opacity: 1
 
 	/*.recording-session*/
 </style>

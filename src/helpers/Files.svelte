@@ -36,9 +36,8 @@
 	@import '../svelte-aui/src/styles/Utils'
 	.overlay
 		+fix
-		+top-left(20px, 50%)
-		+width-height( 320px, 220px )
-		+translate( -50%, 0%)
+		+top-left(0px, 0px)
+		+width-height( 100%, 100% )
 		background: black
 		z-index: 99
 		video 
