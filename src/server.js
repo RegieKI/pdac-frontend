@@ -81,7 +81,6 @@ AutoSetup(
 
 			return new Promise( (resolve, reject) => {
 				wifi.detectSupplicant(function(err, iface, supplicant) {
-					console.log('OIOI>>>', iface, supplicant);
 					if (err) return reject(err);
 					return resolve( {
 						hostname: os.hostname(),
@@ -118,20 +117,43 @@ AutoSetup(
 			return new Promise( (resolve, reject) => {
 				console.log('[Start] sending config:', req.body);
 				axios.post( 'http://localhost:8888/start/', req.body ).then( res => {
-					resolve(res);
+					console.log('[Start] 📸 ✅  successfully started')
+					resolve(res.data);
 				}).catch( err => {
-					reject(err);
+					if (err.response) {
+						let t = '';
+						if (err.response.status) t += err.response.status;
+						if (err.response.statusText) t += ': '+err.response.statusText;
+						if (err.response.data) t += ': '+err.response.data;
+						console.log('[Start] ❌ error', t)
+						reject(t);
+					} else {
+						console.log('[Start] ❌ error', err)
+						reject(err);
+					}
 				});
 
 			});
 		},
 		Stop: async(req, res, params) => {
 			return new Promise( (resolve, reject) => {
-				console.log('[Stop] sending:', req.body);
-				POST( 'http://localhost:8888/stop/', req.body ).then( res => {
-					resolve(res);
+				console.log('[Stop] sending stop...');
+				axios.post( 'http://localhost:8888/stop/', req.body ).then( res => {
+					console.log('[Stop] 📸 🛑  successfully stopped')
+					resolve(res.data);
 				}).catch( err => {
-					reject(err);
+
+					if (err.response) {
+						let t = '';
+						if (err.response.status) t += err.response.status;
+						if (err.response.statusText) t += ': '+err.response.statusText;
+						if (err.response.data) t += ': '+err.response.data;
+						console.log('[Stop] ❌ error', t)
+						reject(t);
+					} else {
+						console.log('[Stop] ❌ error', err)
+						reject(err);
+					}
 				});
 
 			});

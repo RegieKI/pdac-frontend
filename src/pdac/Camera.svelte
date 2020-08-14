@@ -47,17 +47,20 @@
 			}
 		};
 
-		console.log('SENDING CONFIG', config);
-
 		axios.post('/start?as=json', config).then( (res) => {
-			console.log('SUCCESSSsssss!!!!!', res);
+			console.log('[Camera] 📸 ✅  successfully started')
 		}).catch( err => {
-			console.log('ERRROOOORRRR', err);
+			console.log('[Camera] ❌ error starting:', err.code, err.message)
 		});
 	}
 
 	function stop() {
 
+		axios.post('/stop?as=json', {}).then( (res) => {
+			console.log('[Camera] 📸 🛑  successfully stopped')
+		}).catch( err => {
+			console.log('[Camera] ❌ error stopping:', err.code, err.message)
+		});
 	}
 
 </script>

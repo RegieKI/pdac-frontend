@@ -140,16 +140,16 @@ export default (dir, opts={}) => {
 		let pathname = decodeURIComponent(req.path || req.pathname || parser(req).pathname);
 
 		const isJson = req.query.as === 'json';
-		if (isJson) console.log(`[Sirv] 🗂  looking for json...`);
+		if (isJson) console.log(`[Sirv] 🌀 looking for stored directory or file...`);
 
 		if ( isJson && FILES[pathname] ) {
-			console.log(`[Sirv] 🗂  returning file...`);
+			console.log(`[Sirv] ✅🗂  returning file...`);
 			const stats = fs.statSync( FILES[pathname].abs );
 			return send( res, 200, stats);
 
 		} else if ( isJson && DIRS[pathname] ) {
 
-			console.log(`[Sirv] 🗂  returning directory...`);
+			console.log(`[Sirv] ✅🗂  returning directory...`);
 			fs.readdir( DIRS[pathname], (err, files) => {
 				if (err) return isNotFound(req, res);
 				const d = Object.values(files);

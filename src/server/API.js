@@ -16,6 +16,7 @@ import { Loop, LoopRoutes, RegExecute, IsFilesPath, IsJsonPath, CleanFilesPath, 
 export const SendError = ( res, code, msg ) => {
 	console.log( '[API]', `✋ ${code} { ${Object.keys(msg)} } ${msg}` );
 	res.statusCode = code;
+	res.code = code;
 	return res.end();
 }
 
@@ -101,8 +102,11 @@ export const API = ( Endpoints, Routes ) => {
 		console.log( '[API]', `🌐  using "${func.name}" endpoint` );
 
 		func( req, res, route.match ).then( data => {
+			if (data.statusText) console.log('[API] ✅  Success statusText:', data.statusText );
+			if (data.data) console.log('[API] ✅  Success data.data:', data.data );
 			return SendSuccess( res, data );
 		}).catch( err => {
+			if (err.statusText) console.log('[API] ❌  Success statusText:', err.statusText );
 			return SendError( res, 501, err );
 
 		});
