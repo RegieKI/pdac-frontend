@@ -164,15 +164,16 @@
 		padding: 15px
 		font-size: $fontsize
 		color: white
+		padding-top: $topbar + 15px
 		/*font-family: monospace*/
 		input, button, select
 			font-size: $fontsize
 			color: white
 		input[type=text], input[type=password], input[type=email], select
 			border: 1px solid white
-		*
+		/**
 			font-smooth: never!important
-			-webkit-font-smoothing : none!important
+			-webkit-font-smoothing : none!important*/
 		a
 			text-decoration: none
 			display: flex

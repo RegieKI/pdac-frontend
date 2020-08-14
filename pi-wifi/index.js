@@ -458,6 +458,7 @@ function listNetworks(callback) {
           ssid: parameters[1],
           bssid: parameters[2],
           flags: parameters[3],
+          huh: parameters[4 ],
         };
         networksArray.push(tempNetworkJson);
       }

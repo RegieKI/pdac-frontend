@@ -1,5 +1,6 @@
 <script>
 
+	import axios from 'axios'
 	import { Any, Boolean, Group, Text, Defines as d } from '../svelte-aui/src/index.js'
 	import { POST, GET } from '../helpers/Utils.js'
 	import { info } from './Store.js'
@@ -7,8 +8,8 @@
 	export let data = {};
 
 	import { onMount } from 'svelte'
+
 	let key = 'default'
-	let text = "";
 	let InputEl;
 
     String.prototype.splice = function(start, delCount, newSubStr) {
@@ -42,40 +43,44 @@
 		]
 	}
 
-
-	function Status( code, status, message ){
-		return {
-			code, 
-			status,
-			message
-		}
-	}
-
-	let status = Status( 0, 0, 0);
-	let position = 0;
-	let TextInput = {
+	let input = {
 		variant: "text", 
 		placeholder: `Enter password for ${page.query.ssid}`,
 		value: "",
 		currPos : 0
 	}
-	function addChar( char ) {
 
-		TextInput.value = TextInput.value.splice( TextInput.currPos++ , 0, char );
-		// console.log('ADD CHAR');
+	function addChar( char ) {
+		input.value = input.value.splice( input.currPos++ , 0, char );
+	}
+
+	function removeChar( char ) {
+
+		let a = input.value;
+		let b = input.value;
+		const i = input.currPos;
+		a = a.slice( 0, i - 1 );
+		b = b.slice( i );
+
+		console.log('REMOVE', i , a, b);
+		input.value = a + b;
+		if (input.currPos > 1) input.currPos -= 1;
 	}
 
 	function updateCaretPos( ) {
-		// console.log('UPDATE CARET', InputEl.selectionStart)
-		TextInput.currPos = InputEl.selectionStart;
+		input.currPos = InputEl.selectionStart;
 	}
 
 	async function submitPassword() {
-		console.log('Attempting connect...');
-
-		const r = await POST( `/network/connect.json?ssid=${page.query.ssid}`, { password: TextInput.value });
-		if (r.status !== 200) status = Status( r.status, "Could not connect", r.statusText );
-		r.status = Status( 200, "Success!", `Connected to ${page.query.ssid}`);
+		console.log('[NetworkConnect] 🌐  sattempting connection to:', page.query.ssid);
+		axios.post( `/network/connect?as=json`, { 
+			ssid: page.query.ssid,
+			psk: input.value 
+		}).then( res => {
+			console.log('[NetworkConnect] ✅🌐  successfully connected:', res);
+		}).catch( err => {
+			console.log('[NetworkConnect] ❌🌐  errpr connecting:', err);
+		});
 	}
 
 	
@@ -85,9 +90,8 @@
 	@import '../svelte-aui/src/styles/Utils'
 	.keyboard
 		+fix
-		+top-left( 240px, 50% )
-		+width-height(320px, auto)
-		+translate( -50%, -100% )
+		+bottom-left( 0px, 0px )
+		+width-height(100%, auto)
 		.row
 			display: flex
 		button
@@ -102,9 +106,8 @@
 		background: transparent
 </style>
 
-<div class="status status-{status}">
 	<Text 
-		bind:a={TextInput}
+		bind:a={input}
 		bind:InputEl={InputEl} 
 		on:click={updateCaretPos} 
 		on:focus={updateCaretPos} 
@@ -157,6 +160,12 @@
 							on:click={ e => submitPassword() }>
 							{char}
 						</button>
+					{:else if char === '⌫' }
+						<button 
+							class={'key key-'+char} 
+							on:click={ e => removeChar() }>
+							{char}
+						</button>
 					{:else }
 						<button 
 							class={'key key-'+char}
@@ -165,8 +174,8 @@
 						</button>
 					{/if}
 				{/each}
+
+
 			</div>
 		{/each}
 	</div>
-
-</div>

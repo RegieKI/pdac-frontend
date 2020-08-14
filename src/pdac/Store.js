@@ -12,11 +12,17 @@ function createInfo() {
 			let data = await GET('/info?as=json');
 			const mem = MEM( data.freemem );
 			data.memory = mem[mem.use] + mem.use;
-			data.isConnected = false;//( data.connections.length !== 0);
-			data.connection = {};//(data.isConnected) ? data.connections[0] : {};
+			data.isConnected = false;
+			for (let i = 0; i < data.iface.length; i++) {
+				const n = data.iface[i];
+				if (n.flags !== '[DISABLED]' || n.flags.length === 0) {
+					data.isConnected = true;
+					data.connection = n;
+				}
+			}
 			data.active = true;
-			const num = data.connection.frequency;
-			data.connection.freq = (num > 5000 && num < 6000) ? "5ghz" : (num > 2400 && num < 2500) ? "2.4ghz" : ((num/100)*10)+"ghz";
+			// const num = data.connection.frequency;
+			// data.connection.freq = (num > 5000 && num < 6000) ? "5ghz" : (num > 2400 && num < 2500) ? "2.4ghz" : ((num/100)*10)+"ghz";
 			update( n => data );
 		}
 	}

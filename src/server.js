@@ -12,6 +12,8 @@ import wifi from './../pi-wifi';
 import fs from 'fs'
 import DirectusSDK from "@directus/sdk-js"; 
 
+import {exec} from 'child_process'
+
 
 const { PORT, NODE_ENV } = process.env;
 const dev = NODE_ENV === 'development';
@@ -23,6 +25,8 @@ const directus = new DirectusSDK({
 
 
 
+
+import {wpa} from './../wireless-tools';
 
 AutoSetup(
 	{
@@ -54,6 +58,20 @@ AutoSetup(
 				});
 			});
 		},
+		Reboot: async(req, res, params ) => {
+			return new Promise( (resolve, reject ) => {
+				exec('sudo reboot now', function (msg) { 
+					console.log('[server] rebooting: ', msg) 
+				});
+			});
+		},
+		Shutdown: async(req, res, params ) => {
+			return new Promise( (resolve, reject ) => {
+				exec('sudo shutdown now', function (msg) { 
+					console.log('[server] shutting down: ', msg) 
+				});
+			});
+		},
 		Statistics: async(req, res, params ) => {
 			return new Promise( (resolve, reject ) => {
 
@@ -64,23 +82,22 @@ AutoSetup(
 		ConnectToNetwork: async( req, res, params ) => {
 
 			return new Promise( (resolve, reject) => {
-				const pass = req.body.password
-				const ssid = req.query.ssid;
-				console.log(`[ConnectToNetwork] 🗝  ${ssid}/${pass}`	);
-				resolve({});
-				// wifi.connect({ ssid: "ssid", password: "password" }, function(err) {
-				//   if (err) {
-				//   	console.error(`[ConnectToNetwork] 🗝  ${ssid} ${err}`);
-				//   	return reject( {} );
-				//   }
-				//   return resolve({ ssid });
-				// });
+				const ssid = req.body.ssid;
+				const psk = req.body.psk
+				console.log(`[ConnectToNetwork] 🗝  ${ssid}/${psk}`	);
+				wifi.connect({ssid, psk}).then( res => {
+					console.log(`[ConnectToNetwork] ✅🗝  success:`, res );
+					return resolve(res);
+				}).catch( err => {
+					console.log('[ConnectToNetwork] ❌🗝  error:', err );
+					return reject(err);
+				});
 			}) 
 		},
 		GetInfo: async ( req, res, params ) => {
 
 			return new Promise( (resolve, reject) => {
-				wifi.detectSupplicant(function(err, iface, supplicant) {
+				wifi.listNetworks(function(err, iface) {
 					if (err) return reject(err);
 					return resolve( {
 						hostname: os.hostname(),
@@ -89,8 +106,7 @@ AutoSetup(
 						totalmem: os.totalmem(),
 						freemem: os.freemem(),
 						uptime: os.uptime(),
-						iface,
-						supplicant
+						iface
 					} );
 				});
 			})
@@ -98,7 +114,7 @@ AutoSetup(
 		},
 		GetNetworkList: async ( req, res, params ) => {
 			return new Promise( (resolve, reject) => {
-				wifi.listNetworks(function(err, data) {
+				wifi.scan(function(err, data) {
 					if (err) return reject(err);
 					return resolve( data );
 				});
@@ -195,6 +211,12 @@ AutoSetup(
 		},
 		'/stop': {
 			POST: 'Stop'
+		},
+		'/reboot': {
+			POST: 'Reboot'
+		},
+		'/shutdown': {
+			POST: 'Shutdown'
 		}
 	})
 	.use(
