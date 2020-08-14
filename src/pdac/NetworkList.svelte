@@ -6,11 +6,8 @@
 	export let page = {};
 	export let data = {};
 
-	onMount( async() => {
-		console.log(page, data);
-	});
 
-	$: sorted = data.sort( (a,b) => Math.abs( parseInt(a.signal_level) ) - Math.abs( parseInt(b.signal_level) ) );
+	$: sorted = data;//data.sort( (a,b) => Math.abs( parseInt(a.signal_level) ) - Math.abs( parseInt(b.signal_level) ) );
 
 	$: freq = ( (num) => {
 		if (num > 5000 && num < 6000) return "5ghz";
@@ -21,7 +18,7 @@
 </script>
 
 <Back {page} />
-{#each sorted as n}
+{#each data as n}
 
 <Any>
 	<a href={`/network/connect?ssid=${n.ssid}`}>
