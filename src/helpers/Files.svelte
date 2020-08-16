@@ -46,7 +46,7 @@
 			object-fit: fill
 		a
 			+abs
-			+top-right
+			+top-right( 10px, 40px )
 			z-index: 99
 </style>
 

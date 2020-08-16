@@ -137,7 +137,7 @@ AutoSetup(
 						console.log('[Start] ❌ error', t)
 						reject(t);
 					} else {
-						console.log('[Start] ❌ error', err)
+						console.log('[Start] ❌ error', err.toString())
 						reject(err);
 					}
 				});
@@ -160,7 +160,7 @@ AutoSetup(
 						console.log('[Stop] ❌ error', t)
 						reject(t);
 					} else {
-						console.log('[Stop] ❌ error', err)
+						console.log('[Stop] ❌ error', err.toString())
 						reject(err);
 					}
 				});
