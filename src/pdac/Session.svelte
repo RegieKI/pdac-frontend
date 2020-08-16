@@ -118,9 +118,7 @@
 
 		<Back {page} />
 		<Viewer />
-		<Column a={{stretch: true, justify: 'flex-end'}}>
 		<Button style="margin-top:140px"><a href={nextPath}>OK, Begin</a></Button>
-		</Column>
 
 	{:else if exerciseIndex > session.exercises.length}
 		<div>

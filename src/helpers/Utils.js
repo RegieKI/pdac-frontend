@@ -48,48 +48,6 @@ export function CleanJsonPath( p ) {
 	return p;
 }
 
-export async function POST( url, params ) {
-	return new Promise( (resolve, reject) => {
-
-		fetch( url, {
-			type: 'POST',
-			method: 'POST',
-			headers: {'Content-Type' : 'application/json'},
-			body: JSON.stringify( params )
-		}).then( res => {
-			console.log('POST SUCCESSssssss', res)
-			return resolve(res);
-		}).catch( err => {
-			console.log('POST ERrrrrrrrorr', err);
-			return reject(err);
-		});
-
-	});
-	// const r = await fetch( url, {
-	// 		type: 'POST',
-	// 		method: 'POST',
-	// 		headers: {'Content-Type' : 'application/json'},
-	// 		body: JSON.stringify( params )
-	// 	});
-	// const json = await r.json();
-	// return json;
-}
-export async function PUT( url, params ) {
-	const r = await fetch( url, {
-			type: 'PUT',
-			method: 'PUT',
-			headers: {'Content-Type' : 'application/json'},
-			body: JSON.stringify( params )
-		});
-	const json = await r.json();
-	return json;
-}
-
-export async function GET( url, params ) {
-
-	const r = await fetch( url );
-	return await r.json();
-}
 
 export function MEM( bytes ) {
 

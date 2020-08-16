@@ -13,11 +13,15 @@ import { Loop, LoopRoutes, RegExecute, IsFilesPath, IsJsonPath, CleanFilesPath, 
 
 
 
-export const SendError = ( res, code, msg ) => {
-	console.log( '[API]', `✋ ${code} { ${Object.keys(msg)} } ${msg}` );
-	res.statusCode = code;
-	res.code = code;
-	return res.end();
+export const HandleError = ( res, err ) => {
+
+	const data = (err.length && err) || err.message;
+	let status = err.code || err.status || 500;
+	status = (status >= 100 && status < 600) ? status : 500;
+	const message = (data && data.message) || data || STATUS_CODES[status];
+	console.log( '[API]', `✋ ${status} : ${message}` );
+    res.setHeader('Content-Type', 'application/json');
+	return send( res, status, { status, message } );
 }
 
 export const SendSuccess = ( res, data ) => {
@@ -93,11 +97,11 @@ export const API = ( Endpoints, Routes ) => {
 		/*--------------- RETURN if no match ---------------*/
 		
 		if ( route === null ) return SendSuccess( res, {})
-		if ( route.type !== req.method ) return SendError( res, 404, `mismatch of request methods: ${route.type}/${req.method}`);
+		if ( route.type !== req.method ) return HandleError( res, { code: 404, message: `mismatch of request methods: ${route.type}/${req.method}` });
 
 		const func = endpoints[route.func];
 
-		if ( func === undefined ) return SendError( res, 404, `no Directus endpoint found for ${route.func}`)
+		if ( func === undefined ) return HandleError( res, { code: 404, message: `no Directus endpoint found for ${route.func}` })
 
 		console.log( '[API]', `🌐  using "${func.name}" endpoint` );
 
@@ -106,9 +110,9 @@ export const API = ( Endpoints, Routes ) => {
 			if (data.data) console.log('[API] ✅  Success data.data:', data.data );
 			return SendSuccess( res, data );
 		}).catch( err => {
-			if (err.statusText) console.log('[API] ❌  Success statusText:', err.statusText );
-			return SendError( res, 501, err );
-
+			// return res.end();
+			// console.log('boop');
+			return HandleError(res, err)
 		});
 	}
 

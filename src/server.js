@@ -2,8 +2,6 @@ import sirv from 'sirv';
 import compression from 'compression';
 import * as sapper from '@sapper/server';
 
-import { POST, PUT, GET } from './helpers/Utils.js'
-
 import axios from 'axios'
 import { AutoSetup } from './server/API.js'
 import os from 'os'
@@ -108,7 +106,7 @@ AutoSetup(
 						totalmem: os.totalmem(),
 						freemem: os.freemem(),
 						uptime: os.uptime(),
-						iface
+						iface: iface || {}
 					} );
 				});
 			})
@@ -137,7 +135,7 @@ AutoSetup(
 						console.log('[Start] ❌ error', t)
 						reject(t);
 					} else {
-						console.log('[Start] ❌ error', err)
+						console.log('[Start] ❌ error', err.toString())
 						reject(err);
 					}
 				});
@@ -160,7 +158,7 @@ AutoSetup(
 						console.log('[Stop] ❌ error', t)
 						reject(t);
 					} else {
-						console.log('[Stop] ❌ error', err)
+						console.log('[Stop] ❌ error', err.toString())
 						reject(err);
 					}
 				});
