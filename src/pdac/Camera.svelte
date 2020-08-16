@@ -2,10 +2,9 @@
 
 	import axios from 'axios'
 	import Back from './Back.svelte'
-	import { POST, GET, PUT } from '../helpers/Utils.js'
 	import { Column, Button, Toggle, Text, Row } from '../svelte-aui/src/index.js';
 
-	import { info } from './Store.js'
+	import { info, overlay } from './Store.js'
 	export let page = {};
 	export let data = {};
 
@@ -47,19 +46,28 @@
 			}
 		};
 
+		overlay.set( { type: 'wait', message: 'Opening camera' } )
 		axios.post('/start?as=json', config).then( (res) => {
 			console.log('[Camera] 📸 ✅  successfully started')
+			overlay.set( null )
 		}).catch( err => {
-			console.log('[Camera] ❌ error starting:', err.code, err.message)
+			console.log(
+				'[Camera] ❌ error starting:',
+				err.response.data
+			)
+			overlay.set( {type: 'error', ...err.response.data} )
 		});
 	}
 
 	function stop() {
 
+		overlay.set( { type: 'wait', message: 'Closing camera' } )
 		axios.post('/stop?as=json', {}).then( (res) => {
 			console.log('[Camera] 📸 🛑  successfully stopped')
+			overlay.set( null )
 		}).catch( err => {
-			console.log('[Camera] ❌ error stopping:', err.code, err.message)
+			console.log('[Camera] ❌ error stopping:', err.response.data )
+			overlay.set( {type: 'error', ...err.response.data} )
 		});
 	}
 

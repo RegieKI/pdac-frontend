@@ -1,7 +1,6 @@
 <script>
-
+	import axios from 'axios'
 	import Back from './Back.svelte'
-	import { POST, GET } from '../helpers/Utils.js'
 	import { Any, Group, Button, Dropdown, Column } from '../svelte-aui/src/index.js';
 
 	import { info } from './Store.js'
@@ -20,7 +19,7 @@
 		console.log("save Hostname", hostname);
 		if (hostname != undefined) {
 			console.log('DOING POST');
-			POST( `/hostname?as=json`, { hostname }).then( (res)=> {
+			axios.post( `/hostname?as=json`, { hostname }).then( (res)=> {
 
 				console.log('SUCCESS', res);
 			}).catch (err => {

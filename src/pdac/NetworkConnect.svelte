@@ -3,7 +3,6 @@
 	import { goto } from '@sapper/app'
 	import axios from 'axios'
 	import { Any, Boolean, Group, Text, Defines as d } from '../svelte-aui/src/index.js'
-	import { POST, GET } from '../helpers/Utils.js'
 	import { info } from './Store.js'
 	export let page = {};
 	export let data = {};

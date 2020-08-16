@@ -1,7 +1,8 @@
 import { writable } from 'svelte/store';
-import { POST, GET, MEM } from '../helpers/Utils.js'
+import axios from 'axios'
+import {MEM} from '../helpers/Utils.js'
 
-function createInfo() {
+function createInfoStore() {
 	const { subscribe, set, update } = writable({ active: false, connection: {} });
 
 	return {
@@ -9,17 +10,21 @@ function createInfo() {
 
 		grab: async () => {
 
-			let data = await GET('/info?as=json');
+			let data = await axios.get('/info?as=json');
 			const mem = MEM( data.freemem );
 			data.memory = mem[mem.use] + mem.use;
 			data.isConnected = false;
-			for (let i = 0; i < data.iface.length; i++) {
-				let n = data.iface[i];
-				if (n.flags !== '[DISABLED]' || n.flags.length === 0) {
-					data.isConnected = true;
-					data.connection = n;
-					break;
+			if (data.iface) {
+				for (let i = 0; i < data.iface.length; i++) {
+					let n = data.iface[i];
+					if (n.flags !== '[DISABLED]' || n.flags.length === 0) {
+						data.isConnected = true;
+						data.connection = n;
+						break;
+					}
 				}
+			} else {
+				data.iface = [];
 			}
 			data.active = true;
 			console.log('[info] ', data);
@@ -31,4 +36,5 @@ function createInfo() {
 }
 
 
-export const info = createInfo();
+export const info = createInfoStore();
+export const overlay = writable( null );

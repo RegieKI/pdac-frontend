@@ -2,6 +2,7 @@
 	import { fade, fly } from 'svelte/transition';
 	import { onMount } from 'svelte'
 	import { MEM } from '../helpers/Utils.js'
+	import { goto } from '@sapper/app'
 
 
 	import { Any, Group, AUI, Column, Button } from '../svelte-aui/src/index.js'
@@ -17,7 +18,7 @@
 	import MainMenu from './MainMenu.svelte'
 	import Camera from './Camera.svelte'
 
-	import { info } from './Store.js'
+	import { info, overlay } from './Store.js'
 
 	export let page = {};
 	export let data = null;
@@ -52,6 +53,7 @@
 	} 
 
 	onMount( async() => {
+		console.log('grabbing info...')
 		await info.grab();
 	});
 
@@ -66,6 +68,7 @@
 		return '/' + page.params.slug.slice(0,page.params.slug.length-1).join('/')
 	});
 
+
 </script>
 
 <svelte:head>
@@ -76,18 +79,38 @@
 	on:mousemove={onMousemove}
 	on:mouseup={onMouseup}
 	/>
-<div bind:this={PdacEl} on:mousedown={onMousedown} id="pdac" class={`${id} ${(isPi) ? 'hide-cursor' : ''}`}>
+<div bind:this={PdacEl} on:mousedown={onMousedown} id="pdac" class={`aui  ${id} ${(isPi) ? 'hide-cursor' : ''}`}>
 	<header class="header">
 		{#if $info.active }
 			<label>{ $info.memory || "" }</label>
 			<label>{ $info.hostname || "" }</label>
 			<label>
-				{ $info.connection.ssid || "" }
-				<WLAN strength={$info.connection.quality} />
+				<!-- { $info.connection.ssid || "" } -->
+				<WLAN strength={100} />
 			</label>
 		{/if}
 	</header>
-	<div class="aui container">
+
+	{#if $overlay}
+		<div class="overlay">
+			<Column a={{stretch: true}} >
+				<!-- <span>{ JSON.stringify($overlay) }</span> -->
+				{#if $overlay.type === 'error'}
+					<div>
+						Status: {$overlay.status}
+						<br />
+						Message: {$overlay.message}
+					</div>
+					<Button on:click={ e => { window.location = window.location } }>Refresh</Button>
+					<Button on:click={ e => overlay.set(null) }>Close</Button>
+				{:else}
+					<div>{$overlay.message}</div>
+				{/if}
+			</Column>
+		</div>
+	{/if}
+
+	<div class="container">
 		<Column a={{stretch: true}} className="pdac-main-column">
 			<!-- main menu -->
 
@@ -147,83 +170,7 @@
 </div>
 
 <style lang="sass" global>
-	/*@font-face
-		font-family: 'pixel'
-		src: url('/Fonts/slkscr.ttf') format('woff')*/
-	$width: 100%
-	$height: 100vh
-	$topbar: 20px
-	$fontsize: 18px 
-	$smallfontsize: 10px
-	#pdac
-		margin: 0 auto
-		width: $width
-		height: $height
-		overflow: auto
-		position: relative
-		box-sizing: border-box
-		background: #111
-		font-size: $fontsize
-		color: white
-		.pdac-main-column
-			padding: 15px
-			padding-top: $topbar + 15px
-			padding-right: 30px
-		.pdac-main-column > *
-			flex-grow: 1
-			min-height: 60px
-		&.hide-cursor
-			cursor: none!important
-			*, a 
-				cursor: none!important
-		input, button, select
-			font-size: $fontsize
-			color: white
-		input[type=text], input[type=password], input[type=email], select
-			border: 1px solid white
-		/**
-			font-smooth: never!important
-			-webkit-font-smoothing : none!important*/
-		a
-			text-decoration: none
-			display: flex
-			align-items: center
-			justify-content: left
-			min-height: 30px
-			&:focus
-				background: rgba(255,255,255,0.2)
-		.container
-			display: flex
-			height: 100%
-		.aui-button
-			button
-				border: 1px solid white
-				color: white
-				border-radius: 5px
-				a
-					justify-content: center
-		.header
-			position: fixed
-			width: $width
-			height: $topbar
-			top: 0
-			left: 0
-			display: flex
-			justify-content: space-between
-			background-color: rgba(0,0,0,0.9)
-			color: white
-			z-index: 99
-			font-size: $smallfontsize
-			padding: 0 10px
-			box-sizing: border-box
-			line-height: $topbar
-			/*font-family: pixel, monospace, sans-serif*/
-			label
-				display: flex
-
-		*
-			user-select: none
-
+@import '../styles'
 </style>
 
 
