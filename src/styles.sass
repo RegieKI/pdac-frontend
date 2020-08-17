@@ -17,6 +17,8 @@ $smallfontsize: 10px
 	background: #111
 	font-size: $fontsize
 	color: white
+	a
+		text-decoration: none
 	.overlay
 		position: fixed
 		top: 0
@@ -40,6 +42,15 @@ $smallfontsize: 10px
 		flex-grow: 1
 		min-height: 60px
 		display: flex
+		flex-direction: column
+		justify-content: center
+		a
+			display: flex
+			flex-grow: 1
+			min-height: 30px
+			justify-content: left
+			&:focus
+				background: rgba(255,255,255,0.2)
 	&.hide-cursor
 		cursor: none!important
 		*, a 
@@ -52,13 +63,6 @@ $smallfontsize: 10px
 	/**
 		font-smooth: never!important
 		-webkit-font-smoothing : none!important*/
-	a
-		text-decoration: none
-		align-items: center
-		justify-content: left
-		min-height: 30px
-		&:focus
-			background: rgba(255,255,255,0.2)
 	.container
 		display: flex
 		height: 100%
@@ -69,6 +73,7 @@ $smallfontsize: 10px
 			border-radius: 5px
 			a
 				justify-content: center
+				align-items: center
 	.header
 		position: fixed
 		width: $width

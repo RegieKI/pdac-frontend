@@ -2,13 +2,14 @@
 
 	import axios from 'axios'
 	import Back from './Back.svelte'
+	import { Timestamp } from './../helpers/Utils.js'
 	import { Column, Button, Toggle, Text, Row } from '../svelte-aui/src/index.js';
 
 	import { info, overlay } from './Store.js'
 	export let page = {};
 	export let data = {};
 
-	let sessionId = { value: "test" };
+	let sessionId = { value: Timestamp() };
 
 	let audioSettings = { value: false };
 	let videoSettings = { value: true };
@@ -45,6 +46,8 @@
 				}
 			}
 		};
+
+		console.log('[Camera] 📸 opening camera', config)
 
 		overlay.set( { type: 'wait', message: 'Opening camera' } )
 		axios.post('/start?as=json', config).then( (res) => {

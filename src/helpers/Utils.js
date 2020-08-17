@@ -4,6 +4,17 @@ export const SessionID = ( session ) => {
 
 }
 
+export const Timestamp = () => {
+	const d = new Date();
+	let s = d.getFullYear();
+	s+= '-'+d.getMonth()
+	s+= '-'+d.getDate()
+	s+= '-'+d.getHours()
+	s+= '-'+d.getMinutes()
+	s+= '-'+d.getSeconds()
+	return s;
+}
+
 export const Loop = ( object, callback ) => {
 	Object.keys(object).forEach( (key, i) => {
 		const o = object[key];

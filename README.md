@@ -7,23 +7,23 @@ Built with Sapper (Svelte SSR framework), SASS and PUG preprecessors. Contains s
 Node >= 12 should be used (12 and 13 should be interchangeable). Install all dependencies:
 
 ```
-yarn
+npm install
 ```
 
 Run the development application:
 
 ```
-yarn run dev
+npm run dev
 ```
 
 Build production application:
 
 ```
-yarn run build
+npm run build
 ```
 
 Run the production application:
 
 ```
-yarn start
+npm start
 ```

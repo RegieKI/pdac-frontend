@@ -1,13 +1,14 @@
 <script>
 
-
+	import axios from 'axios'
+	import { Timestamp } from './../helpers/Utils.js'
 	import {goto} from '@sapper/app';
 	import { Any, Button, Column } from '../svelte-aui/src/index.js'
 	export let page = {};
 	export let data = null;
 	import Viewer from './Viewer.svelte'
 	import Back from './Back.svelte'
-	import { info } from './Store.js'
+	import { info, overlay } from './Store.js'
 	import { onMount } from 'svelte'
 
 
@@ -54,7 +55,6 @@
 		return query.exercise;
 	}
 
-	const delay = time => new Promise(res=>setTimeout(res,time));
 
 	async function onFrame() {
 		const t = ((new Date()) - timeline.timestamp)/1000;
@@ -67,22 +67,39 @@
 
 
 		if (t >= session.break_time && timeline.status == 0) {
-			setTimeout( () => {
 
-				console.log('[PDAC] Begin recording...', exercise.time);
+			console.log('[Session] 📸  Begin recording...', exercise.time, recordingConfig);
+
+			axios.post('/start?as=json', recordingConfig).then( res => {
+
+				console.log('[Session] 📸  Begun recording ✅');
+
 				timeline.status = 1;
 				timeline.counter = -1;
 				timeline.timestamp = (new Date()); 
 				window.requestAnimationFrame(onFrame);
-			}, 2000);
+			}).catch( err => {
+				console.log('[Session] Could not start 📸 ❌', err.toString(), Object.keys(err), err.response);
+				overlay.set({
+					type: 'error',
+					...err.response.data
+				})
+			})
 		} else if (t >= exercise.time && timeline.status == 1) {
 
-			setTimeout( () => {
-				console.log('[PDAC] Stop recording...');
+			console.log('[Session] 📸  Stop recording...');
+			axios.post('/stop?as=json', {}).then( res => {
+
+				console.log('[Session] 📸  Stopped recording ✅');
 				timeline.status = 2;
 				goto(nextPath);
-
-			},2000);
+			}).catch( err => {
+				console.log('[Session] Could not stop 📸 ❌', err.toString(), Object.keys(err), err.response);
+				overlay.set({
+					type: 'error',
+					...err.response.data
+				})
+			})
 		} else {
 			window.requestAnimationFrame(onFrame);
 		}
@@ -99,8 +116,53 @@
 	$: nextPath = `${page.path}?exercise=${exerciseIndex + 1}`;
 
 
-</script>
+	let useHeartrate = true;
+	let isHRConnected = false;
 
+	$: recordingConfig = {
+		'session-id': `${Timestamp()}_${identifier}`,
+		sources: {
+			audio: {
+				active: true
+			},
+			video: {
+				active: true
+			},
+			heartrate: {
+				active: useHeartrate
+			}
+		},
+		sinks: {
+			rstp: {
+				active: false
+			},
+			file: {
+				active: true
+			},
+			window: {
+				active: true
+			}
+		}
+	};
+
+
+
+	onMount( async() => {
+		console.log('[Session mount 👥] 🌀')
+
+		axios.get('http://localhost:8888/status').then( res => {
+			console.log('[Session mount 👥] ✅', res)
+
+		}).catch( err => {
+			console.log('[Session mount 👥] ❌')
+		})
+	});
+
+	function reconnectHR() {
+
+	}
+
+</script>
 
 	{#if exerciseIndex == -1 }
 		<Back {page} />
@@ -114,17 +176,23 @@
 		</div>
 		<Button><a href={nextPath}>Start Session</a></Button>
 
-		{:else if exerciseIndex == 0}
+	{:else if exerciseIndex == 0}
 
 		<Back {page} />
-		<Viewer />
-		<Button style="margin-top:140px"><a href={nextPath}>OK, Begin</a></Button>
+		{#if useHeartrate && !isHRConnected}
+			<div>MiBand is not connected</div>
+			<Button on:click={reconnectHR}>Reconnect</Button>
+			<Button on:click={ e => { useHeartrate = false } } >Skip</Button>
+		{:else}
+			<Viewer />
+			<Button style="margin-top:140px"><a href={nextPath}>OK, Begin</a></Button>
+		{/if}
 
 	{:else if exerciseIndex > session.exercises.length}
 		<div>
 			{session.title}: Completed
 		</div>
-		<Button><a href="/recordings">View Recordings</a></Button>
+		<Button><a href="/usb/recordings">View Recordings</a></Button>
 		<Button><a href="/session">Back to Sessions</a></Button>
 
 	{:else}

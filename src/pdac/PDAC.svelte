@@ -53,7 +53,7 @@
 	} 
 
 	onMount( async() => {
-		console.log('grabbing info...')
+		console.log('[PDAC] ℹ️ grabbing infomation')
 		await info.grab();
 	});
 
@@ -136,9 +136,9 @@
 				<NetworkConnect {page} {data} />
 			{/if}
 
-			<!-- view recordings -->
+			<!-- view usb -->
 
-			{#if id.indexOf( 'pdac-recordings' ) !== -1 }
+			{#if id.indexOf( 'pdac-usb' ) !== -1 }
 				<Files {page} {data} />
 			{/if}
 

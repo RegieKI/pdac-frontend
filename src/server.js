@@ -166,8 +166,8 @@ AutoSetup(
 			});
 		}
 	}, { 
-		'/recordings': {
-			GET: 'files:../recordings'
+		'/usb': {
+			GET: 'files:../usb'
 		},
 		'/info': { 
 			GET: 'GetInfo'
