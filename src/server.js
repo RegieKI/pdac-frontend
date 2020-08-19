@@ -1,9 +1,11 @@
-import sirv from 'sirv';
-import compression from 'compression';
-import * as sapper from '@sapper/server';
+import sirv from 'sirv'
+import compression from 'compression'
+import * as sapper from '@sapper/server'
 
 import temp from 'pi-temperature'
 import nodeDiskInfo from 'node-disk-info'
+import gpioButtons from 'rpi-gpio-buttons'
+
 
 import axios from 'axios'
 import { AutoSetup } from './server/API.js'
@@ -11,10 +13,12 @@ import os from 'os'
 import wifi from './../pi-wifi';
 
 import fs from 'fs'
-import DirectusSDK from "@directus/sdk-js"; 
+import DirectusSDK from "@directus/sdk-js"
 
-import {exec} from 'child_process'
 
+import kill  from 'tree-kill'
+import { exec, spawn } from 'child_process'
+import ON_DEATH from 'death'
 
 const { PORT, NODE_ENV } = process.env;
 const dev = NODE_ENV === 'development';
@@ -22,12 +26,56 @@ const dev = NODE_ENV === 'development';
 const directus = new DirectusSDK({
   url: "https://api.sinnott.cc/",
   project: "pdac"
-}); 
+});
+
+console.log(`----------------------------------------> mode: ${process.env.NODE_ENV}`);
+
+const isDev = (process.env.NODE_ENV == 'development')
+
+let browser, backend;
+
+if (!isDev) {
+
+	browser = spawn('sh', ['/home/pi/pdac/launchBrowser.sh']);
+	console.log('[server.js] 🥚  spawning launchBrowser.sh >>>>>', browser.pid );
+
+	backend = spawn('sh', ['/home/pi/pdac/runBackend.sh']);
+	console.log('[server.js] 🥚  spawning runBackend.sh >>>>>', backend.pid );
+
+	backend.stdout.pipe(process.stdout)
+	backend.on('exit', function() {
+		console.log('[server.js] ⚰️ backend has exited');
+	})
+
+}
 
 
+gpioButtons( [18, 16, 12] ).on('clicked', function(pin) {
 
+	if (pin == 12) {
+		console.log('[server.js] 🔘  TOP button pressed', pin);
 
-import {wpa} from './../wireless-tools';
+	} else if (pin == 16) {
+		console.log('[server.js] 🔘  MIDDLE button pressed', pin);
+
+	} else if (pin == 18) {
+		console.log('[server.js] 🔘  BOTTOM button pressed', pin);
+
+	}
+});
+
+ON_DEATH(function(signal, err) {
+	console.log('[server.js] ☠️  exiting  ☠️')
+	exec('sh /home/pi/pdac/killPython.sh');
+	// kill(backend.pid, 'SIGTERM', function(err) {
+	// 	if (err)  console.log('[server.js] ☠️  error when exiting:', err);
+	// 	console.log('[server.js] ☠️  backend cleaned up.')
+	// 	kill(browser.pid, 'SIGTERM', function(err) {
+	// 		if (err)  console.log('[server.js] ☠️  error when exiting:', err);
+	// 		console.log('[server.js] ☠️  browser cleaned up.')
+	// 	});
+	// });
+})
 
 AutoSetup(
 	{
@@ -182,6 +230,27 @@ AutoSetup(
 				}
 			});
 		},
+		Restart: async(req, res, params) => {
+
+			return new Promise( (resolve, reject) => {
+				// process.kill(process.pid);
+
+				exec('sh /home/pi/pdac/killPython.sh');
+				exec('sh /home/pi/pdac/killNode.sh');
+				
+				return resolve({});
+			});
+		},
+		Update: async(req, res, params) => {
+
+			return new Promise( (resolve, reject) => {
+				// process.kill(process.pid);
+
+				exec('sh /home/pi/pdac/update.sh');
+				
+				return resolve({});
+			});
+		},
 		Start: async(req, res, params) => {
 			return new Promise( (resolve, reject) => {
 				console.log('[Start] sending config:', req.body);
@@ -273,6 +342,9 @@ AutoSetup(
 		},
 		'/shutdown': {
 			POST: 'Shutdown'
+		},
+		'/restart': {
+			GET: 'Restart'
 		}
 	})
 	.use(
@@ -283,3 +355,4 @@ AutoSetup(
 	.listen(PORT, err => {
 		if (err) console.log('error', err);
 	});
+
