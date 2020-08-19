@@ -45,6 +45,8 @@ if (!isDev) {
 	backend.stdout.pipe(process.stdout)
 	backend.on('exit', function() {
 		console.log('[server.js] ⚰️ backend has exited');
+		exec('sh /home/pi/pdac/killNode.sh');
+		process.exit();
 	})
 
 }
@@ -67,14 +69,10 @@ gpioButtons( [18, 16, 12] ).on('clicked', function(pin) {
 ON_DEATH(function(signal, err) {
 	console.log('[server.js] ☠️  exiting  ☠️')
 	exec('sh /home/pi/pdac/killPython.sh');
-	// kill(backend.pid, 'SIGTERM', function(err) {
-	// 	if (err)  console.log('[server.js] ☠️  error when exiting:', err);
-	// 	console.log('[server.js] ☠️  backend cleaned up.')
-	// 	kill(browser.pid, 'SIGTERM', function(err) {
-	// 		if (err)  console.log('[server.js] ☠️  error when exiting:', err);
-	// 		console.log('[server.js] ☠️  browser cleaned up.')
-	// 	});
-	// });
+	if (!isDev) {
+		exec('sh /home/pi/pdac/killNode.sh');
+		process.exit();
+	}
 })
 
 AutoSetup(
@@ -101,31 +99,24 @@ AutoSetup(
 		},
 		SetHostname: async(req, res, params ) => {
 			return new Promise( (resolve, reject ) => {
-				fs.writeFile('/etc/hostname', params.hostname, function (err) {
-				  if (err) return reject(err);
-				  return resolve();
-				});
+				const cmd = `sh /home/pi/pdac/setHostname.sh ${req.body.hostname}`;
+				console.log('[SetHostname] 🔖  setting with: ', cmd);
+				const r = exec(cmd);
+				// console.log('[SetHostname] 🔖  response: ', );
+				// resolve({});
+				resolve({});
 			});
 		},
-		Reboot: async(req, res, params ) => {
+		SystemReboot: async(req, res, params ) => {
 			return new Promise( (resolve, reject ) => {
-				exec('sudo reboot now', function (msg) { 
-					console.log('[server] rebooting: ', msg) 
-				});
+				exec('sh /home/pi/pdac/rebootNow.sh');
+				resolve({});
 			});
 		},
-		Shutdown: async(req, res, params ) => {
+		SystemShutdown: async(req, res, params ) => {
 			return new Promise( (resolve, reject ) => {
-				exec('sudo shutdown now', function (msg) { 
-					console.log('[server] shutting down: ', msg) 
-				});
-			});
-		},
-		Statistics: async(req, res, params ) => {
-			return new Promise( (resolve, reject ) => {
-
-				// get temp: /opt/vc/bin/vcgencmd measure_temp
-				resolve();
+				exec('sh /home/pi/pdac/shutdownNow.sh');
+				resolve({});
 			});
 		},
 		Info: async ( req, res, params ) => {
@@ -230,32 +221,31 @@ AutoSetup(
 				}
 			});
 		},
-		Restart: async(req, res, params) => {
+		SystemRestart: async(req, res, params) => {
 
 			return new Promise( (resolve, reject) => {
-				// process.kill(process.pid);
 
+				exec('sh /home/pi/pdac/killAll.sh & sh /home/pi/pdac/run.sh');
+				
+				return resolve({});
+			});
+		},
+		SystemUpdate: async(req, res, params) => {
+
+			return new Promise( (resolve, reject) => {
+
+				exec('sh /home/pi/pdac/openVisualUpdate.sh');
 				exec('sh /home/pi/pdac/killPython.sh');
 				exec('sh /home/pi/pdac/killNode.sh');
 				
 				return resolve({});
 			});
 		},
-		Update: async(req, res, params) => {
-
+		CameraStart: async(req, res, params) => {
 			return new Promise( (resolve, reject) => {
-				// process.kill(process.pid);
-
-				exec('sh /home/pi/pdac/update.sh');
-				
-				return resolve({});
-			});
-		},
-		Start: async(req, res, params) => {
-			return new Promise( (resolve, reject) => {
-				console.log('[Start] sending config:', req.body);
+				console.log('[CameraStart] sending config:', req.body);
 				axios.post( 'http://localhost:8888/start/', req.body ).then( res => {
-					console.log('[Start] 📸 ✅  successfully started')
+					console.log('[CameraStart] 📸 ✅  successfully started')
 					resolve(res.data);
 				}).catch( err => {
 					if (err.response) {
@@ -263,21 +253,21 @@ AutoSetup(
 						if (err.response.status) t += err.response.status;
 						if (err.response.statusText) t += ': '+err.response.statusText;
 						if (err.response.data) t += ': '+err.response.data;
-						console.log('[Start] ❌ error', t)
+						console.log('[CameraStart] ❌ error', t)
 						reject(t);
 					} else {
-						console.log('[Start] ❌ error', err.toString())
+						console.log('[CameraStart] ❌ error', err.toString())
 						reject(err);
 					}
 				});
 
 			});
 		},
-		Stop: async(req, res, params) => {
+		CameraStop: async(req, res, params) => {
 			return new Promise( (resolve, reject) => {
-				console.log('[Stop] sending stop...');
+				console.log('[CameraStop] sending stop...');
 				axios.post( 'http://localhost:8888/stop/', req.body ).then( res => {
-					console.log('[Stop] 📸 🛑  successfully stopped')
+					console.log('[CameraStop] 📸 🛑  successfully stopped')
 					resolve(res.data);
 				}).catch( err => {
 
@@ -286,10 +276,10 @@ AutoSetup(
 						if (err.response.status) t += err.response.status;
 						if (err.response.statusText) t += ': '+err.response.statusText;
 						if (err.response.data) t += ': '+err.response.data;
-						console.log('[Stop] ❌ error', t)
+						console.log('[CameraStop] ❌ error', t)
 						reject(t);
 					} else {
-						console.log('[Stop] ❌ error', err.toString())
+						console.log('[CameraStop] ❌ error', err.toString())
 						reject(err);
 					}
 				});
@@ -298,7 +288,7 @@ AutoSetup(
 		}
 	}, { 
 		'/usb': {
-			GET: 'files:../usb'
+			GET: 'files:/home/pi/pdac/usb'
 		},
 		'/info': { 
 			GET: 'Info'
@@ -328,23 +318,23 @@ AutoSetup(
 			GET: 'ParticipantsList',
 			POST: 'SetHostname'
 		},
-		'/statistics': {
-			GET: 'Statistics'
+		'/camera/start': {
+			POST: 'CameraStart'
 		},
-		'/start': {
-			POST: 'Start'
+		'/camera/stop': {
+			POST: 'CameraStop'
 		},
-		'/stop': {
-			POST: 'Stop'
+		'/system/update': {
+			GET: 'SystemUpdate'
 		},
-		'/reboot': {
-			POST: 'Reboot'
+		'/system/reboot': {
+			GET: 'SystemReboot'
 		},
-		'/shutdown': {
-			POST: 'Shutdown'
+		'/system/shutdown': {
+			GET: 'SystemShutdown'
 		},
-		'/restart': {
-			GET: 'Restart'
+		'/system/restart': {
+			GET: 'SystemRestart'
 		}
 	})
 	.use(

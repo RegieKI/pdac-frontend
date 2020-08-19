@@ -30,6 +30,7 @@
 <Any><a rel="prefetch" href="/session">Sessions</a></Any>
 <Any><a rel="prefetch" href="/camera">Camera</a></Any>
 <Any><a rel="prefetch" href="/usb">USB</a></Any>
+<Any><a rel="prefetch" href="/system">System</a></Any>
 <Any><a rel="prefetch" href="/network">Network</a></Any>
 <Any><a rel="prefetch" href="/hostname">Hostname</a></Any>
 <Any><a rel="prefetch" href="/calibrate">Calibrate</a></Any>

@@ -3,7 +3,7 @@
 	import Back from './Back.svelte'
 	import { Any, Group, Button, Dropdown, Column } from '../svelte-aui/src/index.js';
 
-	import { info } from './Store.js'
+	import { info, overlay } from './Store.js'
 	export let page = {};
 	export let data = {};
 
@@ -16,14 +16,10 @@
 		hostname = dropdown.options[dropdown.value].color;
 	}
 	function saveHostname( e ) {
-		console.log("save Hostname", hostname);
 		if (hostname != undefined) {
-			console.log('DOING POST');
 			axios.post( `/hostname?as=json`, { hostname }).then( (res)=> {
-
-				console.log('SUCCESS', res);
 			}).catch (err => {
-				console.log('ERROR', JSON.stringify(err) );
+				overlay.set( {type: 'error', ...err.response.data} )
 			});
 		}
 	}
@@ -31,6 +27,6 @@
 </script>
 
 <Back {page} />
-<p>Change PDAC hostname:</p>
+<div>Current hostname: { ($info) ? $info.hostname : 'LOADING'} </div>
 <Dropdown bind:a={dropdown} on:change={onChanged} />
-<Button  style="margin-top: 5px" on:click={saveHostname}>Restart</Button>
+<Button  style="margin-top: 5px" on:click={saveHostname}>Change Hostname</Button>

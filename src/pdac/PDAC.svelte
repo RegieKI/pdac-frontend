@@ -21,6 +21,7 @@
 	import NetworkList from './NetworkList.svelte'
 	import NetworkMenu from './NetworkMenu.svelte'
 	import NetworkConnect from './NetworkConnect.svelte'
+	import System from './System.svelte'
 	import Hostname from './Hostname.svelte'
 	import MainMenu from './MainMenu.svelte'
 	import Camera from './Camera.svelte'
@@ -154,6 +155,12 @@
 
 			{#if id === 'pdac-network-connect'}
 				<NetworkConnect {page} {data} />
+			{/if}
+
+			<!-- system -->
+
+			{#if id === 'pdac-system'}
+				<System {page} {data} />
 			{/if}
 
 			<!-- view usb -->
