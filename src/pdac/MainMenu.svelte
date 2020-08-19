@@ -33,7 +33,7 @@
 <Any><a rel="prefetch" href="/network">Network</a></Any>
 <Any><a rel="prefetch" href="/hostname">Hostname</a></Any>
 <Any><a rel="prefetch" href="/calibrate">Calibrate</a></Any>
-<Row>
+<!-- <Row>
 	<Button on:click={reboot}>Reboot</Button>
 	<Button on:click={shutdown}>Shutdown</Button>
-</Row>
+</Row> -->

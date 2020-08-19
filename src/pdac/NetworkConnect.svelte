@@ -1,9 +1,10 @@
 <script>
 
+	import Back from './Back.svelte'
 	import { goto } from '@sapper/app'
 	import axios from 'axios'
 	import { Any, Boolean, Group, Text, Defines as d } from '../svelte-aui/src/index.js'
-	import { info } from './Store.js'
+	import { info, overlay } from './Store.js'
 	export let page = {};
 	export let data = {};
 
@@ -45,8 +46,8 @@
 
 	let input = {
 		variant: "text", 
-		placeholder: `Enter password for ${page.query.ssid}`,
-		value: "",
+		placeholder: `Password for ${page.query.ssid}`,
+		value: page.query.psk || "",
 		currPos : 0
 	}
 
@@ -78,9 +79,11 @@
 			psk: input.value 
 		}).then( res => {
 			console.log('[NetworkConnect] ✅🌐  successfully connected:', res);
-			goto( '/network' );
+			goto( '/' );
+			overlay.set(null);
 		}).catch( err => {
 			console.log('[NetworkConnect] ❌🌐  errpr connecting:', err);
+			overlay.set( {type: 'error', message: 'Could not connect', status: 403});
 		});
 	}
 
@@ -90,9 +93,10 @@
 <style lang="sass">
 	@import '../svelte-aui/src/styles/Utils'
 	.keyboard
-		+fix
-		+bottom-left( 0px, 0px )
-		+width-height(100%, auto)
+		/*+fix*/
+		/*+bottom-left( 0px, 0px )*/
+		/*+width-height(100%, auto)*/
+		min-height: 120px
 		.row
 			display: flex
 		button
@@ -100,83 +104,83 @@
 			+reset-webkit
 			border: 1px solid white
 			background: transparent
-			border-radius: 3px
-			margin: 2px
+			border-radius: 0px
+			margin: 0px
 			padding: 0.4em 0em
 	input
 		background: transparent
 </style>
+<Back />
+<Text 
+	bind:a={input}
+	bind:InputEl={InputEl} 
+	on:click={updateCaretPos} 
+	on:focus={updateCaretPos} 
+	on:input={updateCaretPos} 
+	on:keydown={updateCaretPos}  />
+<div class="keyboard">
+	{#each keys[key] as line }
+		<div class="row">
+			{#each line as char}
+				{#if char === 'space'}
+					<button 
+						class={'key key-'+char} 
+						on:click={ e => addChar(char)} 
+						style="width: 40%">
+						{char}
+					</button>
+				{:else if char === '⇧'}
+					<button 
+						class={'key key-'+char} 
+						on:click={ e => key = 'uppercase'}>
+						{char}
+					</button>
+				{:else if char === '⇪'}
+					<button 
+						class={'key key-'+char} 
+						on:click={ e => key = 'default'}>
+						{char}
+					</button>
+				{:else if char === '123'}
+					<button 
+						class={'key key-'+char} 
+						on:click={ e => key = 'numbers'}>
+						{char}
+					</button>
+				{:else if char === 'ABC' }
+					<button 
+						class={'key key-'+char} 
+						on:click={ e => key = 'default'}>
+						{char}
+					</button>
+				{:else if char === '#+=' }
+					<button 
+						class={'key key-'+char} 
+						on:click={ e => key = 'symbols'}>
+						{char}
+					</button>
+				{:else if char === '↵' }
+					<button 
+						class={'key key-'+char} 
+						on:click={ e => submitPassword() }>
+						{char}
+					</button>
+				{:else if char === '⌫' }
+					<button 
+						class={'key key-'+char} 
+						on:click={ e => removeChar() }>
+						{char}
+					</button>
+				{:else }
+					<button 
+						class={'key key-'+char}
+						on:click={ e => addChar(char)} >
+						{char}
+					</button>
+				{/if}
+			{/each}
 
-	<Text 
-		bind:a={input}
-		bind:InputEl={InputEl} 
-		on:click={updateCaretPos} 
-		on:focus={updateCaretPos} 
-		on:input={updateCaretPos} 
-		on:keydown={updateCaretPos}  />
-	<div class="keyboard">
-		{#each keys[key] as line }
-			<div class="row">
-				{#each line as char}
-					{#if char === 'space'}
-						<button 
-							class={'key key-'+char} 
-							on:click={ e => addChar(char)} 
-							style="width: 40%">
-							{char}
-						</button>
-					{:else if char === '⇧'}
-						<button 
-							class={'key key-'+char} 
-							on:click={ e => key = 'uppercase'}>
-							{char}
-						</button>
-					{:else if char === '⇪'}
-						<button 
-							class={'key key-'+char} 
-							on:click={ e => key = 'default'}>
-							{char}
-						</button>
-					{:else if char === '123'}
-						<button 
-							class={'key key-'+char} 
-							on:click={ e => key = 'numbers'}>
-							{char}
-						</button>
-					{:else if char === 'ABC' }
-						<button 
-							class={'key key-'+char} 
-							on:click={ e => key = 'default'}>
-							{char}
-						</button>
-					{:else if char === '#+=' }
-						<button 
-							class={'key key-'+char} 
-							on:click={ e => key = 'symbols'}>
-							{char}
-						</button>
-					{:else if char === '↵' }
-						<button 
-							class={'key key-'+char} 
-							on:click={ e => submitPassword() }>
-							{char}
-						</button>
-					{:else if char === '⌫' }
-						<button 
-							class={'key key-'+char} 
-							on:click={ e => removeChar() }>
-							{char}
-						</button>
-					{:else }
-						<button 
-							class={'key key-'+char}
-							on:click={ e => addChar(char)} >
-							{char}
-						</button>
-					{/if}
-				{/each}
 
-
-			</div>
-		{/each}
-	</div>
+		</div>
+	{/each}
+</div>

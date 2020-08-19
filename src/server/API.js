@@ -18,7 +18,7 @@ export const HandleError = ( res, err ) => {
 	const data = (err.length && err) || err.message;
 	let status = err.code || err.status || 500;
 	status = (status >= 100 && status < 600) ? status : 500;
-	const message = (data && data.message) || data || STATUS_CODES[status];
+	const message = (data && data.message) || data;
 	console.log( '[API]', `✋ ${status} : ${message}` );
     res.setHeader('Content-Type', 'application/json');
 	return send( res, status, { status, message } );

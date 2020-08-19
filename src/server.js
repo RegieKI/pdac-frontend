@@ -2,6 +2,9 @@ import sirv from 'sirv';
 import compression from 'compression';
 import * as sapper from '@sapper/server';
 
+import temp from 'pi-temperature'
+import nodeDiskInfo from 'node-disk-info'
+
 import axios from 'axios'
 import { AutoSetup } from './server/API.js'
 import os from 'os'
@@ -77,48 +80,107 @@ AutoSetup(
 				resolve();
 			});
 		},
-		ConnectToNetwork: async( req, res, params ) => {
+		Info: async ( req, res, params ) => {
 
 			return new Promise( (resolve, reject) => {
-				const ssid = req.body.ssid;
-				const psk = req.body.psk;
-				console.log(`[ConnectToNetwork] 🗝  ${ssid}/${psk}`	);
-				
-				wifi.connectTo({ssid, psk}, function(err) {
-					if (err) {
-						console.log('[ConnectToNetwork] ❌🗝  error:', err );
-						return reject(err);
-					}
-					console.log(`[ConnectToNetwork] ✅🗝  success:`, res );
-					return resolve(res);
-				});
-			}) 
-		},
-		GetInfo: async ( req, res, params ) => {
 
-			return new Promise( (resolve, reject) => {
-				wifi.listNetworks(function(err, iface) {
-					if (err) return reject(err);
-					return resolve( {
-						hostname: os.hostname(),
-						type: os.type(),
-						platform: os.platform(),
-						totalmem: os.totalmem(),
-						freemem: os.freemem(),
-						uptime: os.uptime(),
-						iface: iface || {}
-					} );
+
+				function getInfo( resolve, reject, backend ) {
+					nodeDiskInfo.getDiskInfo().then( drives => {
+						wifi.status( 'wlan0', function(err, status) {
+							if (err) return reject(err);
+
+							temp.measure(function(err2, temperature) {
+									if (err2) return reject(err2);
+									return resolve( {
+										hostname: os.hostname(),
+										type: os.type(),
+										platform: os.platform(),
+										totalmem: os.totalmem(),
+										freemem: os.freemem(),
+										usedmem: os.totalmem() - os.freemem(),
+										uptime: os.uptime(),
+										wlan0: status || {},
+										drives,
+										backend,
+										temperature
+									} );
+							});
+						});
+					});
+				}
+
+				axios.get('http://localhost:8888/status').then( res => {
+					console.log('[Info] ✅  success: backend connected...', Object.keys(res), res.data);
+					return getInfo( resolve, reject, res.data );
+				}).catch( err => {
+					console.log('[Info] ❌  error: backend not connected...', Object.keys(err));
+					return getInfo( resolve, reject, {} );
 				});
 			})
 
 		},
-		GetNetworkList: async ( req, res, params ) => {
+		NetworkList: async ( req, res, params ) => {
 			return new Promise( (resolve, reject) => {
 				wifi.scan(function(err, data) {
 					if (err) return reject(err);
 					return resolve( data );
 				});
 			})
+		},
+		ConnectToNetwork: async( req, res, params ) => {
+
+			return new Promise( (resolve, reject) => {
+				const ssid = req.body.ssid;
+				const password = req.body.psk;
+				const o = {ssid, password};
+				console.log(`[ConnectToNetwork] 🗝 `, o	);
+
+				wifi.connectTo(o, function(err) {
+					if (err) {
+						console.log('[ConnectToNetwork:connectTo] ❌🗝  error:', err );
+						return reject(err);
+					}
+
+
+					wifi.restartInterface( 'wlan0', function(err) {
+						if (err) {
+							console.log('[ConnectToNetwork:restartInterface] ❌🗝  error:', err );
+							return reject(err);
+						}
+						wifi.status( 'wlan0', function(err, status) {
+
+							if (err) {
+								console.log('[ConnectToNetwork:status] ❌🗝  error:', err );
+								return reject(err);
+							}
+							console.log(`[ConnectToNetwork] ✅🗝  success:` );
+							return resolve(status);
+						});
+					});
+				});
+			}) 
+		},
+		NetworkUSB: async( req, res, params ) => {
+
+			return new Promise( (resolve, reject) => {
+				const wlanPath = '/home/pi/pdac/usb/wlan.txt';
+				console.log(`[NetworkUSB] 🌐  getting:`, wlanPath );
+				if ( fs.existsSync( wlanPath ) ) {
+					fs.readFile( wlanPath, "utf8", (err, data) => {
+						if (err) {
+							console.log(`[NetworkUSB] 🌐❌  couldn't open` );
+							return reject(err);
+						}
+						const d = data.split('\n');
+						console.log(`[NetworkUSB] 🌐✅ wlan`, d );
+						return resolve( { ssid: d[0], psk: d[1] } );
+					});
+				} else {
+					console.log(`[NetworkUSB] 🌐  no file` );
+					return resolve( {} );
+				}
+			});
 		},
 		Start: async(req, res, params) => {
 			return new Promise( (resolve, reject) => {
@@ -170,10 +232,13 @@ AutoSetup(
 			GET: 'files:../usb'
 		},
 		'/info': { 
-			GET: 'GetInfo'
+			GET: 'Info'
+		},
+		'/network': {
+			GET: 'NetworkUSB'
 		},
 		'/network/list': {
-			GET: 'GetNetworkList'
+			GET: 'NetworkList'
 		},
 		'/network/connect': {
 			POST: 'ConnectToNetwork'

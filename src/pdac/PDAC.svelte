@@ -1,10 +1,17 @@
 <script>
+
+
+  import Wifi from "svelte-material-icons/Wifi.svelte";
+  import WifiStrengthOffOutline from "svelte-material-icons/WifiStrengthOffOutline.svelte";
+  import WatchVibrate from "svelte-material-icons/WatchVibrate.svelte";
+  import WatchVibrateOff from "svelte-material-icons/WatchVibrateOff.svelte";
+
 	import { fade, fly } from 'svelte/transition';
 	import { onMount } from 'svelte'
-	import { MEM } from '../helpers/Utils.js'
+	import { Memory } from '../helpers/Utils.js'
 	import { goto } from '@sapper/app'
-
-
+	
+	import axios from 'axios'
 	import { Any, Group, AUI, Column, Button } from '../svelte-aui/src/index.js'
 	import Files from '../helpers/Files.svelte'
 	import Breadcrumb from '../helpers/Breadcrumb.svelte'
@@ -55,6 +62,16 @@
 	onMount( async() => {
 		console.log('[PDAC] ℹ️ grabbing infomation')
 		await info.grab();
+
+		axios.get('/network/status?as=json').then( res => {
+			console.log('STATUS', res.data.wpa_state);
+			if (res.data.wpa_state == 'INACTIVE') {
+				goto('/network');
+			}
+		}).catch(err => {
+
+		});
+
 	});
 
 
@@ -81,12 +98,15 @@
 	/>
 <div bind:this={PdacEl} on:mousedown={onMousedown} id="pdac" class={`aui  ${id} ${(isPi) ? 'hide-cursor' : ''}`}>
 	<header class="header">
-		{#if $info.active }
-			<label>{ $info.memory || "" }</label>
+		{#if $info }
+			<label>{ Memory($info.freemem).auto } ({ Memory($info.usedmem).auto }/{ Memory($info.totalmem).auto })</label>
 			<label>{ $info.hostname || "" }</label>
 			<label>
-				<!-- { $info.connection.ssid || "" } -->
-				<WLAN strength={100} />
+				<WatchVibrate />
+				<WatchVibrateOff />
+				{$info.wlan0.ssid || ''}
+				<Wifi />
+				<WifiStrengthOffOutline />
 			</label>
 		{/if}
 	</header>

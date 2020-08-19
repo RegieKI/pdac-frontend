@@ -2,10 +2,9 @@
 
 	import Back from './Back.svelte'
 	import { onMount } from 'svelte'
-	import { Any, Boolean, Defines as d } from '../svelte-aui/src/index.js'
+	import { Button } from '../svelte-aui/src/index.js'
 	export let page = {};
 	export let data = {};
-
 
 	$: sorted = data;//data.sort( (a,b) => Math.abs( parseInt(a.signal_level) ) - Math.abs( parseInt(b.signal_level) ) );
 
@@ -18,13 +17,25 @@
 </script>
 
 <Back {page} />
-{#each data as n}
 
-<Any>
-	<a href={`/network/connect?ssid=${n.ssid}`}>
-		{n.ssid} 
-		({ freq(n.frequency) })
-	</a>
-</Any>
 
-{/each}
+{#if data.result == 'FAIL-BUSY'}
+	<div>Resource is busy! Wait a moment and retry:</div>
+	<Button><a href="/network/list">Retry</a></Button>
+
+{:else}
+
+
+	{#each data as n}
+
+		{#if n.ssid}
+			<div>
+				<a href={`/network/connect?ssid=${n.ssid}`}>
+					{n.ssid} 
+					({ freq(n.frequency) })
+				</a>
+			</div>
+		{/if}
+	{/each}
+
+{/if}

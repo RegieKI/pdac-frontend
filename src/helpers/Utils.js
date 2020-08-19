@@ -60,7 +60,7 @@ export function CleanJsonPath( p ) {
 }
 
 
-export function MEM( bytes ) {
+export function Memory( bytes ) {
 
 	let kb = bytes/1024; 
 	let mb = kb/1024; 
@@ -78,5 +78,9 @@ export function MEM( bytes ) {
 	if ( mb > 1 ) use = 'mb';
 	if ( gb > 1 ) use = 'gb';
 
-	return { bytes, kb, mb, gb, use};
+	let o = { bytes, kb, mb, gb, use};
+
+	o.auto = o[use] + use;
+
+	return o;
 }
