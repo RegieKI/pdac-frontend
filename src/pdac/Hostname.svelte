@@ -7,13 +7,13 @@
 	export let page = {};
 	export let data = {};
 
-	let dropdown = {options: data, key: 'color'};
+	let dropdown = {options: data, key: 'hostname'};
 	let hostname;
 
 	$: hostname = (dropdown.value !== undefined) ? dropdown.options[dropdown.value] : undefined;
 
 	function onChanged(e) {
-		hostname = dropdown.options[dropdown.value].color;
+		hostname = dropdown.options[dropdown.value].hostname;
 	}
 	function saveHostname( e ) {
 		if (hostname != undefined) {

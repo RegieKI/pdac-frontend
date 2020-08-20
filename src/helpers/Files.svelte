@@ -52,7 +52,7 @@
 
 <Back {page} />
 {#each data as file}
-	<a rel={rel(file)} on:click={ e => goto( href(file, true) ) }>{file}</a>
+	<a rel={rel(file)} href={ href(file, true)}>{file}</a>
 {/each}
 
 {#if (page.query.player || page.query.preview) }

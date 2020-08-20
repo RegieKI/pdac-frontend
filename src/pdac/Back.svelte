@@ -1,5 +1,6 @@
 <script>
 
+  import ArrowLeft from "svelte-material-icons/ArrowLeft.svelte";
   import { Any } from '../svelte-aui/src/index.js'
   export let page = {};
   
@@ -11,12 +12,9 @@
   
 </script>
 
-<style lang="sass">
-.back-button
-	position: relative
-	z-index: 9
-	flex-grow: 0!important
-</style>
-
-
-<a class="back-button" href={back()}>Back</a>
+<!-- <Any> -->
+  <a id="back" href={back()}>
+    <ArrowLeft />
+    Back
+  </a>
+<!-- </Any>  -->

@@ -67,11 +67,10 @@ gpioButtons( [18, 16, 12] ).on('clicked', function(pin) {
 });
 
 ON_DEATH(function(signal, err) {
-	console.log('[server.js] ☠️  exiting  ☠️')
-	exec('sh /home/pi/pdac/killPython.sh');
 	if (!isDev) {
+		console.log('[server.js] ☠️  exiting  ☠️')
+		exec('sh /home/pi/pdac/killPython.sh');
 		exec('sh /home/pi/pdac/killNode.sh');
-		process.exit();
 	}
 })
 
@@ -102,8 +101,6 @@ AutoSetup(
 				const cmd = `sh /home/pi/pdac/setHostname.sh ${req.body.hostname}`;
 				console.log('[SetHostname] 🔖  setting with: ', cmd);
 				const r = exec(cmd);
-				// console.log('[SetHostname] 🔖  response: ', );
-				// resolve({});
 				resolve({});
 			});
 		},
@@ -116,6 +113,12 @@ AutoSetup(
 		SystemShutdown: async(req, res, params ) => {
 			return new Promise( (resolve, reject ) => {
 				exec('sh /home/pi/pdac/shutdownNow.sh');
+				resolve({});
+			});
+		},
+		CalibrateScreen: async(req, res, params ) => {
+			return new Promise( (resolve, reject ) => {
+				exec('sh /home/pi/pdac/calibrateScreen.sh');
 				resolve({});
 			});
 		},
@@ -149,12 +152,17 @@ AutoSetup(
 					});
 				}
 
-				axios.get('http://localhost:8888/status').then( res => {
-					console.log('[Info] ✅  success: backend connected...', Object.keys(res), res.data);
-					return getInfo( resolve, reject, res.data );
-				}).catch( err => {
-					console.log('[Info] ❌  error: backend not connected...', Object.keys(err));
-					return getInfo( resolve, reject, {} );
+				const miPath = '/home/pi/pdac/usb/miband.txt'
+
+				fs.readFile( miPath, "utf8", (err, data) => {
+					const mac_address = (err) ? 'UNKNOWN' : data;
+					axios.get('http://localhost:8888/status').then( res => {
+						console.log('[Info] ✅  success: backend connected...', Object.keys(res), res.data);
+						return getInfo( resolve, reject, { ...res.data, mac_address } );
+					}).catch( err => {
+						console.log('[Info] ❌  error: backend not connected...', Object.keys(err));
+						return getInfo( resolve, reject, { mac_address } );
+					});
 				});
 			})
 
@@ -263,6 +271,31 @@ AutoSetup(
 
 			});
 		},
+		MibandConnect: async(req, res, params) => {
+			return new Promise( (resolve, reject) => {
+				console.log('[MibandConnect] starting...');
+				axios.post( 'http://localhost:8888/bleconnect/', {} ).then( res => {
+					console.log('[MibandConnect] 📸 ✅  successfully connected')
+					resolve(res.data);
+				}).catch( err => {
+					if (err.response) {
+
+						// TODO 1
+
+						let t = '';
+						if (err.response.status) t += err.response.status;
+						if (err.response.statusText) t += ': '+err.response.statusText;
+						if (err.response.data) t += ': '+err.response.data;
+						console.log('[MibandConnect] ❌ error', t)
+						reject(t);
+					} else {
+						console.log('[MibandConnect] ❌ error', err.toString())
+						reject(err);
+					}
+				});
+
+			});
+		},
 		CameraStop: async(req, res, params) => {
 			return new Promise( (resolve, reject) => {
 				console.log('[CameraStop] sending stop...');
@@ -271,6 +304,8 @@ AutoSetup(
 					resolve(res.data);
 				}).catch( err => {
 
+						// TODO 2
+						
 					if (err.response) {
 						let t = '';
 						if (err.response.status) t += err.response.status;
@@ -285,6 +320,11 @@ AutoSetup(
 				});
 
 			});
+		},
+		Debug: async( req, res, params ) => {
+			return new Promise( (resolve, reject) => {
+				console.log('[server.js] 🎉  DEBUG:', JSON.stringify(req.body, null, 2)); 
+			}) 
 		}
 	}, { 
 		'/usb': {
@@ -318,6 +358,9 @@ AutoSetup(
 			GET: 'ParticipantsList',
 			POST: 'SetHostname'
 		},
+		'/miband/reconnect': {
+			POST: 'MibandConnect'
+		},
 		'/camera/start': {
 			POST: 'CameraStart'
 		},
@@ -335,6 +378,12 @@ AutoSetup(
 		},
 		'/system/restart': {
 			GET: 'SystemRestart'
+		},
+		'/system/calibrate': {
+			GET: 'CalibrateScreen'
+		},
+		'/debug': {
+			POST: 'Debug'
 		}
 	})
 	.use(

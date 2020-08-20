@@ -10,6 +10,7 @@
 	import Back from './Back.svelte'
 	import { info, overlay } from './Store.js'
 	import { onMount } from 'svelte'
+	import WebCam from './../helpers/WebCam.svelte'
 
 
 	let timeline = {
@@ -105,7 +106,7 @@
 		}
 	}
 
-	$: identifier = (exercise) ? `${session.title}_${exerciseIndex}_${exercise.tags.map( t => {
+	$: identifier = (exercise) ? `${$info.hostname}_${session.title}_${exerciseIndex}_${exercise.tags.map( t => {
 		return t.tag_id.title;
 	})}` : 'none';
 
@@ -146,25 +147,44 @@
 	};
 
 
+	$: mac_address =  ($info) ? $info.backend.mac_address : 'UNKNOWN';
 
 	onMount( async() => {
-		console.log('[Session mount 👥] 🌀')
+		console.log('[Session mount] 👥🌀')
 
 		axios.get('http://localhost:8888/status').then( res => {
-			console.log('[Session mount 👥] ✅', res)
+			console.log('[Session mount] 👥✅', res)
 
 		}).catch( err => {
-			console.log('[Session mount 👥] ❌')
+			console.log('[Session mount] 👥❌')
 		})
 	});
 
 	function reconnectHR() {
 
+		console.log('[Session] ⌚️  Miband reconnecting...');
+		overlay.set( { type: 'wait', message: 'Reconnecting to ' + mac_address } )
+
+		axios.post('/miband/reconnect?as=json', {}).then( res => {
+
+				console.log('[Session] ⌚️✅  Miband connected');
+				overlay.set(null);
+		}).catch( err => {
+
+				console.log('[Session] ⌚️❌ Miband could not reconnect ', err.toString(), Object.keys(err), err.response);
+				overlay.set({
+					type: 'error',
+					...err.response.data
+				})
+		})
 	}
 
 </script>
 
 	{#if exerciseIndex == -1 }
+
+		<!-- introduction -->
+
 		<Back {page} />
 		<div>
 			{session.title}: 
@@ -178,17 +198,22 @@
 
 	{:else if exerciseIndex == 0}
 
-		<Back {page} />
+		<!-- preview video -->
+
 		{#if useHeartrate && !isHRConnected}
-			<div>MiBand is not connected</div>
+			<Back {page} />
+			<div>MiBand is not connected<br />Address: {mac_address}</div>
 			<Button on:click={reconnectHR}>Reconnect</Button>
 			<Button on:click={ e => { useHeartrate = false } } >Skip</Button>
 		{:else}
-			<Viewer />
-			<Button style="margin-top:140px"><a href={nextPath}>OK, Begin</a></Button>
+			<WebCam on:click={ e => goto(nextPath) } />
+			<!-- <Button><a href={nextPath}>OK, Begin</a></Button> -->
 		{/if}
 
 	{:else if exerciseIndex > session.exercises.length}
+
+		<!-- finished! -->
+
 		<div>
 			{session.title}: Completed
 		</div>
@@ -196,6 +221,9 @@
 		<Button><a href="/session">Back to Sessions</a></Button>
 
 	{:else}
+
+		<!-- exercide (idx) -->
+
 		<div class={`circle ${ (timeline.status == 1) ? 'active' : '' }`} />
 		<div>
 			<div>

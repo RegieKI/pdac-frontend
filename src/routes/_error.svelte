@@ -18,9 +18,7 @@
 	<title>{status}</title>
 </svelte:head>
 
-<div id="pdac">
-	<div class="aui container">
-		<Column a={{stretch: true}} >
+<div class="error">
 		<Back />
 		<p>{status}</p>
 		<p>{error.message}</p>
@@ -29,6 +27,4 @@
 		{#if dev && error.stack}
 			<pre>{error.stack}</pre>
 		{/if}
-		</Column>
-	</div>
 </div>

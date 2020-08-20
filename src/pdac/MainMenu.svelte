@@ -1,5 +1,9 @@
 <script>
 
+  import AccountBox from "svelte-material-icons/AccountBox.svelte";
+  import UsbFlashDrive from "svelte-material-icons/UsbFlashDrive.svelte";
+  import Wrench from "svelte-material-icons/Wrench.svelte";
+  import Camera from "svelte-material-icons/Camera.svelte";
 	import axios from 'axios'
 	import { Any, Group, Button, Row } from '../svelte-aui/src/index.js'
 	
@@ -24,16 +28,15 @@
 	}
 </script>
 
-<style>
+<style lang="sass">
+	.link a
+		/*display: block*/
 </style>
 
-<Any><a rel="prefetch" href="/session">Sessions</a></Any>
-<Any><a rel="prefetch" href="/camera">Camera</a></Any>
-<Any><a rel="prefetch" href="/usb">USB</a></Any>
-<Any><a rel="prefetch" href="/system">System</a></Any>
-<Any><a rel="prefetch" href="/network">Network</a></Any>
-<Any><a rel="prefetch" href="/hostname">Hostname</a></Any>
-<Any><a rel="prefetch" href="/calibrate">Calibrate</a></Any>
+<Any><a rel="prefetch" href="/session"><!-- <AccountBox /> -->  Sessions</a></Any>
+<Any><a rel="prefetch" href="/camera"><!-- <Camera /> -->  Camera</a></Any>
+<Any><a rel="prefetch" href="/usb"><!-- <UsbFlashDrive /> -->  USB</a></Any>
+<Any><a rel="prefetch" href="/system"><!-- <Wrench /> -->  System</a></Any>
 <!-- <Row>
 	<Button on:click={reboot}>Reboot</Button>
 	<Button on:click={shutdown}>Shutdown</Button>

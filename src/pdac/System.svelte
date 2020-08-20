@@ -1,7 +1,7 @@
 <script>
   import axios from 'axios'
   import Back from './Back.svelte'
-  import { Group, Button, Dropdown, Column } from '../svelte-aui/src/index.js';
+  import { Group, Button, Dropdown, Column, Row } from '../svelte-aui/src/index.js';
 
   import { info } from './Store.js'
   export let page = {};
@@ -16,12 +16,12 @@
 
     });
   }
-  function restart() {
-    axios.get('/system/restart').then( res => {
-      console.log('[System] 📠  restart');
+  function calibrate() {
+    axios.get('/system/calibrate').then( res => {
+      console.log('[System] 📠  calibrate');
 
     }).catch(err => {
-      console.log('[System] 📠❌  restart', err);
+      console.log('[System] 📠❌  calibrate', err);
 
     });
 
@@ -50,7 +50,11 @@
 </script>
 
 <Back {page} />
-<Button on:click={update}>Update</Button>
-<Button on:click={restart}>Restart</Button>
-<Button on:click={shutdown}>Shutdown</Button>
-<Button on:click={reboot}>Reboot</Button>
+<div class="grid">
+  <Button a={{stretch: true}}  on:click={shutdown}>Shutdown</Button>
+  <Button a={{stretch: true}}  on:click={reboot}>Reboot</Button>
+  <Button a={{stretch: true}}  ><a rel="prefetch" href="/network">WLAN</a></Button>
+  <Button a={{stretch: true}}  ><a rel="prefetch" href="/hostname">Hostname</a></Button>
+  <Button a={{stretch: true}}  on:click={update}>Update System</Button>
+  <Button a={{stretch: true}}  on:click={calibrate}>Calibrate Screen</Button>
+</div>

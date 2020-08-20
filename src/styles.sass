@@ -1,3 +1,5 @@
+@import "./pdac/_colors"
+
 
 /*@font-face
 	font-family: 'pixel'
@@ -7,6 +9,22 @@ $height: 100vh
 $topbar: 30px
 $fontsize: 18px 
 $smallfontsize: 14px
+
+
+
+
+
+@keyframes spin-fwd
+	from 
+		transform: rotate(0deg)
+	to 
+		transform: rotate(360deg) 
+@keyframes spin-rev
+	from 
+		transform: rotate(0deg)
+	to 
+		transform: rotate(-360deg) 
+
 #pdac
 	margin: 0 auto
 	width: $width
@@ -14,9 +32,65 @@ $smallfontsize: 14px
 	overflow: auto
 	position: relative
 	box-sizing: border-box
-	background: #111
+	background: var(--yellow-500)
 	font-size: $fontsize
 	color: white
+	select
+		option
+			background-color: var(--grey-900)
+			color: white
+	::-webkit-scrollbar
+		display: none
+	*
+		user-select: none
+	#back
+		flex-direction: row
+		justify-content: left
+		align-items: center
+		svg
+			display: inline 
+	.overlay
+		justify-content: center
+		.aui-group
+			align-items: center
+		.aui-flex-button
+			width: 100%
+		.spinner
+			$s: 40px
+			margin: 20px
+			position: relative
+			width: $s * 2
+			height: $s * 2 
+			max-height: $s * 2 
+			display: block
+			transform-origin: 50% 50%
+			animation: spin-rev 6s infinite linear
+			span
+				border: 2px solid white
+				display: block
+				position: absolute
+				width: $s
+				height: $s
+				transform-origin: 0 0 
+				animation: spin-fwd 4s infinite linear
+				left: 0
+				top: 0
+				box-sizing: border-box
+				transform-origin: 50% 50%
+				&:nth-child(1)
+					left: $s/2
+					animation-duration: 4.1s
+				&:nth-child(2)
+					top: $s/2
+					animation-duration: 4.2s
+				&:nth-child(3)
+					top: $s/2
+					left: $s 
+					animation-duration: 3.9s
+				&:nth-child(4)
+					top: $s 
+					left: $s/2 
+					animation-duration: 4.3s
 	.hostname
 		padding: 20px
 		border-radius: 100%
@@ -34,18 +108,17 @@ $smallfontsize: 14px
 		z-index: 99
 		box-sizing: border-box
 		padding: 40px 	
-		background: #111
+		// background: #111
 		.aui-column > *
 			display: flex
 			flex-grow: 1
 	.pdac-main-column
 		padding: 10px
 		padding-top: $topbar + 10px
-		padding-right: 30px
 		max-width: 100vw
 	.pdac-main-column > *
 		flex-grow: 1
-		min-height: 60px
+		min-height: 50px
 		display: flex
 		flex-direction: column
 		justify-content: center
@@ -76,15 +149,21 @@ $smallfontsize: 14px
 			a
 				justify-content: center
 				align-items: center
+	.grid
+		display: grid!important
+		justify-content: stretch
+		grid-template-columns: repeat(2, minmax(10px, auto))
+		.aui-flex
+			padding: 0!important
 	.header
-		position: fixed
+		position: absolute
 		width: $width
 		height: $topbar
 		top: 0
 		left: 0
 		display: flex 
 		justify-content: space-between
-		background-color: rgba(0,0,0,0.9)
+		// background-color: rgba(0,0,0,0.9)
 		color: white
 		z-index: 99
 		font-size: $smallfontsize
