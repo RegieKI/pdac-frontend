@@ -52,6 +52,34 @@ if (!isDev) {
 }
 
 
+import GPIO from 'rpi-gpio'
+// 16 + 26 or 36 + 37
+// GND is 39
+
+console.log('[server.js] 📍 attempting pins...');
+GPIO.setup(36, GPIO.DIR_HIGH, function(err) {
+	if (err) throw err;
+  GPIO.write(36, true, function(err) {
+	      if (err) console.error('[server.js] 📍 PIN 36: error', err);
+      console.log('[server.js] 📍 PIN 36: written to pin');
+  });
+});
+GPIO.setup(37, GPIO.DIR_HIGH, function(err) {
+	if (err) throw err;
+	let onoff = true;
+  console.log('[server.js] 📍 PIN 37: setting loop...');
+	setInterval( function() {
+		onoff = !onoff;
+	  GPIO.write(37, onoff, function(err) {
+	      if (err) console.error('[server.js] 📍 PIN 37: error', err);
+	  });
+	}, 2);
+});
+
+
+
+// library uses physical ordering of pins!
+
 gpioButtons( [18, 16, 12] ).on('clicked', function(pin) {
 
 	if (pin == 12) {
