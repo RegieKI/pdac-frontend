@@ -100,8 +100,6 @@ gpioButtons( [18, 16, 12] ).on('clicked', function(pin) {
 ON_DEATH(function(signal, err) {
 	if (!isDev) {
 		console.log('[server.js] ☠️  exiting  ☠️')
-		exec('sh /home/pi/pdac/killPython.sh');
-		exec('sh /home/pi/pdac/killNode.sh');
 	}
 })
 
