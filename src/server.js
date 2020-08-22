@@ -55,7 +55,7 @@ if (!isDev) {
 import GPIO from 'rpi-gpio'
 // 16 + 26 or 36 + 37
 // GND is 39
-
+/*
 console.log('[server.js] 📍 attempting pins...');
 GPIO.setup(36, GPIO.DIR_HIGH, function(err) {
 	if (err) throw err;
@@ -75,7 +75,7 @@ GPIO.setup(37, GPIO.DIR_HIGH, function(err) {
 	  });
 	}, 2);
 });
-
+*/
 
 
 // library uses physical ordering of pins!
@@ -123,6 +123,14 @@ AutoSetup(
 					"fields": "*"
 				}
 			)).data;
+		},
+		Execute: async(req, res, params ) => {
+			return new Promise( (resolve, reject ) => {
+				exec( req.body.command, function( err, out, code ) {
+					if (err) return reject( err );
+					return resolve(out);
+				})
+			});
 		},
 		SetHostname: async(req, res, params ) => {
 			return new Promise( (resolve, reject ) => {
@@ -202,7 +210,7 @@ AutoSetup(
 					return resolve( data );
 				});
 			})
-		},
+		}, 
 		ConnectToNetwork: async( req, res, params ) => {
 
 			return new Promise( (resolve, reject) => {
@@ -212,26 +220,31 @@ AutoSetup(
 				console.log(`[ConnectToNetwork] 🗝 `, o	);
 
 				wifi.connectTo(o, function(err) {
-					if (err) {
-						console.log('[ConnectToNetwork:connectTo] ❌🗝  error:', err );
-						return reject(err);
-					}
+					// if (err) {
+					// 	console.log('[ConnectToNetwork:connectTo] ❌🗝  error:', err.message, Object.keys(err) );
+					// 	return reject(err);
+					// }
 
 
 					wifi.restartInterface( 'wlan0', function(err) {
-						if (err) {
-							console.log('[ConnectToNetwork:restartInterface] ❌🗝  error:', err );
-							return reject(err);
-						}
-						wifi.status( 'wlan0', function(err, status) {
+						// if (err) {
+						// 	console.log('[ConnectToNetwork:restartInterface] ❌🗝  error:', err.message, Object.keys(err) );
+						// 	return reject(err);
+						// }
+						setTimeout( function() { 
+							wifi.status( 'wlan0', function(err, status) {
 
-							if (err) {
-								console.log('[ConnectToNetwork:status] ❌🗝  error:', err );
-								return reject(err);
-							}
-							console.log(`[ConnectToNetwork] ✅🗝  success:` );
-							return resolve(status);
-						});
+								if (err) {
+									console.log('[ConnectToNetwork:status] ❌🗝  error:', err.message, Object.keys(err) );
+									return reject(err);
+								}
+								if (!status.ssid) {
+									return reject({message: 'No SSID'})
+								}
+								console.log(`[ConnectToNetwork] ✅🗝  success:` );
+								return resolve(status);
+							});
+						}, 1000 * 10);
 					});
 				});
 			}) 
@@ -412,6 +425,9 @@ AutoSetup(
 		},
 		'/debug': {
 			POST: 'Debug'
+		},
+		'/execute': {
+			POST: 'Execute'
 		}
 	})
 	.use(
