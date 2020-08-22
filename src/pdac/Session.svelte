@@ -71,7 +71,7 @@
 
 			console.log('[Session] 📸  Begin recording...', exercise.time, recordingConfig);
 
-			axios.post('/start?as=json', recordingConfig).then( res => {
+			axios.post('/camera/start?as=json', recordingConfig).then( res => {
 
 				console.log('[Session] 📸  Begun recording ✅');
 
@@ -89,7 +89,7 @@
 		} else if (t >= exercise.time && timeline.status == 1) {
 
 			console.log('[Session] 📸  Stop recording...');
-			axios.post('/stop?as=json', {}).then( res => {
+			axios.post('/camera/stop?as=json', {}).then( res => {
 
 				console.log('[Session] 📸  Stopped recording ✅');
 				timeline.status = 2;
@@ -106,8 +106,8 @@
 		}
 	}
 
-	$: identifier = (exercise) ? `${$info.hostname}_${session.title}_${exerciseIndex}_${exercise.tags.map( t => {
-		return t.tag_id.title;
+	$: identifier = (exercise && $info) ? `${$info.hostname}_${session.title}_${exerciseIndex}_${exercise.tags.map( t => {
+		return t.tag_id.title; 
 	})}` : 'none';
 
 	$: exerciseIndex = parseInt( onExerciseChanged( page.query ), 10);
@@ -141,7 +141,7 @@
 				active: true
 			},
 			window: {
-				active: true
+				active: false
 			}
 		}
 	};

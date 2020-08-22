@@ -13,13 +13,13 @@
 
 	let sessionId = { value: 'camera_test_'+Timestamp() }; 
 
-	let audioSettings = { value: false };
+	let audioSettings = { value: true };
 	let videoSettings = { value: true };
 	let heartRateSettings = { value: false };
 
 	let rtspSettings = { value: false };
-	let fileSettings = { value: false };
-	let windowSettings = { value: true };
+	let fileSettings = { value: true };
+	let windowSettings = { value: false };
 
 	function start() {
 

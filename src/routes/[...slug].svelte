@@ -2,7 +2,7 @@
 
 	export async function preload( page ) {
 		const p = `${page.path}?as=json`;
-		console.log(`[Slug] 🌞 attempting JSON: ${p}`)
+		console.log(`[...slug] 🌞 attempting JSON: ${p}`)
 		try {
 			const r = await this.fetch( p );
 			if (r.status !== 200) return this.error( r.status, r.statusText );
@@ -14,6 +14,13 @@
 			return this.error( 501, err );
 		}
 	};
+
+	// import { onMount } from 'svelte'
+
+
+	// onMount( async() => {
+	// 	console.log('[...slug] 📃  MOUNTED')
+	// });
 
 </script>
 

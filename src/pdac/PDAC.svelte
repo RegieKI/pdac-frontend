@@ -1,6 +1,10 @@
 <script>
 
 
+	import Colors from './Colors.js'
+	import MiBands from './MiBands.js'
+
+	import cssVars from 'svelte-css-vars'
   import Wifi from "svelte-material-icons/Wifi.svelte";
   import Brain from "svelte-material-icons/Brain.svelte";
   import TemperatureCelsius from "svelte-material-icons/TemperatureCelsius.svelte";
@@ -36,19 +40,44 @@
 	let PdacEl;
 
 
+	let waitMsg = "Waiting for backend";
+	async function grabInfo() {
+
+
+		await info.grab();
+		if (!$info.backend.active) {
+			if ($overlay.type == "wait" && $overlay.message == waitMsg) {
+				console.log('[PDAC] ℹ️ retrying for backend in 3 seconds')
+				setTimeout( grabInfo, 3000);
+			} else {
+				console.log('[PDAC] ℹ️ cancelled wait for backend')
+			}
+		} else {
+			overlay.set(null)
+		}
+	}
+
+	function strip(str) {
+		return str.replace(/(\r\n|\n|\r)/gm, "").trim()
+	}
+
+
+	$: color = ($info) ?  Colors.find( c => strip(c.hostname) === strip($info.hostname) ) : undefined;
+	$: miband = ($info) ?  MiBands.find( c => strip(c.mac_address) === strip($info.backend.mac_address) ) : undefined;
+
+
 	onMount( async() => {
 		console.log('[PDAC] ℹ️ grabbing infomation')
 		await info.grab();
+		if (!$info.backend.active) overlay.set({type: "wait", message: waitMsg, close: "Skip"})
 
-		axios.get('/network/status?as=json').then( res => {
-			console.log('STATUS', res.data.wpa_state);
-			if (res.data.wpa_state == 'INACTIVE') {
-				goto('/network');
-			}
-		}).catch(err => { 
-
-		});
-
+		console.log($info, mibands, miband);
+	MiBands.find( c => {
+		console.log('...' + strip(c.mac_address) + '...' + strip($info.backend.mac_address) + '...' )
+		console.log('...' + strip(c.mac_address).length + '...' + strip($info.backend.mac_address).length + '...' )
+		console.log(strip(c.mac_address) === strip($info.backend.mac_address) )
+	});
+		setTimeout( grabInfo, 3000);
 	});
 
 
@@ -75,11 +104,11 @@
 	on:mousedrag={onMouseDrag} -->
 <svelte:window
 	/>
-<div bind:this={PdacEl}  style={backgroundColor} id="pdac" class={`aui  ${id} ${ (isPi) ? 'hide-cursor' : ''} `}>
-	<header class="header" style={backgroundColor} >
+<div bind:this={PdacEl}  id="pdac" class={`aui  ${id} ${ (isPi) ? 'hide-cursor' : ''} bg-${ color ? color.color : 'null' }  txt-${ color ? color.text_color : 'null' }`}>
+	<header class="header" >
 		{#if $info }
 			<label><Brain />  { Memory($info.freemem).auto }  {$info.temperature} <TemperatureCelsius /> </label>
-			<label>{ $info.hostname || "" }</label>
+			<label>{ $info.hostname || "" } ({ miband ? miband.number : "~" })</label>
 			<label>
 				<!-- {#if $info.wlan0.ssid} <WatchVibrate /> {:else} <WatchVibrateOff /> {/if} -->
 				{#if $info.wlan0.ssid} <Wifi /> {:else} <WifiStrengthOffOutline /> {/if}  
@@ -89,7 +118,7 @@
 	</header>
 
 	{#if $overlay}
-		<div class="overlay" style={backgroundColor} >
+		<div class="overlay" >
 			<Column a={{stretch: true}} >
 				{#if $overlay.type === 'wait'}
 				<div>
@@ -108,11 +137,16 @@
 						<br />
 						Message: {$overlay.message}
 					</div>
-					<Button on:click={ e => { window.location = window.location } }>Refresh</Button>
-					<Button on:click={ e => overlay.set(null) }>Close</Button>
 				{:else}
 					<div>{$overlay.message}</div>
 				{/if}
+
+				{#if $overlay.type === 'error' || $overlay.refresh}
+					<Button on:click={ e => { window.location = window.location } }>{ $overlay.refresh || "Refresh" }</Button>
+				{/if}
+				{#if $overlay.type === 'error' || $overlay.close}
+					<Button on:click={ e => overlay.set(null) }>{ $overlay.close || "Close" }</Button>
+				{/if} 
 			</Column>
 		</div>
 	{/if}
@@ -178,8 +212,8 @@
 			{:else}
 
 				<Back />
-				<div>Nothing here</div>
 			{/if}
+			<slot />
 		</Column>
 	</div>
 </div>

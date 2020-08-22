@@ -36,8 +36,6 @@ let browser, backend;
 
 if (!isDev) {
 
-	browser = spawn('sh', ['/home/pi/pdac/launchBrowser.sh']);
-	console.log('[server.js] 🥚  spawning launchBrowser.sh >>>>>', browser.pid );
 
 	backend = spawn('sh', ['/home/pi/pdac/runBackend.sh']);
 	console.log('[server.js] 🥚  spawning runBackend.sh >>>>>', backend.pid );
@@ -48,6 +46,11 @@ if (!isDev) {
 		exec('sh /home/pi/pdac/killNode.sh');
 		process.exit();
 	})
+
+	setTimeout( function() { 
+		browser = spawn('sh', ['/home/pi/pdac/launchBrowser.sh']);
+		console.log('[server.js] 🥚  spawning launchBrowser.sh >>>>>', browser.pid );
+	}, 10000)
 
 }
 
@@ -191,13 +194,13 @@ AutoSetup(
 				const miPath = '/home/pi/pdac/usb/miband.txt'
 
 				fs.readFile( miPath, "utf8", (err, data) => {
-					const mac_address = (err) ? 'UNKNOWN' : data;
+					const mac_address = (err) ? 'UNKNOWN' : data.replace(/(\r\n|\n|\r)/gm, "").trim();
 					axios.get('http://localhost:8888/status').then( res => {
 						console.log('[Info] ✅  success: backend connected...', Object.keys(res), res.data);
-						return getInfo( resolve, reject, { ...res.data, mac_address } );
+						return getInfo( resolve, reject, { ...res.data, mac_address, active: true } );
 					}).catch( err => {
 						console.log('[Info] ❌  error: backend not connected...', Object.keys(err));
-						return getInfo( resolve, reject, { mac_address } );
+						return getInfo( resolve, reject, { mac_address, active: false } );
 					});
 				});
 			})
