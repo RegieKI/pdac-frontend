@@ -53,8 +53,7 @@
 <div class="grid">
   <Button a={{stretch: true}}  on:click={shutdown}>Shutdown</Button>
   <Button a={{stretch: true}}  on:click={reboot}>Reboot</Button>
-  <Button a={{stretch: true}}  ><a rel="prefetch" href="/network">WLAN</a></Button>
-  <Button a={{stretch: true}}  ><a rel="prefetch" href="/hostname">Hostname</a></Button>
+  <!-- <Button a={{stretch: true}}  ><a rel="prefetch" href="/hostname">Hostname</a></Button> -->
   <Button a={{stretch: true}}  on:click={update}>Update System</Button>
   <Button a={{stretch: true}}  on:click={calibrate}>Calibrate Screen</Button>
 </div>

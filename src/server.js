@@ -4,7 +4,7 @@ import * as sapper from '@sapper/server'
 
 import temp from 'pi-temperature'
 import nodeDiskInfo from 'node-disk-info'
-import gpioButtons from 'rpi-gpio-buttons'
+// import gpioButtons from 'rpi-gpio-buttons'
 
 
 import axios from 'axios'
@@ -34,8 +34,13 @@ const isDev = (process.env.NODE_ENV == 'development')
 
 let browser, backend;
 
-if (!isDev) {
+// if (!isDev) {
 
+
+axios.get('http://localhost:8888').then( res => {
+	console.log('[server.js] 🥚  backend is running! not starting.')
+}).catch( err => {
+	
 
 	backend = spawn('sh', ['/home/pi/pdac/runBackend.sh']);
 	console.log('[server.js] 🥚  spawning runBackend.sh >>>>>', backend.pid );
@@ -52,10 +57,12 @@ if (!isDev) {
 		console.log('[server.js] 🥚  spawning launchBrowser.sh >>>>>', browser.pid );
 	}, 10000)
 
-}
+})
+
+// }
 
 
-import GPIO from 'rpi-gpio'
+// import GPIO from 'rpi-gpio'
 // 16 + 26 or 36 + 37
 // GND is 39
 /*
@@ -83,25 +90,25 @@ GPIO.setup(37, GPIO.DIR_HIGH, function(err) {
 
 // library uses physical ordering of pins!
 
-gpioButtons( [18, 16, 12] ).on('clicked', function(pin) {
+// gpioButtons( [18, 16, 12] ).on('clicked', function(pin) {
 
-	if (pin == 12) {
-		console.log('[server.js] 🔘  TOP button pressed', pin);
+// 	if (pin == 12) {
+// 		console.log('[server.js] 🔘  TOP button pressed', pin);
 
-	} else if (pin == 16) {
-		console.log('[server.js] 🔘  MIDDLE button pressed', pin);
+// 	} else if (pin == 16) {
+// 		console.log('[server.js] 🔘  MIDDLE button pressed', pin);
 
-	} else if (pin == 18) {
-		console.log('[server.js] 🔘  BOTTOM button pressed', pin);
+// 	} else if (pin == 18) {
+// 		console.log('[server.js] 🔘  BOTTOM button pressed', pin);
 
-	}
-});
+// 	}
+// });
 
-ON_DEATH(function(signal, err) {
-	if (!isDev) {
-		console.log('[server.js] ☠️  exiting  ☠️')
-	}
-})
+// ON_DEATH(function(signal, err) {
+// 	if (!isDev) {
+// 		console.log('[server.js] ☠️  exiting  ☠️')
+// 	}
+// })
 
 AutoSetup(
 	{
@@ -296,7 +303,8 @@ AutoSetup(
 				console.log('[CameraStart] sending config:', req.body);
 				axios.post( 'http://localhost:8888/start/', req.body ).then( res => {
 					console.log('[CameraStart] 📸 ✅  successfully started')
-					resolve(res.data);
+					exec('/usr/bin/python /home/pi/pdac/buzz.py 200 200 10 0.001');
+					return resolve(res.data);
 				}).catch( err => {
 					if (err.response) {
 						let t = '';
@@ -318,7 +326,8 @@ AutoSetup(
 				console.log('[MibandConnect] starting...');
 				axios.post( 'http://localhost:8888/bleconnect/', {} ).then( res => {
 					console.log('[MibandConnect] 📸 ✅  successfully connected')
-					resolve(res.data);
+					return resolve(res.data);
+
 				}).catch( err => {
 					if (err.response) {
 
@@ -343,7 +352,8 @@ AutoSetup(
 				console.log('[CameraStop] sending stop...');
 				axios.post( 'http://localhost:8888/stop/', req.body ).then( res => {
 					console.log('[CameraStop] 📸 🛑  successfully stopped')
-					resolve(res.data);
+					exec('/usr/bin/python /home/pi/pdac/buzz.py 50 50 30 0.0001')
+					return resolve(res.data);
 				}).catch( err => {
 
 						// TODO 2

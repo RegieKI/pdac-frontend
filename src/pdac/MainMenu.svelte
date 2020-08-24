@@ -35,7 +35,8 @@
 
 <Any><a rel="prefetch" href="/session"><!-- <AccountBox /> -->  Sessions</a></Any>
 <Any><a rel="prefetch" href="/camera"><!-- <Camera /> -->  Camera</a></Any>
-<Any><a rel="prefetch" href="/usb"><!-- <UsbFlashDrive /> -->  USB</a></Any>
+<!-- <Any><a rel="prefetch" href="/usb"><UsbFlashDrive />  USB</a></Any> -->
+<Any><a rel="prefetch" href="/network">WLAN</a></Any>
 <Any><a rel="prefetch" href="/system"><!-- <Wrench /> -->  System</a></Any>
 <!-- <Row>
 	<Button on:click={reboot}>Reboot</Button>

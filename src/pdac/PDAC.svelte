@@ -71,7 +71,6 @@
 		await info.grab();
 		if (!$info.backend.active) overlay.set({type: "wait", message: waitMsg, close: "Skip"})
 
-		console.log($info, mibands, miband);
 	MiBands.find( c => {
 		console.log('...' + strip(c.mac_address) + '...' + strip($info.backend.mac_address) + '...' )
 		console.log('...' + strip(c.mac_address).length + '...' + strip($info.backend.mac_address).length + '...' )
