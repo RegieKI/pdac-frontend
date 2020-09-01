@@ -1,7 +1,7 @@
 <script>
 
   import { onMount } from 'svelte'
-
+  export let style;
   let ref;
   onMount( async() => {
     if (process.browser ) {
@@ -29,9 +29,9 @@
 <style lang="sass">
 .webcam
   position: relative
+  overflow: hidden
   video
     object-fit: contain
-    width: 100%
     height: 100%
   svg
     position: absolute
@@ -41,9 +41,9 @@
     height: 100%
 </style>
 
-<div class="webcam" on:click>
+<div class="webcam" on:click style={style} >
   <video bind:this={ref}></video>
-  <svg class="sil" width="100%" height="100%" viewBox="0 0 480 320" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+  <svg class="body" width="100%" height="100%" viewBox="0 0 480 320" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
       <g transform="matrix(0.303359,0,0,0.303359,-76.4356,-172.363)">
           <circle cx="1042.46" cy="736.603" r="47.55" style="fill:none;stroke:rgb(255,255,255);stroke-width:11.67px;"/>
       </g>
@@ -66,4 +66,30 @@
           <path d="M919.714,1102.16L955.517,1303.46L973.734,1516.85" style="fill:none;stroke:rgb(255,255,255);stroke-width:11.67px;"/>
       </g>
   </svg>
+  <svg class="face" width="100%" height="100%" viewBox="0 0 480 320" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+      <g transform="matrix(0.303359,0,0,0.303359,-76.4356,-172.363)">
+          <g transform="matrix(3.70983,0,0,3.70983,-2826.64,-1876.21)">
+              <circle cx="1042.46" cy="736.603" r="47.55" style="fill:none;stroke:white;stroke-width:3.11px;"/>
+          </g>
+          <g transform="matrix(3.29642,0,0,3.29642,242.176,600.802)">
+              <circle cx="219.132" cy="70.482" r="8.134" style="fill:none;stroke:white;stroke-width:3.5px;"/>
+          </g>
+          <g transform="matrix(3.29642,0,0,3.29642,399.332,600.802)">
+              <circle cx="219.132" cy="70.482" r="8.134" style="fill:none;stroke:white;stroke-width:3.5px;"/>
+          </g>
+      </g>
+      <g transform="matrix(1.12541,0,0,1.12541,-879.689,-744.414)">
+          <path d="M899.814,842.866L1070.12,1102.16L919.714,1102.16L1090.02,842.866L899.814,842.866Z" style="fill:none;stroke:white;stroke-width:3.11px;"/>
+      </g>
+      <g transform="matrix(1.12541,0,0,1.12541,-902.084,-744.414)">
+          <path d="M879.915,1136.8L879.915,986.272L919.714,842.866" style="fill:none;stroke:white;stroke-width:3.11px;"/>
+      </g>
+      <g transform="matrix(-1.12541,0,0,1.12541,1382.08,-744.414)">
+          <path d="M879.915,1136.8L879.915,986.272L919.714,842.866" style="fill:none;stroke:white;stroke-width:3.11px;"/>
+      </g>
+      <g transform="matrix(1.12541,0,0,1.10663,-879.689,-728.579)">
+          <path d="M994.915,842.866L994.915,689.053" style="fill:none;stroke:white;stroke-width:2.85px;"/>
+      </g>
+  </svg>
+
 </div>

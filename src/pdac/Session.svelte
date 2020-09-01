@@ -3,7 +3,10 @@
 	import axios from 'axios'
 	import { Timestamp } from './../helpers/Utils.js'
 	import {goto} from '@sapper/app';
-	import { Any, Button, Column } from '../svelte-aui/src/index.js'
+  import ArrowLeft from "svelte-material-icons/ArrowLeft.svelte";
+  import TimerSand from "svelte-material-icons/TimerSand.svelte";
+  import RadioboxMarked from "svelte-material-icons/RadioboxMarked.svelte";
+	import { Any, Button, Column, Row } from '../svelte-aui/src/index.js'
 	export let page = {};
 	export let data = null;
 	import Viewer from './Viewer.svelte'
@@ -11,12 +14,13 @@
 	import { info, overlay } from './Store.js'
 	import { onMount } from 'svelte'
 	import WebCam from './../helpers/WebCam.svelte'
+	import AudioLevels from './../helpers/AudioLevels.svelte'
 
 
 	let timeline = {
 		previousIndex: null,
 		timestamp: 0,
-		status: 0,
+		status: -1,
 		counter: -1,
 		human: -1,
 		percent: ''
@@ -33,10 +37,11 @@
 		return t;
 	});
 
-	function onExerciseChanged( query ) {
+	function startExercise( ) {
+		const query = page.query;
 		if (!query.exercise) return -1;
+		timeline.status = 0;
 
-		if ( parseInt(query.exercise) > session.exercises.length) return query.exercise;
 		if (query.exercise != timeline.previousIndex) {
 			const e = session.exercises[query.exercise];
 			console.log('[PDAC] Starting process...', query.exercise, e);
@@ -61,10 +66,15 @@
 		const t = ((new Date()) - timeline.timestamp)/1000;
 		const abs = Math.round( t );
 
-		if ( abs != timeline.counter ) console.log('[PDAC] Counting...', abs);
+		if ( abs != timeline.counter ) {
+			const ss = session.break_time - abs;
+			console.log('[PDAC] Counting...', ss);
+			axios.post('/buzz?as=json', { sequence: (ss == 1) ? '1000 50 1 0.000095' : '100 100 1 0.0005' });
+		}
+		const countdown = ( timeline.status == 0) ? session.break_time - t : exercise.time - t;
 		timeline.counter = abs;
-		timeline.human = ( timeline.status == 0) ? session.break_time - t : exercise.time - t;
-		timeline.percent = ( timeline.status == 0) ? 100 - timeline.human/session.break_time*100 : 100 - timeline.human/exercise.time*100;
+		timeline.human = parseInt( countdown, 10);
+		timeline.percent = ( timeline.status == 0) ? 100 - countdown/session.break_time*100 : 100 - countdown/exercise.time*100;
 
 
 		if (t >= session.break_time && timeline.status == 0) {
@@ -106,11 +116,11 @@
 		}
 	}
 
-	$: identifier = (exercise && $info) ? `${$info.hostname}_${session.title}_${exerciseIndex}_${exercise.tags.map( t => {
-		return t.tag_id.title; 
+	$: identifier = (exercise && $info) ? `${$info.hostname}_${session.point_of_interest}_${session.url}_${exerciseIndex}_${exercise.tags.map( t => {
+		return t.tag_id.url; 
 	})}` : 'none';
 
-	$: exerciseIndex = parseInt( onExerciseChanged( page.query ), 10);
+	$: exerciseIndex = parseInt( (!page.query.exercise) ? -1 : page.query.exercise, 10);
 	$: exercise = (exerciseIndex <= session.exercises.length && exerciseIndex > 0) ? session.exercises[exerciseIndex-1].exercise_id : null;
 
 	$: previousPath = `${page.path}?exercise=${exerciseIndex - 1}`;
@@ -118,10 +128,10 @@
 
 
 	let useHeartrate = true;
-	let isHRConnected = false;
+	$: isHRConnected = ($info) ? ($info.backend) ? $info.backend.miband.connected : false : false;
 
 	$: recordingConfig = {
-		'session-id': `${Timestamp()}_${identifier}`,
+		'session-id': `${identifier}_${Timestamp()}`,
 		sources: {
 			audio: {
 				active: true
@@ -186,14 +196,12 @@
 		<!-- introduction -->
 
 		<Back {page} />
-		<div>
+<!-- 		<div>
 			{session.title}: 
 			{session.exercises.length} exercise(s), 
 			{totalTime()} seconds in total
-		</div>
-		<div class="html">
-			<div>{@html session.description}</div>
-		</div>
+		</div> -->
+		<div style="padding: 0.5em 0em">{@html session.description}</div>
 		<Button><a href={nextPath}>Start Session</a></Button>
 
 	{:else if exerciseIndex == 0}
@@ -206,8 +214,15 @@
 			<Button on:click={reconnectHR}>Reconnect</Button>
 			<Button on:click={ e => { useHeartrate = false } } >Skip</Button>
 		{:else}
-			<WebCam on:click={ e => goto(nextPath) } />
-			<!-- <Button><a href={nextPath}>OK, Begin</a></Button> -->
+			<!-- <Back {page} /> -->
+
+			{#if session.point_of_interest == 'sound'}
+				<AudioLevels />
+			{:else}
+				<WebCam/>
+			{/if}
+			<Button a={{stretch: true}} style="position:absolute;width:calc( 50% - 20px );bottom:10px;left:10px;"><a href={previousPath}><ArrowLeft />Back</a></Button>
+			<Button a={{stretch: true}} style="position:absolute;width:calc( 50% - 20px );bottom:10px;right:10px;"><a href={nextPath}>OK, Begin</a></Button>
 		{/if}
 
 	{:else if exerciseIndex > session.exercises.length}
@@ -217,7 +232,7 @@
 		<div>
 			{session.title}: Completed
 		</div>
-		<Button><a href="/usb/recordings">View Recordings</a></Button>
+		<!-- <Button><a href="/usb/recordings">View Recordings</a></Button> -->
 		<Button><a href="/session">Back to Sessions</a></Button>
 
 	{:else}
@@ -225,30 +240,73 @@
 		<!-- exercide (idx) -->
 
 		<div class={`circle ${ (timeline.status == 1) ? 'active' : '' }`} />
+
+		{#if timeline.status == -1}
+			<Back {page} />
+		{/if}
+
 		<div>
-			<div>
-				Exercise {exerciseIndex}/{session.exercises.length}: 
+			<h3>
+				{exerciseIndex}/{session.exercises.length}: 
 				{exercise.description}
-			</div>
-			<div>Identifier: {identifier}</div>
-			<div>
-				Tags:
-				{#each exercise.tags as tag}
-					<span>{tag.tag_id.title}</span>  
-				{/each}
-			</div>
-		</div>
-		<div>
-			{#if timeline.status == 0}
-				Countdown:
-			{:else if timeline.status == 1}
-				Recording:
+			</h3>
+			{#if timeline.status == -1}
+				<div>
+					Tags:
+					{#each exercise.tags as tag}
+						<span>{tag.tag_id.title}&nbsp;</span>  
+					{/each}
+				</div>
+				<div>ID: {identifier}</div>
+
+				<!-- sound -->
+
+				{#if session.point_of_interest == 'sound'}
+					<audio style="width:100%" src={exercise.example.data.full_url} controls />
+				{/if}
 			{/if}
-			<div class={`bar status-${timeline.status}`}>
-				<div class="inner" style={`width: ${timeline.percent}%`}></div>
-			</div>
 		</div>
-		<Button><a href={nextPath}>Skip</a></Button>
+
+		{#if timeline.status == -1}
+
+			<!-- exercise overview... -->
+
+			<Row style="margin-top: 20px">
+				<Button a={{stretch: true}} ><a href={nextPath}>Skip</a></Button>
+				<Button a={{stretch: true}} on:click={startExercise}>Start</Button>
+			</Row>
+
+
+		{:else if timeline.status == 0}
+
+			<!-- countdown... -->
+
+			<div style="font-size: 100px;line-height:80px">{timeline.human}</div>
+			<div>
+				Countdown:
+				<div class={`bar status-${timeline.status}`}>
+					<div class="inner" style={`width: ${timeline.percent}%`}></div>
+				</div>
+			</div>
+			<Button a={{stretch: true}} on:click={() => window.location.reload() }>Cancel</Button>
+
+		{:else if timeline.status == 1}
+
+			<!-- recording... -->
+
+			<RadioboxMarked />
+			<div>
+				Recording:
+				<div class={`bar status-${timeline.status}`}>
+					<div class="inner" style={`width: ${timeline.percent}%`}></div>
+				</div>
+			</div>
+			<Button a={{stretch: true}} on:click={() => window.location.reload() }>Cancel</Button>
+
+		{/if}
+
+
+
 
 	{/if}
 

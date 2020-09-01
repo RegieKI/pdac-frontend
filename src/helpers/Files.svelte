@@ -25,7 +25,7 @@
 		file = page.path + '/' + file;
 		if (prev) {
 			file = convertFilePath( file, ['png','jpg','jpeg','svg','tiff','bmp'], '?preview=' );
-			file = convertFilePath( file, ['mp4','mov','avi'], '?player=' );
+			file = convertFilePath( file, ['mp4','mov','avi','mkv'], '?player=' );
 		}
 		return file;
 	});

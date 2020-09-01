@@ -20,3 +20,4 @@ function createInfoStore() {
 
 export const info = createInfoStore();
 export const overlay = writable( null );
+export const previousPage = writable( "/" );

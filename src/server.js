@@ -115,7 +115,7 @@ AutoSetup(
 		SessionByID: async ( req, res, params ) => {
 			return (await directus.getItems( 'session', {
 					"filter[url][eq]": params.session,
-					"fields": "*,exercises.exercise_id.*,exercises.exercise_id.tags.tag_id.*"
+					"fields": "*,exercises.exercise_id.*,exercises.exercise_id.tags.tag_id.*,exercises.exercise_id.example.*"
 				}
 			)).data;
 		},
@@ -211,6 +211,15 @@ AutoSetup(
 			})
 
 		},
+		SetMibandAddress: async ( req, res, params ) => {
+			return new Promise( (resolve, reject) => {
+				console.log('[SetMibandAddress] setting...', req.body.mac_address);
+				fs.writeFile( '/home/pi/pdac/usb/miband.txt', req.body.mac_address, (err) => {
+					if (err) return reject(err);
+					return resolve({});
+				});
+			})
+		}, 
 		NetworkList: async ( req, res, params ) => {
 			return new Promise( (resolve, reject) => {
 				wifi.scan(function(err, data) {
@@ -228,17 +237,7 @@ AutoSetup(
 				console.log(`[ConnectToNetwork] 🗝 `, o	);
 
 				wifi.connectTo(o, function(err) {
-					// if (err) {
-					// 	console.log('[ConnectToNetwork:connectTo] ❌🗝  error:', err.message, Object.keys(err) );
-					// 	return reject(err);
-					// }
-
-
 					wifi.restartInterface( 'wlan0', function(err) {
-						// if (err) {
-						// 	console.log('[ConnectToNetwork:restartInterface] ❌🗝  error:', err.message, Object.keys(err) );
-						// 	return reject(err);
-						// }
 						setTimeout( function() { 
 							wifi.status( 'wlan0', function(err, status) {
 
@@ -287,15 +286,11 @@ AutoSetup(
 				return resolve({});
 			});
 		},
-		SystemUpdate: async(req, res, params) => {
-
+		Buzz: async(req, res, params) => {
 			return new Promise( (resolve, reject) => {
-
-				exec('sh /home/pi/pdac/openVisualUpdate.sh');
-				exec('sh /home/pi/pdac/killPython.sh');
-				exec('sh /home/pi/pdac/killNode.sh');
-				
-				return resolve({});
+					const seq = req.body.sequence || '200 200 10 0.001';
+					exec(`/usr/bin/python /home/pi/pdac/buzz.py ${seq}`);
+					resolve({});
 			});
 		},
 		CameraStart: async(req, res, params) => {
@@ -303,7 +298,8 @@ AutoSetup(
 				console.log('[CameraStart] sending config:', req.body);
 				axios.post( 'http://localhost:8888/start/', req.body ).then( res => {
 					console.log('[CameraStart] 📸 ✅  successfully started')
-					exec('/usr/bin/python /home/pi/pdac/buzz.py 200 200 10 0.001');
+					//50 50 3 0.00008
+					if (req.body.buzz) exec(`/usr/bin/python /home/pi/pdac/buzz.py ${req.body.buzz}`);
 					return resolve(res.data);
 				}).catch( err => {
 					if (err.response) {
@@ -419,11 +415,11 @@ AutoSetup(
 		'/camera/stop': {
 			POST: 'CameraStop'
 		},
-		'/system/update': {
-			GET: 'SystemUpdate'
-		},
 		'/system/reboot': {
 			GET: 'SystemReboot'
+		},
+		'/miband/update': {
+			POST: 'SetMibandAddress'
 		},
 		'/system/shutdown': {
 			GET: 'SystemShutdown'
@@ -439,6 +435,9 @@ AutoSetup(
 		},
 		'/execute': {
 			POST: 'Execute'
+		},
+		'/buzz': {
+			POST: 'Buzz'
 		}
 	})
 	.use(

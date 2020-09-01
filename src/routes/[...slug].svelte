@@ -15,13 +15,6 @@
 		}
 	};
 
-	// import { onMount } from 'svelte'
-
-
-	// onMount( async() => {
-	// 	console.log('[...slug] 📃  MOUNTED')
-	// });
-
 </script>
 
 <script>

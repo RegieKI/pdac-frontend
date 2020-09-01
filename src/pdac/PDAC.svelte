@@ -9,8 +9,7 @@
   import Brain from "svelte-material-icons/Brain.svelte";
   import TemperatureCelsius from "svelte-material-icons/TemperatureCelsius.svelte";
   import WifiStrengthOffOutline from "svelte-material-icons/WifiStrengthOffOutline.svelte";
-  import WatchVibrate from "svelte-material-icons/WatchVibrate.svelte";
-  import WatchVibrateOff from "svelte-material-icons/WatchVibrateOff.svelte";
+  import WatchVariant from "svelte-material-icons/WatchVariant.svelte";
 
 	import { fade, fly } from 'svelte/transition';
 	import { onMount } from 'svelte'
@@ -29,6 +28,7 @@
 	import NetworkConnect from './NetworkConnect.svelte'
 	import System from './System.svelte'
 	import Hostname from './Hostname.svelte'
+	import MiBand from './MiBand.svelte'
 	import MainMenu from './MainMenu.svelte'
 	import Camera from './Camera.svelte'
 	import Preview from './Preview.svelte'
@@ -71,11 +71,6 @@
 		await info.grab();
 		if (!$info.backend.active) overlay.set({type: "wait", message: waitMsg, close: "Skip"})
 
-	MiBands.find( c => {
-		console.log('...' + strip(c.mac_address) + '...' + strip($info.backend.mac_address) + '...' )
-		console.log('...' + strip(c.mac_address).length + '...' + strip($info.backend.mac_address).length + '...' )
-		console.log(strip(c.mac_address) === strip($info.backend.mac_address) )
-	});
 		setTimeout( grabInfo, 3000);
 	});
 
@@ -106,12 +101,12 @@
 <div bind:this={PdacEl}  id="pdac" class={`aui  ${id} ${ (isPi) ? 'hide-cursor' : ''} bg-${ color ? color.color : 'null' }  txt-${ color ? color.text_color : 'null' }`}>
 	<header class="header" >
 		{#if $info }
-			<label><Brain />  { Memory($info.freemem).auto }  {$info.temperature} <TemperatureCelsius /> </label>
-			<label>{ $info.hostname || "" } ({ miband ? miband.number : "~" })</label>
+			<label><Brain />&nbsp;{ Memory($info.freemem).auto }&nbsp;{$info.temperature} <TemperatureCelsius /> </label>
+			<label>{ $info.hostname || "" }&nbsp;<WatchVariant />&nbsp;{ miband ? miband.number : "~" }</label>
 			<label>
-				<!-- {#if $info.wlan0.ssid} <WatchVibrate /> {:else} <WatchVibrateOff /> {/if} -->
+				<!-- {#if $info.wlan0.ssid} <WatchVariant /> {:else} <WatchVariantOff /> {/if} -->
 				{#if $info.wlan0.ssid} <Wifi /> {:else} <WifiStrengthOffOutline /> {/if}  
-				{$info.wlan0.ssid || ''}
+				&nbsp;{$info.wlan0.ssid || ''}
 			</label>
 		{/if}
 	</header>
@@ -171,6 +166,11 @@
 
 			{:else if id === 'pdac-network-connect'}
 				<NetworkConnect {page} {data} />
+
+			<!-- system -->
+
+			{:else if id === 'pdac-miband'}
+				<MiBand {page} {data} />
 
 			<!-- system -->
 
