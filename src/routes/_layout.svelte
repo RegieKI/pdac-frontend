@@ -45,10 +45,14 @@
         const infoUrl = '/info?as=json';
         axios.get(infoUrl);
         fetch(infoUrl).then(response => {
-          console.log('FETCH...', response.status);
           response.json().then( d => {
-            console.log('DATA', d);
             info.set(d);
+            console.log('[_layout.svelte] ℹ⭕️ checking information...')
+            if (!$info.backend.active) {
+              console.log('[_layout.svelte] ℹ❌ no backend, looping...')
+              overlay.set({type: "wait", message: waitMsg, close: "Skip"})
+              setTimeout( loopUntilBackend, 3000);
+            }
           });
 
         });
@@ -60,17 +64,15 @@
 
   function loopUntilBackend() {
 
-
     info.grab().then( res => {
       if (!$info.backend.active) {
         if ($overlay.type == "wait" && $overlay.message == waitMsg) {
-          console.log('[_layout.svelte] ℹ️ retrying for backend in 3 seconds')
+          console.log('[_layout.svelte] ℹ️⭕️ retrying for backend in 3 seconds')
           setTimeout( loopUntilBackend, 3000);
         } else {
-          console.log('[_layout.svelte] ℹ️ cancelled wait for backend')
+          console.log('[_layout.svelte] ℹ️✅ cancelled wait for backend')
         }
       } else {
-        console.log('HUHUHUH????')
         overlay.set( undefined )
       }
     });
@@ -137,18 +139,23 @@
             <div>
               Status: {$overlay.status}
               <br />
-              Message: {$overlay.message}
+              Message: {@html $overlay.message}
             </div>
           {:else}
-            <div>{$overlay.message}</div>
+            <div>{@html $overlay.message}</div>
           {/if}
 
           {#if $overlay.type === 'error' || $overlay.refresh}
             <Button on:click={ e => { window.location = window.location } }>{ $overlay.refresh || "Refresh" }</Button>
           {/if}
-          {#if $overlay.type === 'error' || $overlay.close}
+          {#if $overlay.type === 'error' || $overlay.close} 
             <Button on:click={ e => overlay.set(null) }>{ $overlay.close || "Close" }</Button>
           {/if} 
+          {#if $overlay.actions}
+            {#each $overlay.actions as a }
+              <Button on:click={ e => overlay.set(null) }><a href={a[1]}>{a[0]}</a></Button>
+            {/each}
+          {/if}
         </Column>
       </div>
     {/if}

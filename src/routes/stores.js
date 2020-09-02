@@ -7,24 +7,22 @@ function createInfoStore() {
 	return {
 		subscribe,
 		set,
-		update
-		// grab: () => {
-		// 	console.log('HRABBINMG!!!');
-		// 	return new Promise( (resolve, reject) => {
-		// 	console.log('PROMISE!!!');
-		// 		axios.get('/info?as=json').then(res=>{
+		update,
+		grab: () => {
+			return new Promise( (resolve, reject) => {
+				axios.get('/info?as=json').then(res=>{
 
-		// 			const d = res.data;
-		// 			console.log('[info] ℹ️  ', d);
-		// 			set( d );
-		// 			resolve(d);
-		// 		}).catch(err => {
-		// 			console.error('[info] ℹ️  ', err);
-		// 			reject({});
-		// 		});
+					const d = res.data;
+					console.log('[info] ℹ️  ', d);
+					set( d );
+					resolve(d);
+				}).catch(err => {
+					console.error('[info] ℹ️  ', err);
+					reject({});
+				});
 
-		// 	})
-		// }
+			})
+		}
 	}
 }
 

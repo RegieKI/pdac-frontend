@@ -5,7 +5,7 @@
 	export let message;
 	export let response;
 
-	import { Column, Button } from '../svelte-aui/src/index.js'
+	import { Column, Button, Row } from '../svelte-aui/src/index.js'
 	const dev = process.env.NODE_ENV === 'development';
 	console.log(error, status, message ,response);
 
@@ -19,9 +19,15 @@
 	<title>{status}</title>
 </svelte:head>
 
-<div>{status}: {error.message}</div>
-<Button><a href="/">Home</a></Button>
-<Button on:click={ () => window.location = window.location } >Refresh</Button>
+<Back useHistory={true} />
+<div>
+	<h2>{status}</h2>
+	{error.message}
+</div>
+<Row>
+	<Button><a href="/">Home</a></Button>
+	<Button on:click={ () => window.location = window.location } >Refresh</Button>
+</Row>
 {#if dev && error.stack}
 	<pre>{error.stack}</pre>
 {/if}

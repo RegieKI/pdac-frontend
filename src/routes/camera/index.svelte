@@ -11,7 +11,12 @@
   export let page = {};
   export let data = {};
 
-  let sessionId = { value: 'camera_test_'+Timestamp() }; 
+
+  function fileName() {
+    return $info.hostname + '_test_'+Timestamp();
+  }
+
+  let sessionId = { value: fileName() }; 
 
   let audioSettings = { value: true };
   let videoSettings = { value: true };
@@ -77,6 +82,7 @@
       overlay.set( {type: 'error', ...err.response.data} )
     }).finally( e => {
       info.grab();
+      sessionId.value = fileName();
     })
   }
 
