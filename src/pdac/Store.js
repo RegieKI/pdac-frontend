@@ -2,7 +2,7 @@ import { writable } from 'svelte/store';
 import axios from 'axios'
 
 function createInfoStore() {
-	const { subscribe, set, update } = writable( null );
+	const { subscribe, set, update } = writable( { backend: { miband: {} }, session: {}, wlan0: {}, drives: [] } );
 
 	return {
 		subscribe,

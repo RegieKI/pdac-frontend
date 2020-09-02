@@ -59,6 +59,11 @@
 
 <Back {page} />
 <div>Current MiBand: { miband ? miband.number : "NONE" } ( { miband ? miband.mac_address : "~" } ) </div>
+<div>
+  Status: 
+  { $info.backend.miband.initialised ? "Initialised" : "Not Initialised" }
+  { $info.backend.miband.connected ? "Connected" : "Not Connected" }
+</div>
 <Dropdown bind:a={dropdown} on:change={onChanged} />
 <Button on:click={setMiBand}>Change MiBand</Button>
 <Button on:click={reconnectHR}>Reconnect MiBand</Button>

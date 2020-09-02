@@ -9,11 +9,12 @@
   import Brain from "svelte-material-icons/Brain.svelte";
   import TemperatureCelsius from "svelte-material-icons/TemperatureCelsius.svelte";
   import WifiStrengthOffOutline from "svelte-material-icons/WifiStrengthOffOutline.svelte";
+  import Sleep from "svelte-material-icons/Sleep.svelte";
   import WatchVariant from "svelte-material-icons/WatchVariant.svelte";
 
 	import { fade, fly } from 'svelte/transition';
 	import { onMount } from 'svelte'
-	import { Memory } from '../helpers/Utils.js'
+	import { Memory, Strip } from '../helpers/Utils.js'
 	import { goto } from '@sapper/app'
 	
 	import axios from 'axios'
@@ -57,13 +58,9 @@
 		}
 	}
 
-	function strip(str) {
-		return str.replace(/(\r\n|\n|\r)/gm, "").trim()
-	}
 
-
-	$: color = ($info) ?  Colors.find( c => strip(c.hostname) === strip($info.hostname) ) : undefined;
-	$: miband = ($info) ?  MiBands.find( c => strip(c.mac_address) === strip($info.backend.mac_address) ) : undefined;
+	$: color = ($info) ?  Colors.find( c => Strip(c.hostname) === Strip($info.hostname) ) : undefined;
+	$: miband = ($info) ?  MiBands.find( c => Strip(c.mac_address) === Strip($info.backend.mac_address) ) : undefined;
 
 
 	onMount( async() => {
@@ -102,7 +99,15 @@
 	<header class="header" >
 		{#if $info }
 			<label><Brain />&nbsp;{ Memory($info.freemem).auto }&nbsp;{$info.temperature} <TemperatureCelsius /> </label>
-			<label>{ $info.hostname || "" }&nbsp;<WatchVariant />&nbsp;{ miband ? miband.number : "~" }</label>
+			<label>
+				{ $info.hostname || "" }&nbsp;
+
+				{#if $info.backend.miband.connected}
+					<WatchVariant />
+				{:else}
+					<Sleep />
+				{/if}
+				&nbsp;{ miband ? miband.number : "~" }</label>
 			<label>
 				<!-- {#if $info.wlan0.ssid} <WatchVariant /> {:else} <WatchVariantOff /> {/if} -->
 				{#if $info.wlan0.ssid} <Wifi /> {:else} <WifiStrengthOffOutline /> {/if}  
@@ -158,7 +163,7 @@
 				<NetworkMenu {page} {data} />
 
 			<!-- network list -->
-
+			
 			{:else if id === 'pdac-network-list'}
 				<NetworkList {page} {data} />
 
@@ -217,6 +222,3 @@
 	</div>
 </div>
 
-
-
-<!-- <span>{JSON.stringify(data)}</span> -->

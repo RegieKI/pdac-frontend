@@ -31,6 +31,25 @@ export const LoopRoutes = ( routes, callback ) => {
 	});
 }
 
+
+export const Strip = (str) => {
+	if (!str) {
+		console.error('Cannot strip null / undefined string');
+		return "";
+	}
+	return str.replace(/(\r\n|\n|\r)/gm, "").trim()
+}
+
+
+
+export const NestedExists = (obj, level,  ...rest) => {
+	if (obj === undefined) return false
+	if (rest.length == 0 && obj.hasOwnProperty(level)) return true
+	return checkNested(obj[level], ...rest)
+} 
+
+
+
 export function RegExecute(path, result) {
 	let i=0, out={};
 	let matches = result.pattern.exec(path);

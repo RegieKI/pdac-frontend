@@ -199,14 +199,15 @@ AutoSetup(
 				const miPath = '/home/pi/pdac/usb/miband.txt'
 
 				fs.readFile( miPath, "utf8", (err, data) => {
-					const mac_address = (err) ? 'UNKNOWN' : data.replace(/(\r\n|\n|\r)/gm, "").trim();
-					axios.get('http://localhost:8888/status').then( res => {
-						console.log('[Info] ✅  success: backend connected...', Object.keys(res), res.data);
-						return getInfo( resolve, reject, { ...res.data, mac_address, active: true } );
-					}).catch( err => {
-						console.log('[Info] ❌  error: backend not connected...', Object.keys(err));
-						return getInfo( resolve, reject, { mac_address, active: false } );
-					});
+							console.log('[Info] ✅  read miband.txt...', data);
+						const mac_address = (err) ? 'UNKNOWN' : data.replace(/(\r\n|\n|\r)/gm, "").trim();
+						axios.get('http://localhost:8888/status').then( res => {
+							console.log('[Info] ✅  success: backend connected...', Object.keys(res), res.data);
+							return getInfo( resolve, reject, { ...res.data, mac_address, active: true } );
+						}).catch( err => {
+							console.log('[Info] ❌  error: backend not connected...', Object.keys(err));
+							return getInfo( resolve, reject, { mac_address, active: false } );
+						});
 				});
 			})
 
