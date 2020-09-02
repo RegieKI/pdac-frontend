@@ -1,19 +1,24 @@
+<script context="module">
+  import { AutoPreload } from './../../helpers/Utils.js'
+  export async function preload( page, session ) {  return AutoPreload(page, session, this) }
+</script>
+
 <script>
 
-  import MiBands from './MiBands.js'
   import axios from 'axios'
-  import Back from './Back.svelte'
-  import { Any, Group, Button, Dropdown, Column } from '../svelte-aui/src/index.js';
+  import Back from './../../helpers/Back.svelte'
+  import MiBands from './../db.mibands.js'
+  import { Any, Group, Button, Dropdown, Column } from '../../svelte-aui/src/index.js';
 
-  import { info, overlay } from './Store.js'
-  export let page = {};
-  export let data = {};
+  import { info, overlay } from './../stores.js'
+  export let data;
 
   let dropdown = {options: MiBands, key: 'number'};
   function strip(str) {
+    if (!str) return "";
     return str.replace(/(\r\n|\n|\r)/gm, "").trim()
   }
-  $: miband = ($info) ?  MiBands.find( c => strip(c.mac_address) === strip($info.backend.mac_address) ) : undefined;
+  $: miband = MiBands.find( c => strip(c.mac_address) === strip($info.backend.mac_address) );
 
   function setMiBand() {
     let mb = MiBands[dropdown.value];
@@ -21,7 +26,7 @@
 
     if (mb) {
 
-      axios.post( `/miband/update?as=json`, { mac_address: mb.mac_address }).then( (res)=> {
+      axios.post( `/system/miband?as=json`, { mac_address: mb.mac_address }).then( (res)=> {
         console.log('[Miband] ⌚️✅  Miband updated...', mb.mac_address, mb.number);
         info.grab(); 
       }).catch (err => {
@@ -37,7 +42,7 @@
     console.log('[Session] ⌚️  Miband reconnecting...');
     overlay.set( { type: 'wait', message: 'Reconnecting to ' + miband.mac_address } )
 
-    axios.post('/miband/reconnect?as=json', {}).then( res => {
+    axios.post('/system/miband/reconnect?as=json', {}).then( res => {
 
         console.log('[Session] ⌚️✅  Miband connected');
         overlay.set(null);
@@ -57,7 +62,7 @@
 
 </script>
 
-<Back {page} />
+<Back />
 <div>Current MiBand: { miband ? miband.number : "NONE" } ( { miband ? miband.mac_address : "~" } ) </div>
 <div>
   Status: 

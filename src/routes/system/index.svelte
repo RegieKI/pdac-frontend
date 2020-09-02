@@ -1,11 +1,17 @@
+<script context="module">
+  import { AutoPreload } from './../../helpers/Utils.js'
+  export async function preload( page, session ) { return AutoPreload(page, session, this) }
+</script>
+
 <script>
   import axios from 'axios'
-  import Back from './Back.svelte'
-  import { Group, Button, Dropdown, Column, Row } from '../svelte-aui/src/index.js';
+  import Back from './../../helpers/Back.svelte'
+  import { Group, Button, Dropdown, Column, Row } from '../../svelte-aui/src/index.js';
 
-  import { info } from './Store.js'
-  export let page = {};
-  export let data = {};
+  import { info } from '../stores.js'
+  import { getContext } from 'svelte';
+  const page = getContext('page');
+  const data = getContext('data');
 
   function update() {
     axios.get('/system/update').then( res => {
@@ -53,8 +59,8 @@
 <div class="grid">
   <Button a={{stretch: true}}  on:click={shutdown}>Shutdown</Button>
   <Button a={{stretch: true}}  on:click={reboot}>Reboot</Button>
-  <Button a={{stretch: true}}  ><a rel="prefetch" href="/hostname">Hostname</a></Button>
-  <Button a={{stretch: true}}  ><a rel="prefetch" href="/miband">MiBand</a></Button>
-  <Button a={{stretch: true}}  on:click={update}>Update System</Button>
+  <Button a={{stretch: true}}  ><a rel="prefetch" href="/system/miband">MiBand</a></Button>
+  <Button a={{stretch: true}}  ><a rel="prefetch" href="/system/hostname">Hostname</a></Button>
+  <Button a={{stretch: true}}  ><a rel="prefetch" href="/network">WLAN</a></Button>
   <Button a={{stretch: true}}  on:click={calibrate}>Calibrate Screen</Button>
 </div>

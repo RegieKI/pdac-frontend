@@ -85,7 +85,7 @@ export const API = ( Endpoints, Routes ) => {
 		/*--------------- RETURN if not JSON ---------------*/
 
 		if ( !isJson || isSys ) {
-			console.log( '[API]', `✈️  skipping ${req.method} ${inp} because not JSON...`);
+			// console.log( '[API]', `✈️  skipping ${req.method} ${inp} because not JSON...`);
 			return next();
 		}
 

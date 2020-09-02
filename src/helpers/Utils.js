@@ -4,6 +4,24 @@ export const SessionID = ( session ) => {
 
 }
 
+export const AutoPreload = async ( page, session, t ) => {
+
+		console.log('AUTOPRELOAD', session);
+		
+    const p = `${page.path}?as=json`;
+    console.log(`[AutoPreload] 🌞 attempting JSON: ${p}`)
+    try {
+      const r = await t.fetch( p );
+      if (r.status !== 200) return t.error( r.status, r.statusText );
+      const data = await r.json();
+      console.log(`[AutoPreload] ✅ 200 ${Object.keys(data)}`, (process.browser) ? data : '');
+      return { data, page };
+    } catch(err) {
+      console.log(`[AutoPreload] ❌ 501 ${err}`);
+      return t.error( 501, err );
+    }
+}
+
 export const Timestamp = () => {
 	const d = new Date();
 	let s = d.getFullYear();
@@ -34,7 +52,7 @@ export const LoopRoutes = ( routes, callback ) => {
 
 export const Strip = (str) => {
 	if (!str) {
-		console.error('Cannot strip null / undefined string');
+		// console.warn('[Strip] cannot strip null / undefined string');
 		return "";
 	}
 	return str.replace(/(\r\n|\n|\r)/gm, "").trim()

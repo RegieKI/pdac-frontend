@@ -1,6 +1,5 @@
 <script>
-	import Back from './../pdac/Back.svelte'
-	import PDAC from './../pdac/PDAC.svelte'
+	import Back from './../helpers/Back.svelte'
 	export let status;
 	export let error;
 	export let message;
@@ -15,21 +14,14 @@
 	};
 </script>
 
-<style lang="sass" global>
-@import '../styles'
-</style>
 
 <svelte:head>
 	<title>{status}</title>
 </svelte:head>
 
-<div class="error">
-		<PDAC page={{path: "error"}}>
-			<div>{status}: {error.message}</div>
-			<Button><a href="/">Home</a></Button>
-			<Button on:click={ () => window.location = window.location } >Refresh</Button>
-			{#if dev && error.stack}
-				<pre>{error.stack}</pre>
-			{/if}
-		</PDAC>
-</div>
+<div>{status}: {error.message}</div>
+<Button><a href="/">Home</a></Button>
+<Button on:click={ () => window.location = window.location } >Refresh</Button>
+{#if dev && error.stack}
+	<pre>{error.stack}</pre>
+{/if}

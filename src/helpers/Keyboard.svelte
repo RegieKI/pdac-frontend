@@ -90,7 +90,7 @@
 <style lang="sass">
   @import '../svelte-aui/src/styles/Utils'
   .keyboard
-    min-height: 120px
+    flex-basis: 120px
     .row
       display: flex
     button

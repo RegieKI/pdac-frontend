@@ -1,18 +1,17 @@
 <script>
 
-  import { previousPage } from './Store.js'
+  import { stores } from '@sapper/app';
+  const { preloading, page, session } = stores();
   import ArrowLeft from "svelte-material-icons/ArrowLeft.svelte";
-  export let page = {};
-  
+
 
   $: back = ( () => {
-    if ( !page.params ) return '/';
-    if ( !page.params.slug ) return '/';
-    return '/' + page.params.slug.slice(0,page.params.slug.length-1).join('/')
+    const idx = $page.path.lastIndexOf('/');
+    if ( idx == -1 ) return '/';
+    return $page.path.substring( 0, idx );
   });
 
   function onClick(e) {
-
 
     if (typeof window !== "undefined" && typeof document !== "undefined") {
       window.history.back();

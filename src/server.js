@@ -403,13 +403,6 @@ AutoSetup(
 		'/session/:session/exercise/:exercise': {
 			GET: 'SessionByID'
 		},
-		'/hostname': {
-			GET: 'ParticipantsList',
-			POST: 'SetHostname'
-		},
-		'/miband/reconnect': {
-			POST: 'MibandConnect'
-		},
 		'/camera/start': {
 			POST: 'CameraStart'
 		},
@@ -419,9 +412,6 @@ AutoSetup(
 		'/system/reboot': {
 			GET: 'SystemReboot'
 		},
-		'/miband/update': {
-			POST: 'SetMibandAddress'
-		},
 		'/system/shutdown': {
 			GET: 'SystemShutdown'
 		},
@@ -430,6 +420,16 @@ AutoSetup(
 		},
 		'/system/calibrate': {
 			GET: 'CalibrateScreen'
+		},
+		'/system/hostname': {
+			GET: 'ParticipantsList',
+			POST: 'SetHostname'
+		},
+		'/system/miband/reconnect': {
+			POST: 'MibandConnect'
+		},
+		'/system/miband': {
+			POST: 'SetMibandAddress'
 		},
 		'/debug': {
 			POST: 'Debug'
