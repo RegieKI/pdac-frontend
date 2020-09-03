@@ -1,3 +1,7 @@
+<script context="module">
+  import { AutoPreload } from './../../../helpers/Utils.js'
+  export async function preload( page, session ) { return AutoPreload(page, session, this) }
+</script>
 <script>
 
   import axios from 'axios'
@@ -14,5 +18,12 @@
   import { Any, Button, Column, Row } from '../../../svelte-aui/src/index.js'
 
   export let data;
+  $: session = data[0] || {};
 
 </script>
+
+<div style="margin: 0.5em 0em">Complete: {session.title}</div>
+<Row>
+  <Button><a href="/session">Sessions</a></Button>
+  <Button><a href="/sync">Sync</a></Button>
+</Row>

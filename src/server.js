@@ -394,6 +394,9 @@ AutoSetup(
 		'/session/:session/preview': {
 			GET: 'SessionByID'
 		},
+		'/session/:session/complete': {
+			GET: 'SessionByID'
+		},
 		'/session/:session/:idx': {
 			GET: 'SessionByID'
 		},

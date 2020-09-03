@@ -45,12 +45,12 @@
       <ArrowLeft />
     </a>
   </Button>
-  <Column a={{justify: 'center'}}>
-    <AudioLevels />
+  <Column a={{justify: 'center', stretch: true}}>
+    <AudioLevels style="height: 100%" />
     {#if !isSound} <WebCam width="360px" height="240px" focus={session.point_of_interest} /> {/if}
   </Column>
   <Button a={{stretch: true}}>
-    <a href={'/session/'+session.url+'/0'}>
+    <a href={'/session/'+session.url+'/1'}>
       <Check />
     </a>
   </Button>

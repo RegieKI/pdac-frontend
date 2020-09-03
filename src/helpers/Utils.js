@@ -2,8 +2,6 @@ import UrlPattern from 'url-pattern'
 
 export const AutoPreload = async ( page, session, t ) => {
 
-		console.log('AUTOPRELOAD', session);
-		
     const p = `${page.path}?as=json`;
     console.log(`[AutoPreload] 🌞 attempting JSON: ${p}`)
     try {

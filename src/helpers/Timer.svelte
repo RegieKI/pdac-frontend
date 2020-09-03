@@ -22,9 +22,11 @@
 
   export function restart( time_ ) {
     if (typeof window !== "undefined" && typeof document !== "undefined") {
+      clearAllFrames();
       time = time_;
       human = time;
       timer = time;
+      gap = 0;
       timestamp = (new Date());
       window.requestAnimationFrame(onFrame);
       dispatch( 'start', timer );
@@ -32,23 +34,37 @@
   }
 
 
+  function clearAllFrames() {
+    for (var i = 1; i < 99999; i++) {
+      window.clearInterval(i);
+      window.cancelAnimationFrame(i);
+    }
+  }
+
+  let gap;
 
   function onFrame() {
 
     if (typeof window !== "undefined" && typeof document !== "undefined") {
+
+      let req = true;
       if (!paused && human > 0) {
-        const t = ((new Date()) - timestamp)/1000;
+        gap = ((new Date()) - timestamp)/1000;
         const prevHuman = human;
-        timer = time - t;
+        timer = time - gap;
         human = parseInt(timer, 10);
         if (human != prevHuman) {
           dispatch( 'second', timer );
           if (human == 0) {
             dispatch( 'end', timer );
+            clearAllFrames();
+            req = false;
           }
         }
+      } else {
+        timestamp = (new Date()) - (gap * 1000);
       }
-      window.requestAnimationFrame( onFrame );
+      if (req) window.requestAnimationFrame( onFrame );
     } else {
       console.error('there is no window to request animation frame from');
     }

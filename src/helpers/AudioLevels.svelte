@@ -71,6 +71,7 @@
   flex-direction: row
   align-items: center
   .inner
+    margin: 0 auto
     display: flex
     flex-grow: 1
     position: relative
