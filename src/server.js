@@ -367,6 +367,20 @@ AutoSetup(
 					}
 				});
 			}) 
+		},
+		DangerZone: async( req, res, params ) => {
+			return new Promise( (resolve, reject) => {
+
+				console.log('[server.js] 👹☠️  welcome to the danger zone! ☠️👹  ');
+				exec(`sh ${config.pdac_utils}/dangerDeleteRecordings.sh`, function(err, stdout, stderr) {
+					if (err) {
+						console.log('[server.js] ☠️❌  danger zone! error:', err, stdout, stderr);
+						return reject( err );
+					}
+					console.log('[server.js] ☠️✅  danger zone! success:', stderr, stdout);
+					return resolve( stdout );
+				});
+			}) 
 		}
 	}, 
 	{ 
@@ -437,7 +451,10 @@ AutoSetup(
 		'/sync': {
 			GET: 'RcloneCheck',
 			POST: 'RcloneSync'
-		}
+		},
+		'/sync/clearup': {
+			POST: 'DangerZone'
+		},
 	})
 	.use(
 		compression({ threshold: 0 }),

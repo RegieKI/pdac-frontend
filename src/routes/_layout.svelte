@@ -52,6 +52,8 @@
               console.log('[_layout.svelte] ℹ❌ no backend, looping...')
               overlay.set({type: "wait", message: waitMsg, close: "Skip"})
               setTimeout( loopUntilBackend, 3000);
+            } else if ( !$info.wlan0.ssid ) {
+              overlay.set({type: "wlan", message: "No WLAN Connection", close: "Skip", actions: [ ['Setup WLAN', '/network'] ]})
             }
           });
 
@@ -136,26 +138,26 @@
 
           {/if}
           {#if $overlay.type === 'error'}
-            <div>
+            <div style="align-items:center">
               Status: {$overlay.status}
               <br />
               Message: {@html $overlay.message}
             </div>
           {:else}
-            <div>{@html $overlay.message}</div>
+            <div style="align-items:center">{@html $overlay.message}</div>
           {/if}
 
+          {#if $overlay.actions}
+            {#each $overlay.actions as a }
+              <Button on:click={ e => overlay.set(null) }><a href={a[1]}>{a[0]}</a></Button>
+            {/each}
+          {/if}
           {#if $overlay.type === 'error' || $overlay.refresh}
             <Button on:click={ e => { window.location = window.location } }>{ $overlay.refresh || "Refresh" }</Button>
           {/if}
           {#if $overlay.type === 'error' || $overlay.close} 
             <Button on:click={ e => overlay.set(null) }>{ $overlay.close || "Close" }</Button>
           {/if} 
-          {#if $overlay.actions}
-            {#each $overlay.actions as a }
-              <Button on:click={ e => overlay.set(null) }><a href={a[1]}>{a[0]}</a></Button>
-            {/each}
-          {/if}
         </Column>
       </div>
     {/if}
