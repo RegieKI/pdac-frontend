@@ -1,9 +1,5 @@
 import UrlPattern from 'url-pattern'
 
-export const SessionID = ( session ) => {
-
-}
-
 export const AutoPreload = async ( page, session, t ) => {
 
 		console.log('AUTOPRELOAD', session);

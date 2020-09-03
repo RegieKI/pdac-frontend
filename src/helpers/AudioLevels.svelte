@@ -1,18 +1,22 @@
 <script>
 
   import { onMount } from 'svelte'
-  export let style;
-  let ref;
+  import Microphone from "svelte-material-icons/Microphone.svelte";
 
+  let ref;
   let audioLevel = 0;
   let incomingAudio = 0;
 
+  export let style;
+  export let orientation = 'vertical';
+
+  $: isVertical = orientation == 'vertical';
+  $: size = `height: ${audioLevel}%`
 
   function onFrame() {
 
     audioLevel = incomingAudio;
     window.requestAnimationFrame(onFrame);
-    console.log('VOILUMNE...', audioLevel);
 
   }
   onMount( async() => {
@@ -63,12 +67,41 @@
 .audio-levels
   position: relative
   overflow: hidden
-  .meter
-    min-height: 10px
+  justify-content: center
+  flex-direction: row
+  align-items: center
+  .inner
+    display: flex
+    flex-grow: 1
+    position: relative
+    width: 15px
+    min-height: 100%
+    text-align: center
+    .meter
+      width: 5px
+      height: 100%
+      position: absolute
+      top: 0
+      display: block
+      &.left
+        left: 0
+      &.right
+        right: 0
+      span
+        position: absolute
+        bottom: 0
+        left: 0
+        display: block
+        width: 100%
+        background: white
+
 </style>
 
 <div class="audio-levels" on:click style={style} >
-  AUDIO LEVELKS {audioLevel}
+  <div class="inner">
+    <div class="left meter"><span style={size} /></div>
+    <div class="right meter"><span style={size} /></div>
+  </div>
 </div>
 
 

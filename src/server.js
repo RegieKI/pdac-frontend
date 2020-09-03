@@ -154,7 +154,7 @@ AutoSetup(
 				const miPath = config.pdac_usb+'/miband.txt'
 
 				fs.readFile( miPath, "utf8", (err, data) => {
-							console.log('[Info] ✅  read miband.txt...', data);
+						console.log('[Info] ✅  read miband.txt...', data);
 						const mac_address = (err) ? 'UNKNOWN' : data.replace(/(\r\n|\n|\r)/gm, "").trim();
 						axios.get('http://localhost:8888/status').then( res => {
 							console.log('[Info] ✅  success: backend connected...', Object.keys(res), res.data);
@@ -236,7 +236,7 @@ AutoSetup(
 		Buzz: async(req, res, params) => {
 			return new Promise( (resolve, reject) => {
 					const seq = req.body.sequence || '200 200 10 0.001';
-					exec(`/usr/bin/python ${config.pdac_utils}/buzz.py ${seq}`);
+					exec(`/usr/bin/python ${config.pdac_utils}/pythonBuzz.py ${seq}`);
 					resolve({});
 			});
 		},
@@ -295,7 +295,6 @@ AutoSetup(
 				console.log('[CameraStop] sending stop...');
 				axios.post( 'http://localhost:8888/stop/', req.body ).then( res => {
 					console.log('[CameraStop] 📸 🛑  successfully stopped')
-					exec('/usr/bin/python ${config.pdac_utils}/buzz.py 50 50 30 0.0001')
 					return resolve(res.data);
 				}).catch( err => {
 
@@ -392,10 +391,10 @@ AutoSetup(
 		'/session/:session': {
 			GET: 'SessionByID'
 		},
-		'/session/:session/exercise': {
+		'/session/:session/preview': {
 			GET: 'SessionByID'
 		},
-		'/session/:session/exercise/:exercise': {
+		'/session/:session/:idx': {
 			GET: 'SessionByID'
 		},
 		'/camera/start': {

@@ -20,13 +20,29 @@ $smallfontsize: 14px
 	to 
 		transform: rotate(-360deg) 
 
-#pdac, #pdac .overlay
+
+// hostname: background colors...
+
+#pdac, #pdac .overlay, #pdac .header
 	background-color: map-get($colors, "blue-grey-900")
 
-@each $name, $color in $colors
-	#pdac.bg-#{$name}, #pdac.bg-#{$name} .overlay
-		background-color: $color
 #pdac
+	*, *::placeholder, *::-webkit-input-placeholder
+		color: white
+
+@each $name, $color in $colors
+	#pdac.bg-#{$name}
+		background-color: $color
+		.overlay, .header
+			background-color: $color
+		.timer.pulse *
+			color: $color
+
+
+// PDAC main...
+
+#pdac
+
 	margin: 0 auto
 	width: $width
 	height: $height
@@ -36,19 +52,22 @@ $smallfontsize: 14px
 	font-size: $fontsize
 
 
-
-	*, *::placeholder, *::-webkit-input-placeholder
-		color: white
 	.overlay .spinner span, input[type=text], input[type=password], input[type=email], select, .aui-button button
 		border-color: white
+
+	// hostname: text colors...
 
 	.pdac-main-column a
 			&:focus, &:active
 				background: rgba(255,255,255,0.2)
-
-
 	@each $name, $color in $colors
 		&.txt-#{$name}
+			.timer
+				&.spin
+					border-color: $color
+				&.pulse
+					.ring
+						background: $color
 			*, *::placeholder, *::-webkit-input-placeholder
 				color: $color
 			.overlay .spinner span, input[type=text], input[type=password], input[type=email], select, .aui-button button
@@ -56,7 +75,6 @@ $smallfontsize: 14px
 			.pdac-main-column a
 					&:focus, &:active
 						background: transparentize($color, 	0.8)
-
 
 
 	select
@@ -134,7 +152,6 @@ $smallfontsize: 14px
 		z-index: 99
 		box-sizing: border-box
 		padding: 40px 	
-		// background: #111
 		.aui-column > *
 			display: flex
 			flex-grow: 1
@@ -186,7 +203,6 @@ $smallfontsize: 14px
 		left: 0
 		display: flex 
 		justify-content: space-between
-		// background-color: rgba(0,0,0,0.9)
 		z-index: 101
 		font-size: $smallfontsize
 		box-sizing: border-box

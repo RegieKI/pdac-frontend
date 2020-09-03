@@ -107,11 +107,15 @@
 
 <Back {page} />
 <!-- <Column> -->
-  <Text bind:a={sessionId} />
   <Row>
     <Toggle bind:a={audioSettings}>Audio</Toggle>
     <Toggle bind:a={videoSettings}>Video</Toggle>
     <Toggle bind:a={heartRateSettings}>Heartrate</Toggle>
+  </Row>
+  <Row>
+    <Toggle >Face</Toggle>
+    <Toggle >Body</Toggle>
+    <Toggle >Sockets</Toggle>
   </Row>
   <Row>
     <Toggle bind:a={rtspSettings}>RTSP</Toggle>
