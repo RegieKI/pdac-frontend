@@ -41,7 +41,7 @@
   $: zeroIdx = parseInt( $page.params.idx, 10 ) - 1;
   $: humanIdx = parseInt( $page.params.idx, 10 );
   $: session = data[0] || {};
-  $: exercise = (session.exercises[zeroIdx]) ? session.exercises[zeroIdx].exercise_id : {} || {};
+  $: exercise = (session.exercises[zeroIdx]) ? session.exercises[zeroIdx].exercise_id : { example: { data: {} }};
   $: tags = exercise.tags || [];
 
   $: identifier = `${$info.hostname}_${session.point_of_interest}_${session.url}_${humanIdx}_${tags.map( t => { return t.tag_id.url;  })}`;
@@ -181,7 +181,7 @@
 
   {#if session.point_of_interest == 'sound'}
 
-    <div>SOUND</div>
+    <audio style="margin: 0.6em 0em" src={exercise.example.data.full_url} autoplay controls />
   {:else}
     <div style="margin: 0.5em 0em">
       {humanIdx}/{session.exercises.length}: {exercise.description} <br />

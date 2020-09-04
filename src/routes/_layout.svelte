@@ -53,7 +53,12 @@
               overlay.set({type: "wait", message: waitMsg, close: "Skip"})
               setTimeout( loopUntilBackend, 3000);
             } else if ( !$info.wlan0.ssid ) {
-              overlay.set({type: "wlan", message: "No WLAN Connection", close: "Skip", actions: [ ['Setup WLAN', '/network'] ]})
+
+              axios.get( '/ping?as=json' ).then( () => {
+
+              }).catch( () => {
+                overlay.set({type: "wlan", message: "Could not connect to API", close: "Skip", actions: [ ['Setup WLAN', '/network'] ]})
+              })
             }
           });
 

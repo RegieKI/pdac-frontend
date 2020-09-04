@@ -14,7 +14,7 @@
   const data = getContext('data');
 
   function update() {
-    axios.get('/system/update').then( res => {
+    axios.post('/system/update?as=json').then( res => {
       console.log('[System] 📠  update');
 
     }).catch(err => {
@@ -23,7 +23,7 @@
     });
   }
   function calibrate() {
-    axios.get('/system/calibrate').then( res => {
+    axios.post('/system/calibrate?as=json').then( res => {
       console.log('[System] 📠  calibrate');
 
     }).catch(err => {
@@ -33,7 +33,7 @@
 
   }
   function reboot() {
-    axios.get('/system/reboot').then( res => {
+    axios.post('/system/reboot?as=json').then( res => {
       console.log('[System] 📠  reboot');
 
     }).catch(err => {
@@ -43,7 +43,7 @@
 
   }
   function shutdown() {
-    axios.get('/system/shutdown').then( res => {
+    axios.post('/system/shutdown?as=json').then( res => {
       console.log('[System] 📠  shutdown');
 
     }).catch(err => {
@@ -56,11 +56,14 @@
 </script>
 
 <Back {page} />
-<div class="grid">
+<div class="grid" style="height: 120px;margin-top: 90px;">
   <Button a={{stretch: true}}  on:click={shutdown}>Shutdown</Button>
   <Button a={{stretch: true}}  on:click={reboot}>Reboot</Button>
   <Button a={{stretch: true}}  ><a rel="prefetch" href="/system/miband">MiBand</a></Button>
-  <Button a={{stretch: true}}  ><a rel="prefetch" href="/system/hostname">Hostname</a></Button>
-  <Button a={{stretch: true}}  ><a rel="prefetch" href="/network">WLAN</a></Button>
   <Button a={{stretch: true}}  on:click={calibrate}>Calibrate Screen</Button>
 </div>
+<div style="margin: 1em 0em">Admin Only!</div>
+<Row>
+  <Button a={{stretch: true}}  ><a rel="prefetch" href="/system/hostname">Hostname</a></Button>
+  <Button a={{stretch: true}}  ><a rel="prefetch" href="/camera">Test Camera</a></Button>
+</Row>

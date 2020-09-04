@@ -65,7 +65,7 @@ axios.get('http://localhost:8888').then( res => {
 })
 
 AutoSetup(
-	{
+	{ 
 		SessionByID: async ( req, res, params ) => {
 			return (await directus.getItems( 'session', {
 					"filter[url][eq]": params.session,
@@ -106,19 +106,25 @@ AutoSetup(
 		},
 		SystemReboot: async(req, res, params ) => {
 			return new Promise( (resolve, reject ) => {
-				exec(`sh ${config.pdac_utils}/utiilityRebootNow.sh`);
+				exec(`sh ${config.pdac_utils}/utilityRebootNow.sh`, function( err, out, code ) {
+					console.log('[server.js] 👂 REBOOT ', err, out, code);
+				});
 				resolve({});
 			});
 		},
 		SystemShutdown: async(req, res, params ) => {
 			return new Promise( (resolve, reject ) => {
-				exec(`sh ${config.pdac_utils}/utiilityShutdownNow.sh`);
+				exec(`sh ${config.pdac_utils}/utilityShutdownNow.sh`, function( err, out, code ) {
+					console.log('[server.js] 👂 SHUTDOWN ', err, out, code);
+				});
 				resolve({});
 			});
 		},
 		CalibrateScreen: async(req, res, params ) => {
 			return new Promise( (resolve, reject ) => {
-				exec(`sh ${config.pdac_utils}/launchCalibrator.sh`);
+				exec(`sh ${config.pdac_utils}/launchCalibrator.sh`, function( err, out, code ) {
+					console.log('[server.js] 👂 CALIBRATE ', err, out, code);
+				});
 				resolve({});
 			});
 		},
@@ -166,6 +172,15 @@ AutoSetup(
 				});
 			})
 
+		},
+		Ping: async ( req, res, params ) => {
+			return new Promise( (resolve, reject) => {
+				axios.get(config.directus_url + 'server/ping' ).then( res => {
+					resolve( 'PONG' );
+				}).catch( err => {
+					reject( err );
+				});
+			})
 		},
 		SetMibandAddress: async ( req, res, params ) => {
 			return new Promise( (resolve, reject) => {
@@ -421,13 +436,13 @@ AutoSetup(
 			POST: 'CameraStop'
 		},
 		'/system/reboot': {
-			GET: 'SystemReboot'
+			POST: 'SystemReboot'
 		},
 		'/system/shutdown': {
-			GET: 'SystemShutdown'
+			POST: 'SystemShutdown'
 		},
 		'/system/calibrate': {
-			GET: 'CalibrateScreen'
+			POST: 'CalibrateScreen'
 		},
 		'/system/hostname': {
 			GET: 'ParticipantsList',
@@ -455,6 +470,9 @@ AutoSetup(
 		'/sync/clearup': {
 			POST: 'DangerZone'
 		},
+		'/ping': {
+			GET: 'Ping'
+		}
 	})
 	.use(
 		compression({ threshold: 0 }),
