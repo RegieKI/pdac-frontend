@@ -312,8 +312,6 @@ AutoSetup(
 					console.log('[CameraStop] 📸 🛑  successfully stopped')
 					return resolve(res.data);
 				}).catch( err => {
-
-						// TODO 2
 						
 					if (err.response) {
 						let t = '';

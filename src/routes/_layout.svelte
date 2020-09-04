@@ -52,7 +52,7 @@
               console.log('[_layout.svelte] ℹ❌ no backend, looping...')
               overlay.set({type: "wait", message: waitMsg, close: "Skip"})
               setTimeout( loopUntilBackend, 3000);
-            } else if ( !$info.wlan0.ssid ) {
+            } else if ( !$info.wlan0.ssid && ( $page.path == "/" || $page.path == "" )  ) {
 
               axios.get( '/ping?as=json' ).then( () => {
 
