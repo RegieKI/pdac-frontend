@@ -30,7 +30,7 @@
   import WatchVariant from "svelte-material-icons/WatchVariant.svelte";
 
   let PdacEl;
-  let waitMsg = "Waiting for backend";
+  let waitMsg = "Pairing with MiBand";
 
   import { stores } from '@sapper/app';
   const { page } = stores();

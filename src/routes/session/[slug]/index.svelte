@@ -57,6 +57,18 @@
     })
   });
 
+    axios.post('/system/miband/reconnect?as=json', {}).then( res => {
+
+        console.log('[Session] ⌚️✅  Miband connected');
+        overlay.set(null);
+    }).catch( err => {
+
+        console.log('[Session] ⌚️❌ Miband could not reconnect ', err.toString(), Object.keys(err), err.response);
+        overlay.set({
+          type: 'error',
+          ...err.response.data
+        })
+    })
   function reconnectHR() {
 
     console.log('[Session] ⌚️  Miband reconnecting...');
@@ -65,9 +77,8 @@
     axios.post('/system/miband/reconnect?as=json', {}).then( res => {
 
         console.log('[Session] ⌚️✅  Miband connected', res);
-        info.grab().finally( () => {
-          overlay.set(null);
-        });
+        info.grab();
+        overlay.set( { type: 'success', message: 'Successfully Reconnected', close: 'OK'});
     }).catch( err => {
 
         console.log('[Session] ⌚️❌ Miband could not reconnect ', err.toString(), Object.keys(err), err.response);
