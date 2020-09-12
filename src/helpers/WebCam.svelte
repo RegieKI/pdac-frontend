@@ -1,6 +1,6 @@
 <script>
 
-  import { onMount } from 'svelte'
+  import { onMount, onDestroy } from 'svelte'
   export let style;
   let ref;
 
@@ -8,13 +8,24 @@
   export let height = 'auto';
   export let focus = "none";
 
+  let streamPtr;
+
+  onDestroy(() => {
+    if (!streamPtr) return;
+    streamPtr.getTracks().forEach(function(track) {
+      console.log('[WebCam] 🎥☠️  destroying stream:', track);
+      track.stop();
+    });
+  });
+
   onMount( async() => {
     if (process.browser ) {
       if (navigator.mediaDevices) {
         if (navigator.mediaDevices.getUserMedia) {
           navigator.mediaDevices.getUserMedia({ video: {width: 480, height: 320} })
             .then(function (stream) { 
-              console.log('[WebCam] 🎥✅  successfully opened', ref. stream)
+              streamPtr = stream;
+              console.log('[WebCam] 🎥✅  successfully opened', stream)
               ref.srcObject = stream;
               ref.onloadedmetadata = function(e) {
                 ref.play();
