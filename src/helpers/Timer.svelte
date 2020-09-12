@@ -2,7 +2,7 @@
 
   import { createEventDispatcher } from 'svelte';
   import { stores } from '@sapper/app';
-  import { onMount } from 'svelte'
+  import { onMount, onDestroy } from 'svelte'
   const { preloading, page, session } = stores();
 
   const dispatch = createEventDispatcher();
@@ -11,23 +11,36 @@
   export let style;
   export let className = "spin";
   export let paused = false;
+  export let id = "";
 
   let human;
   let timer;
   let timestamp;
+  let destroy = false;
 
 
   $: computed = `font-size:${size * 0.4}px;line-height:${size}px;border-radius:${size}px;width:${size}px;height:${size}px;flex-basis:${size}px;max-height:${size}px;`
   $: radius = `border-radius:${size}px;animation-delay:-${Math.floor(Math.random() * 100)}s;`;
 
+  onMount( async() => {
+    destroy = false;
+    console.log('[Timer] ⏰✅  onMount (restart) :', id);
+    restart( time );
+  });
+  onDestroy(() => {
+    console.log('[Timer] ⏰❌  onDestroy:', id);
+    destroy = true;
+  });
+
   export function restart( time_ ) {
-    if (typeof window !== "undefined" && typeof document !== "undefined") {
+    if (typeof window !== "undefined" && typeof document !== "undefined" && !destroy) {
       clearAllFrames();
       time = time_;
       human = time;
       timer = time;
       gap = 0;
       timestamp = (new Date());
+      console.log('[Timer] ⏰  onRestart:', id);
       window.requestAnimationFrame(onFrame);
       dispatch( 'start', timer );
     }
@@ -64,15 +77,15 @@
       } else {
         timestamp = (new Date()) - (gap * 1000);
       }
-      if (req) window.requestAnimationFrame( onFrame );
+      if (req && !destroy) {
+        console.log('[Timer] ⏰  onFrame:', id);
+        window.requestAnimationFrame( onFrame );
+      }
     } else {
       console.error('there is no window to request animation frame from');
     }
   }
 
-  onMount( async() => {
-    restart( time );
-  });
   
 </script>
 <div class="timer {className} { paused ? 'paused' : ''}" style="{computed}{style}">
