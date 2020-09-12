@@ -30,7 +30,6 @@
   import WatchVariant from "svelte-material-icons/WatchVariant.svelte";
 
   let PdacEl;
-  let waitMsg = "Pairing with MiBand";
 
   import { stores } from '@sapper/app';
   const { page } = stores();
@@ -38,52 +37,16 @@
 
   onMount( async() => {
 
-    if (typeof window !== "undefined" && typeof document !== "undefined") {
+    // if (typeof window !== "undefined" && typeof document !== "undefined") {
+      console.log('[_layout.svelte] 📦 mounted');
+      // await info.grab();
       page.subscribe(({ path, params, query }) => {
-        console.log('[_layout.svelte] 📦 mounted');
 
-        const infoUrl = '/info?as=json';
-        axios.get(infoUrl);
-        fetch(infoUrl).then(response => {
-          response.json().then( d => {
-            info.set(d);
-            console.log('[_layout.svelte] ℹ⭕️ checking information...')
-            if (!$info.backend.active) {
-              console.log('[_layout.svelte] ℹ❌ no backend, looping...')
-              overlay.set({type: "wait", message: waitMsg, close: "Skip"})
-              setTimeout( loopUntilBackend, 3000);
-            } else if ( !$info.wlan0.ssid && ( $page.path == "/" || $page.path == "" )  ) {
-
-              axios.get( '/ping?as=json' ).then( () => {
-
-              }).catch( () => {
-                overlay.set({type: "wlan", message: "Could not connect to API", close: "Skip", actions: [ ['Setup WLAN', '/network'] ]})
-              })
-            }
-          });
-
-        });
+        console.log('[_layout.svelte] 📄 page changed : subscribe', path);
+        info.grab();
       })
-    }
+    // }
   });
-
-  // preload data...
-
-  function loopUntilBackend() {
-
-    info.grab().then( res => {
-      if (!$info.backend.active) {
-        if ($overlay.type == "wait" && $overlay.message == waitMsg) {
-          console.log('[_layout.svelte] ℹ️⭕️ retrying for backend in 3 seconds')
-          setTimeout( loopUntilBackend, 3000);
-        } else {
-          console.log('[_layout.svelte] ℹ️✅ cancelled wait for backend')
-        }
-      } else {
-        overlay.set( undefined )
-      }
-    });
-  }
 
 
   $: color = ($info) ?  Colors.find( c => Strip(c.hostname) === Strip($info.hostname) ) : undefined;
@@ -108,7 +71,7 @@
 <svelte:window  />
 <main> 
   <div bind:this={PdacEl}  id="pdac" class={`aui  ${ (isPi) ? 'hide-cursor' : ''} bg-${ color ? color.color : 'null' }  txt-${ color ? color.text_color : 'null' }`}>
-    <header class="header" >
+    <header class="header" on:click={ () => window.location.reload() } >
       {#if $info }
         <label><Brain />&nbsp;{ Memory($info.freemem).auto }&nbsp;{$info.temperature} <TemperatureCelsius /> </label>
         <label>
