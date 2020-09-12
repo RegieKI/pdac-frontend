@@ -57,18 +57,6 @@
     })
   });
 
-    axios.post('/system/miband/reconnect?as=json', {}).then( res => {
-
-        console.log('[Session] ⌚️✅  Miband connected');
-        overlay.set(null);
-    }).catch( err => {
-
-        console.log('[Session] ⌚️❌ Miband could not reconnect ', err.toString(), Object.keys(err), err.response);
-        overlay.set({
-          type: 'error',
-          ...err.response.data
-        })
-    })
   function reconnectHR() {
 
     console.log('[Session] ⌚️  Miband reconnecting...');
@@ -82,10 +70,13 @@
     }).catch( err => {
 
         console.log('[Session] ⌚️❌ Miband could not reconnect ', err.toString(), Object.keys(err), err.response);
-        overlay.set({
+        let o = {
           type: 'error',
           ...err.response.data
-        })
+        };
+
+        o.message = "MiBand Response:<br />"+o.message;
+        overlay.set(o)
     })
   }
 
@@ -96,11 +87,11 @@
 
   <Back />
 
-  {#if useHeartrate && !isHRConnected}
+<!--   {#if useHeartrate && !isHRConnected}
     <div style="margin: 0.5em 0em">MiBand is not connected<br />Address: {$info.backend.mac_address}</div>
     <Button on:click={reconnectHR}>Reconnect</Button>
     <Button on:click={ e => { useHeartrate = false } } >Skip</Button>
-  {:else}
+  {:else} -->
     <div>
       {session.title}: <br />
       {session.exercises.length} exercise(s), 
@@ -108,5 +99,5 @@
     </div>
     <div style="padding: 0.5em 0em">{@html session.description}</div>
     <Button><a href={$page.path + '/preview'}>Start Session</a></Button>
-  {/if}
+<!--   {/if} -->
 
