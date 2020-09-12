@@ -43,8 +43,7 @@
   $: session = data[0] || {};
   $: exercise = (session.exercises[zeroIdx]) ? session.exercises[zeroIdx].exercise_id : { example: { data: {} }};
   $: tags = exercise.tags || [];
-
-  $: identifier = `${$info.hostname}_${session.point_of_interest}_${session.url}_${humanIdx}_${tags.map( t => { return t.tag_id.url;  })}`;
+  $: identifier = (`${$info.hostname}_${session.point_of_interest}_${session.url}_${humanIdx}_${tags.map( t => { return t.tag_id.url;  })}`).replace(/,/g, '-');
 
 
   onMount( async() => {
@@ -66,7 +65,7 @@
         active: true
       },
       heartrate: {
-        active: $info.backend.miband.connected
+        active: ( $info.backend.miband.connected ) ? true : false
       }
     },
     sinks: {
@@ -128,10 +127,11 @@
       overlay.set( null );
     }).catch( err => {
       console.log('[session:slug:idx] could not start 📸 ❌', err.toString(), Object.keys(err), err.response);
-      overlay.set({
-        type: 'error',
-        ...err.response.data
-      })
+      stop();
+      // overlay.set({
+      //   type: 'error',
+      //   ...err.response.data
+      // })
     })
   }
 
@@ -172,9 +172,9 @@
 
 <Row a={{justify: "center"}}>
   {#if recording} 
-    <Timer className="pulse" on:start={onRecordStart} on:second={onRecordSecond} on:end={onRecordEnd} time={exercise.time} />
+    <Timer className="pulse" id="RECORD: {exercise.description}" on:start={onRecordStart} on:second={onRecordSecond} on:end={onRecordEnd} time={exercise.time} />
   {:else}
-    <Timer className="spin" bind:restart={restartTimer} on:start={onIntroStart} on:second={onIntroSecond} on:end={onIntroEnd} time={time+1} paused={paused} />
+    <Timer className="spin" id="INTRO: {exercise.description}" bind:restart={restartTimer} on:start={onIntroStart} on:second={onIntroSecond} on:end={onIntroEnd} time={time+1} paused={paused} />
   {/if}
 </Row>
 <Row a={{justify: "center"}}>
