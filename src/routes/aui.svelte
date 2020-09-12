@@ -1,6 +1,6 @@
 <script>
-	import { AUI } from '../svelte-aui/src/index.js'
-	import { Defines as d } from '../svelte-aui/src/index.js'
+	import { AUI } from 'svelte-aui/src/index.js'
+	import { Defines as d } from 'svelte-aui/src/index.js'
 	const a = {
 		width: "100vw",
 		height: "100vh",

@@ -1,0 +1,4 @@
+[submodule "svelte-aui"]
+	path = svelte-aui
+	url = https://github.com/autr/svelte-aui
+	branch = master

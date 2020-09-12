@@ -27,7 +27,7 @@
   import WebCam from './../../../helpers/WebCam.svelte'
   import Back from './../../../helpers/Back.svelte'
   import AudioLevels from './../../../helpers/AudioLevels.svelte'
-  import { Any, Button, Column, Row } from '../../../svelte-aui/src/index.js'
+  import { Any, Button, Column, Row } from 'svelte-aui/src/index.js'
 
   const style = "";//"position:absolute;width:calc( 50% - 20px );bottom:10px;";
 

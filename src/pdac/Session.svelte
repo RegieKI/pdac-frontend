@@ -6,7 +6,7 @@
   import ArrowLeft from "svelte-material-icons/ArrowLeft.svelte";
   import TimerSand from "svelte-material-icons/TimerSand.svelte";
   import RadioboxMarked from "svelte-material-icons/RadioboxMarked.svelte";
-	import { Any, Button, Column, Row } from '../svelte-aui/src/index.js'
+	import { Any, Button, Column, Row } from 'svelte-aui/src/index.js'
 	export let page = {};
 	export let data = null;
 	import Viewer from './Viewer.svelte'

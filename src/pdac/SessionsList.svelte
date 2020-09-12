@@ -1,7 +1,7 @@
 <script>
 
 	import Back from './Back.svelte'
-	import { Any } from '../svelte-aui/src/index.js'
+	import { Any } from 'svelte-aui/src/index.js'
 	export let page = {};
 	export let data = null;
 	

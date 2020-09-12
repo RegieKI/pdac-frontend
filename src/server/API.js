@@ -2,7 +2,6 @@
 import path from 'path'
 import os from 'os'
 import send from '@polka/send-type'
-import wifi from 'node-wifi'
 import regexparam from 'regexparam'
 import UrlPattern from 'url-pattern'
 import { json, urlencoded } from 'body-parser'

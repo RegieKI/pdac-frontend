@@ -18,7 +18,7 @@
 
   import { Memory, Strip } from '../helpers/Utils.js'
   import Back from '../helpers/Back.svelte'
-  import { Any, Group, AUI, Column, Button } from '../svelte-aui/src/index.js'
+  import { Any, Group, AUI, Column, Button } from 'svelte-aui/src/index.js'
 
   // material icons...
 

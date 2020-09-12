@@ -65,7 +65,6 @@ export default {
 		],
 
 		preserveEntrySignatures: false,
-		onwarn,
 	},
 
 	server: {
@@ -91,7 +90,6 @@ export default {
 		),
 
 		preserveEntrySignatures: 'strict',
-		onwarn,
 	},
 
 	serviceworker: {
@@ -108,6 +106,5 @@ export default {
 		],
 
 		preserveEntrySignatures: false,
-		onwarn,
 	}
 };

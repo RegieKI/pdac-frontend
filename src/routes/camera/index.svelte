@@ -5,7 +5,7 @@
   import Back from './../../helpers/Back.svelte'
   import WebCam from './../../helpers/WebCam.svelte'
   import { Timestamp } from './../../helpers/Utils.js'
-  import { Column, Button, Toggle, Text, Row } from '../../svelte-aui/src/index.js';
+  import { Column, Button, Toggle, Text, Row } from 'svelte-aui/src/index.js';
 
   import { info, overlay } from './../stores.js'
   export let page = {};

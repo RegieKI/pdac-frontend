@@ -8,7 +8,7 @@
   import axios from 'axios'
   import Back from './../../helpers/Back.svelte'
   import MiBands from './../db.mibands.js'
-  import { Any, Group, Button, Dropdown, Column } from '../../svelte-aui/src/index.js';
+  import { Any, Group, Button, Dropdown, Column } from 'svelte-aui/src/index.js';
 
   import { info, overlay } from './../stores.js'
   export let data;

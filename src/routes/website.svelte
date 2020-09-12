@@ -1,6 +1,6 @@
 <script>
-	import { AUI, Row, Column, Wrapper, Button, Any } from '../svelte-aui/src/index.js'
-	import { Defines as d } from '../svelte-aui/src/index.js'
+	import { AUI, Row, Column, Wrapper, Button, Any } from 'svelte-aui/src/index.js'
+	import { Defines as d } from 'svelte-aui/src/index.js'
 
 
 </script>
@@ -28,7 +28,7 @@
 </template>
 
 <style lang="sass" global>
-	@import '../svelte-aui/src/styles/Utils'
+	@import 'svelte-aui/src/styles/Utils'
 	.website
 		width: 1600px
 		margin: auto

@@ -5,7 +5,7 @@
 	export let message;
 	export let response;
 
-	import { Column, Button, Row } from '../svelte-aui/src/index.js'
+	import { Column, Button, Row } from 'svelte-aui/src/index.js'
 	const dev = process.env.NODE_ENV === 'development';
 	console.log(error, status, message ,response);
 

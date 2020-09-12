@@ -6,7 +6,7 @@
 <script>
   import axios from 'axios'
   import Back from './../../helpers/Back.svelte'
-  import { Group, Button, Dropdown, Column, Row } from '../../svelte-aui/src/index.js';
+  import { Group, Button, Dropdown, Column, Row } from 'svelte-aui/src/index.js';
 
   import { info } from '../stores.js'
   import { getContext } from 'svelte';

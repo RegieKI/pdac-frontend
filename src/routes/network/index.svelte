@@ -5,7 +5,7 @@
 
 <script>
   import { info } from '../stores.js'
-  import { Button } from '../../svelte-aui/src/index.js'
+  import { Button } from 'svelte-aui/src/index.js'
   import Back from './../../helpers/Back.svelte'
   export let data;
   

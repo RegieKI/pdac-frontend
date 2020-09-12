@@ -15,7 +15,7 @@
   import { stores } from '@sapper/app';
   const { page } = stores();
 
-  import { Any, Button, Column, Row } from '../../../svelte-aui/src/index.js'
+  import { Any, Button, Column, Row } from 'svelte-aui/src/index.js'
 
   export let data;
   $: session = data[0] || {};

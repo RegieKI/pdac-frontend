@@ -6,7 +6,7 @@
 <script>
 
   import Back from './../../helpers/Back.svelte'
-  import { Any } from '../../svelte-aui/src/index.js'
+  import { Any } from 'svelte-aui/src/index.js'
   export let data;
   
 </script>

@@ -13,7 +13,7 @@
   import { info, overlay } from './../stores.js'
   import Back from './../../helpers/Back.svelte'
   import Keyboard from '../../helpers/Keyboard.svelte'
-  import { Any, Boolean, Group, Text, Defines as d } from '../../svelte-aui/src/index.js'
+  import { Any, Boolean, Group, Text, Defines as d } from 'svelte-aui/src/index.js'
 
   export let data;
 

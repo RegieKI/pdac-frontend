@@ -2,7 +2,7 @@
 
   import axios from 'axios'
   import { onMount } from 'svelte'
-  import { Button, Row } from '../../svelte-aui/src/index.js'
+  import { Button, Row } from 'svelte-aui/src/index.js'
   import Back from './../../helpers/Back.svelte'
   import { Memory } from './../../helpers/Utils.js'
   import { info, overlay } from './../stores.js'

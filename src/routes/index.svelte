@@ -2,7 +2,7 @@
 
   import { onMount } from 'svelte'
   import axios from 'axios'
-  import { Any, Group, Button, Row } from '../svelte-aui/src/index.js'
+  import { Any, Group, Button, Row } from 'svelte-aui/src/index.js'
   import { info, overlay } from './stores.js'
   import { stores } from '@sapper/app';
   const { page } = stores();

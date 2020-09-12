@@ -1,4 +1,4 @@
-import sirv from 'sirv'
+import Sirv from './server/Sirv.js';
 import compression from 'compression'
 import * as sapper from '@sapper/server'
 import temp from 'pi-temperature'
@@ -9,11 +9,12 @@ import os from 'os'
 import wifi from './../pi-wifi';
 import fs from 'fs'
 import DirectusSDK from "@directus/sdk-js"
-import kill  from 'tree-kill'
 import { exec, spawn } from 'child_process'
-import ON_DEATH from 'death'
 import path from 'path'
 
+
+
+console.log('----------------_!!!!!! YOYOYO', process.argv);
 
 const config = {
 	directus_url: 'https://api.sinnott.cc/',
@@ -52,9 +53,12 @@ axios.get('http://localhost:8888').then( res => {
 
 	backend.stdout.pipe(process.stdout)
 	backend.on('exit', function() {
-		console.log('[server.js] ⚰️ backend has exited');
-		exec(`sh ${config.pdac_utils}/killAll.sh`);
-		process.exit();
+		console.log('[server.js] ⚰️  backend has exited');
+		if (!isDev) {
+			console.log('[server.js] ⚰️  killing all...');
+			exec(`sh ${config.pdac_utils}/killAll.sh`);
+			process.exit();
+		}
 	})
 
 	setTimeout( function() { 
@@ -473,7 +477,7 @@ AutoSetup(
 	})
 	.use(
 		compression({ threshold: 0 }),
-		sirv('static', { dev }),
+		Sirv('static', { dev }),
 		sapper.middleware()
 	)
 	.listen(PORT, err => {

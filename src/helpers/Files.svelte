@@ -1,7 +1,7 @@
 <script>
 
 	import Back from '../helpers/Back.svelte'
-	import { Any, Group } from '../svelte-aui/src/index.js'
+	import { Any, Group } from 'svelte-aui/src/index.js'
 	import { goto } from '@sapper/app'
 
 	export let page = {};
@@ -33,7 +33,7 @@
 </script>
 
 <style lang="sass">
-	@import '../svelte-aui/src/styles/Utils'
+	@import 'svelte-aui/src/styles/Utils'
 	.overlay
 		+fix
 		+top-left(0px, 0px)

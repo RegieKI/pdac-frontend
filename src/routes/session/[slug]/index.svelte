@@ -25,7 +25,7 @@
   import WebCam from './../../../helpers/WebCam.svelte'
   import Back from './../../../helpers/Back.svelte'
   import AudioLevels from './../../../helpers/AudioLevels.svelte'
-  import { Any, Button, Column, Row } from './../../../svelte-aui/src/index.js'
+  import { Any, Button, Column, Row } from 'svelte-aui/src/index.js'
 
 
   export let data;

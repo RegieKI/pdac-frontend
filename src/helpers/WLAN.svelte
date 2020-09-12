@@ -1,7 +1,7 @@
 
 <script>
 	import cssVars from 'svelte-css-vars'
-	import { Utils } from '../svelte-aui/src/index.js'
+	import { Utils } from 'svelte-aui/src/index.js'
 	export let strength = 0;
 	export let size = 22;
 

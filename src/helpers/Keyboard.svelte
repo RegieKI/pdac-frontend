@@ -2,7 +2,7 @@
   import { createEventDispatcher } from 'svelte';
   import { goto } from '@sapper/app'
   import axios from 'axios'
-  import { Any, Boolean, Group, Text, Defines as d } from '../svelte-aui/src/index.js'
+  import { Any, Boolean, Group, Text, Defines as d } from 'svelte-aui/src/index.js'
   export let page = {};
   export let data = {};
 
@@ -88,7 +88,7 @@
 </script>
 
 <style lang="sass">
-  @import '../svelte-aui/src/styles/Utils'
+  @import 'svelte-aui/src/styles/Utils'
   .keyboard
     flex-basis: 120px
     .row

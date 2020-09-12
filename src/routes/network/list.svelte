@@ -6,7 +6,7 @@
 <script>
 
   import { onMount } from 'svelte'
-  import { Button } from '../../svelte-aui/src/index.js'
+  import { Button } from 'svelte-aui/src/index.js'
   import Back from './../../helpers/Back.svelte'
   
   export let data;
