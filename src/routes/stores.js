@@ -6,22 +6,17 @@ function createInfoStore() {
 
 	return {
 		subscribe,
-		set,
-		update,
-		grab: () => {
-			return new Promise( (resolve, reject) => {
-				axios.get('/info?as=json').then(res=>{
+		grab: async () => {
 
-					const d = res.data;
-					console.log('[info] ℹ️  ', d);
-					set( d );
-					resolve(d);
-				}).catch(err => {
-					console.error('[info] ℹ️  ', err);
-					reject({});
-				});
-
-			})
+			console.log('[stores] ℹ️ getting info... ');
+			try {
+				let res = await axios.get('/info?as=json');
+				let d = res.data;
+				console.log('[stores] ℹ️✅ info :  ', d);
+				update( n => d );
+			} catch (err) {
+				console.log('[stores] ℹ️❌ info :  ', err);
+			}
 		}
 	}
 }
