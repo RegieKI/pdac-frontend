@@ -13,6 +13,17 @@
   $: isVertical = orientation == 'vertical';
   $: size = `height: ${audioLevel}%`
 
+
+  let streamPtr;
+
+  onDestroy(() => {
+    if (!streamPtr) return;
+    streamPtr.getTracks().forEach(function(track) {
+      console.log('[AudioLevels] 🔈☠️  destroying stream:', track);
+      track.stop();
+    });
+  });
+
   function onFrame() {
 
     audioLevel = incomingAudio;
@@ -29,6 +40,10 @@
 
         navigator.mediaDevices.getUserMedia({ audio: true, video: false })
         .then(function(stream) {
+
+          streamPtr = stream;
+          console.log('[AudioLevels] 🔈✅  successfully opened', stream)
+
           const audioContext = new AudioContext();
           const analyser = audioContext.createAnalyser();
           const microphone = audioContext.createMediaStreamSource(stream);
