@@ -162,7 +162,7 @@ AutoSetup(
 				fs.readFile( miPath, "utf8", (err, data) => {
 						console.log('[Info] ✅  read miband.txt...', data);
 						const mac_address = (err) ? 'UNKNOWN' : data.replace(/(\r\n|\n|\r)/gm, "").trim();
-						axios.get('http://localhost:8888/status').then( res => {
+						axios.get('http://localhost:8888/status', { timeout: 2000 } ).then( res => {
 							console.log('[Info] ✅  success: backend connected...', Object.keys(res), res.data);
 							return getInfo( resolve, reject, { ...res.data, mac_address, active: true } );
 						}).catch( err => {
@@ -257,10 +257,9 @@ AutoSetup(
 		},
 		CameraStart: async(req, res, params) => {
 			return new Promise( (resolve, reject) => {
-				console.log('[CameraStart] sending config:', req.body);
-				axios.post( 'http://localhost:8888/start/', req.body ).then( res => {
+				console.log('[CameraStart] 📸 starting camera : sending config:', req.body);
+				axios.post( 'http://localhost:8888/start/', req.body, { timeout: 180 * 1000 } ).then( res => {
 					console.log('[CameraStart] 📸 ✅  successfully started')
-					//50 50 3 0.00008
 					if (req.body.buzz) exec(`/usr/bin/python ${config.pdac_utils}/buzz.py ${req.body.buzz}`);
 					return resolve(res.data);
 				}).catch( err => {
@@ -308,7 +307,7 @@ AutoSetup(
 		CameraStop: async(req, res, params) => {
 			return new Promise( (resolve, reject) => {
 				console.log('[CameraStop] sending stop...');
-				axios.post( 'http://localhost:8888/stop/', req.body ).then( res => {
+				axios.post( 'http://localhost:8888/stop/', req.body, { timeout: 180 * 1000 }  ).then( res => {
 					console.log('[CameraStop] 📸 🛑  successfully stopped')
 					return resolve(res.data);
 				}).catch( err => {
