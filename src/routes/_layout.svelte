@@ -16,8 +16,7 @@
 
   // helpers modules...
 
-  import { Memory, Strip } from '../helpers/Utils.js'
-  import Back from '../helpers/Back.svelte'
+  import { Memory, Strip, Back } from 'svelte-touch-os/src/index.js'
   import { Any, Group, AUI, Column, Button } from 'svelte-aui/src/index.js'
 
   // material icons...
@@ -73,9 +72,14 @@
   <div bind:this={PdacEl}  id="pdac" class={`aui  ${ (isPi) ? 'hide-cursor' : ''} bg-${ color ? color.color : 'null' }  txt-${ color ? color.text_color : 'null' }`}>
     <header class="header" on:click={ () => window.location.reload() } >
       {#if $info }
-        <label><Brain />&nbsp;{ Memory($info.freemem).auto }&nbsp;{$info.temperature} <TemperatureCelsius /> </label>
         <label>
-          { $info.hostname || "" }&nbsp;
+          <Brain />&nbsp;
+          { Memory($info.freemem).auto || "~" }&nbsp;
+          {$info.temperature || "~"} 
+          <TemperatureCelsius /> 
+        </label>
+        <label>
+          { $info.hostname || "~" }&nbsp;
 
           {#if $info.backend.miband.connected}
             <WatchVariant />

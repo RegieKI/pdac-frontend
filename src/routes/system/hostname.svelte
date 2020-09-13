@@ -1,11 +1,11 @@
 <script context="module">
-  import { AutoPreload } from './../../helpers/Utils.js'
+  import { AutoPreload } from 'svelte-touch-os/src/index.js'
   export async function preload( page, session ) {  return AutoPreload(page, session, this) }
 </script>
 
 <script>
   import axios from 'axios'
-  import Back from './../../helpers/Back.svelte'
+  import { Back } from 'svelte-touch-os/src/index.js'
   import { Any, Group, Button, Dropdown, Column } from 'svelte-aui/src/index.js';
 
   import { info, overlay } from './../stores.js'

@@ -2,9 +2,8 @@
 
   import { onMount } from 'svelte'
   import axios from 'axios'
-  import Back from './../../helpers/Back.svelte'
-  import WebCam from './../../helpers/WebCam.svelte'
-  import { Timestamp } from './../../helpers/Utils.js'
+  import { Back, WebCam } from 'svelte-touch-os/src/index.js'
+  import { Timestamp } from 'svelte-touch-os/src/index.js'
   import { Column, Button, Toggle, Text, Row } from 'svelte-aui/src/index.js';
 
   import { info, overlay } from './../stores.js'

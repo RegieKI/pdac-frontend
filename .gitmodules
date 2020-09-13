@@ -2,3 +2,7 @@
 	path = svelte-aui
 	url = https://github.com/autr/svelte-aui
 	branch = master
+[submodule "svelte-touch-os"]
+	path = svelte-touch-os
+	url = https://github.com/autr/svelte-touch-os
+	branch = master

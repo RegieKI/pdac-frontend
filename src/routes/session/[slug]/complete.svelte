@@ -1,5 +1,5 @@
 <script context="module">
-  import { AutoPreload } from './../../../helpers/Utils.js'
+  import { AutoPreload } from 'svelte-touch-os/src/index.js'
   export async function preload( page, session ) { return AutoPreload(page, session, this) }
 </script>
 <script>

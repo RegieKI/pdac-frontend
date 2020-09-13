@@ -32,7 +32,7 @@
 
     await info.grab();
 
-    if (!$info.backend.active) {
+    if (!$info.backend.active && $overlay) {
       if ($overlay.type == "wait" && $overlay.message == waitMsg) {
         console.log('[/:index.svelte] ℹ️⭕️ retrying for backend in 3 seconds')
         setTimeout( loopUntilBackend, 3000);

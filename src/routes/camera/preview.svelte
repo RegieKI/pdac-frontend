@@ -1,7 +1,6 @@
 <script>
 
-  import Back from './../../helpers/Back.svelte'
-  import WebCam from './../../helpers/WebCam.svelte'
+  import { Back, WebCam } from 'svelte-touch-os/src/index.js'
   import { Any } from 'svelte-aui/src/index.js'
   
 </script>

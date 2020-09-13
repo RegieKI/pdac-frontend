@@ -1,5 +1,5 @@
 <script context="module">
-  import { AutoPreload } from './../../../helpers/Utils.js'
+  import { AutoPreload }  from 'svelte-touch-os/src/index.js'
   export async function preload( page, session ) { return AutoPreload(page, session, this) }
 </script>
 <script>
@@ -24,9 +24,7 @@
 
   // helpers...
 
-  import WebCam from './../../../helpers/WebCam.svelte'
-  import Back from './../../../helpers/Back.svelte'
-  import AudioLevels from './../../../helpers/AudioLevels.svelte'
+  import { Back, WebCam, AudioLevels }  from 'svelte-touch-os/src/index.js'
   import { Any, Button, Column, Row } from 'svelte-aui/src/index.js'
 
   const style = "";//"position:absolute;width:calc( 50% - 20px );bottom:10px;";

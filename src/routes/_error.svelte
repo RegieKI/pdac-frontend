@@ -1,5 +1,5 @@
 <script>
-	import Back from './../helpers/Back.svelte'
+	import { Back } from 'svelte-touch-os/src/index.js'
 	export let status;
 	export let error;
 	export let message;
@@ -19,7 +19,7 @@
 	<title>{status}</title>
 </svelte:head>
 
-<Back useHistory={true} />
+<Back history={true} />
 <div>
 	<h2>{status}</h2>
 	{error.message}

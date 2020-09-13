@@ -4,7 +4,7 @@ const { join, normalize, resolve } = require('path');
 const parser = require('@polka/url');
 const mime = require('mime/lite');
 import send from '@polka/send-type'
-import { IsFilesPath, IsJsonPath } from './../helpers/Utils.js'
+import { IsFilesPath, IsJsonPath } from 'svelte-touch-os/src/index.js'
 
 
 const FILES = {};

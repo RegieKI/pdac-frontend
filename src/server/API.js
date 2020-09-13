@@ -8,7 +8,7 @@ import { json, urlencoded } from 'body-parser'
 import polka from 'polka';
 
 import Sirv from './Sirv.js';
-import { Loop, LoopRoutes, RegExecute, IsFilesPath, IsJsonPath, CleanFilesPath, CleanJsonPath } from './../helpers/Utils.js'
+import { Loop, LoopRoutes, RegExecute, IsFilesPath, IsJsonPath, CleanFilesPath, CleanJsonPath } from 'svelte-touch-os/src/index.js'
 
 
 

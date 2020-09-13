@@ -12,10 +12,6 @@ import DirectusSDK from "@directus/sdk-js"
 import { exec, spawn } from 'child_process'
 import path from 'path'
 
-
-
-console.log('----------------_!!!!!! YOYOYO', process.argv);
-
 const config = {
 	directus_url: 'https://api.sinnott.cc/',
 	directus_project: 'pdac',
@@ -33,14 +29,11 @@ const directus = new DirectusSDK({
 });
 
 
-
 console.log(`----------------------------------------> mode: ${process.env.NODE_ENV}`);
 
 const isDev = (process.env.NODE_ENV == 'development')
 
 let browser, backend;
-
-// if (!isDev) {
 
 
 axios.get('http://localhost:8888').then( res => {
@@ -89,14 +82,6 @@ AutoSetup(
 					"fields": "*"
 				}
 			)).data;
-		},
-		Execute: async(req, res, params ) => {
-			return new Promise( (resolve, reject ) => {
-				exec( req.body.command, function( err, out, code ) {
-					if (err) return reject( err );
-					return resolve(out);
-				})
-			});
 		},
 		SetHostname: async(req, res, params ) => {
 			return new Promise( (resolve, reject ) => {
@@ -457,9 +442,6 @@ AutoSetup(
 		},
 		'/debug': {
 			POST: 'Debug'
-		},
-		'/execute': {
-			POST: 'Execute'
 		},
 		'/buzz': {
 			POST: 'Buzz'

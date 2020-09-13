@@ -1,5 +1,5 @@
 <script context="module">
-  import { AutoPreload } from './../../../helpers/Utils.js'
+  import { AutoPreload } from 'svelte-touch-os/src/index.js'
   export async function preload( page, session ) { return AutoPreload(page, session, this) }
 </script>
 <script>
@@ -25,11 +25,7 @@
 
   // helpers...
 
-  import { Timestamp } from './../../../helpers/Utils.js'
-  import Timer from './../../../helpers/Timer.svelte'
-  import WebCam from './../../../helpers/WebCam.svelte'
-  import Back from './../../../helpers/Back.svelte'
-  import AudioLevels from './../../../helpers/AudioLevels.svelte'
+  import { Timestamp, Timer, WebCam, Back, AudioLevels } from 'svelte-touch-os/src/index.js'
   import { Any, Button, Column, Row } from 'svelte-aui/src/index.js'
 
 
