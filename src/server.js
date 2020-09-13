@@ -6,7 +6,7 @@ import nodeDiskInfo from 'node-disk-info'
 import axios from 'axios'
 import { AutoSetup } from './server/API.js'
 import os from 'os'
-import wifi from './../pi-wifi';
+import wifi from './server/PiWifi.js';
 import fs from 'fs'
 import DirectusSDK from "@directus/sdk-js"
 import { exec, spawn } from 'child_process'

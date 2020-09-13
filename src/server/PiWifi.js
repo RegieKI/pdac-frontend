@@ -1,6 +1,6 @@
 /* Intended to be run ON the Raspberry Pi */
 
-var tools = require('./../wireless-tools');
+var tools = require('wireless-tools');
 var async = require('async');
 
 const defaultOpenKey = 'NONE';

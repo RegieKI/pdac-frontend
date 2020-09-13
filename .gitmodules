@@ -6,3 +6,7 @@
 	path = svelte-touch-os
 	url = https://github.com/autr/svelte-touch-os
 	branch = master
+[submodule "wireless-tools"]
+	path = wireless-tools
+	url = https://github.com/autr/wireless-tools.git
+	branch = master
