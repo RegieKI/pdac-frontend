@@ -22,7 +22,7 @@
   // helpers...
 
   import { Timestamp, Back, WebCam, AudioLevels }  from 'svelte-touch-os/src/index.js'
-  import { Any, Button, Column, Row } from 'svelte-aui/src/index.js'
+  import { Any, Button, Column, Row, Block } from 'svelte-aui/src/index.js'
 
 
   export let data;
@@ -89,12 +89,18 @@
     <Button on:click={reconnectHR}>Reconnect</Button>
     <Button on:click={ e => { useHeartrate = false } } >Skip</Button>
   {:else} -->
-    <div>
+  <Block className="p06">
+    <Block className="pb06">
       {session.title}: <br />
       {session.exercises.length} exercise(s), 
       {totalTime()} seconds in total
-    </div>
-    <div style="padding: 0.5em 0em">{@html session.description}</div>
-    <Button><a href={$page.path + '/preview'}>Start Session</a></Button>
+    </Block>
+    <Block className="pb06">
+      {@html session.description
+    }</Block>
+    <Button>
+      <a href={$page.path + '/preview'}>Start Session</a>
+    </Button>
+  </Block>
 <!--   {/if} -->
 

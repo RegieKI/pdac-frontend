@@ -64,7 +64,7 @@
 </svelte:head>
 
 <style lang="sass" global>
-@import '../styles'
+@import '../styles/app'
 </style>
 
 <svelte:window  />

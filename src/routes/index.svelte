@@ -51,7 +51,7 @@
     /*display: block*/
 </style>
 
-<Any><a rel="prefetch" href="/session">Sessions</a></Any>
-<Any><a rel="prefetch" href="/sync">Sync</a></Any>
-<Any><a rel="prefetch" href="/network">WLAN</a></Any>
-<Any><a rel="prefetch" href="/system">System</a></Any>
+<Any><a class="grow flex align-center plr06" rel="prefetch" href="/session">Sessions</a></Any>
+<Any><a class="grow flex align-center plr06" rel="prefetch" href="/sync">Sync</a></Any>
+<Any><a class="grow flex align-center plr06" rel="prefetch" href="/network">WLAN</a></Any>
+<Any><a class="grow flex align-center plr06" rel="prefetch" href="/system">System</a></Any>

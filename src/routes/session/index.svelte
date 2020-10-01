@@ -14,5 +14,5 @@
 
 <Back />
 {#each data as d}
-<Any><a href={`/session/${d.url}`}>{d.title}</a></Any>
+<Any><a class="grow flex align-center plr06" href={`/session/${d.url}`}>{d.title}</a></Any>
 {/each}

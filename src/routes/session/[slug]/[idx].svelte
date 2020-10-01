@@ -26,7 +26,7 @@
   // helpers...
 
   import { Timestamp, Timer, WebCam, Back, AudioLevels } from 'svelte-touch-os/src/index.js'
-  import { Any, Button, Column, Row } from 'svelte-aui/src/index.js'
+  import { Any, Button, Column, Row, Block } from 'svelte-aui/src/index.js'
 
 
   export let data;
@@ -166,13 +166,13 @@
 
 </script>
 
-<Row a={{justify: "center"}}>
+<Block className="justify-center align-center">
   {#if recording} 
     <Timer className="pulse" id="RECORD: {exercise.description}" on:start={onRecordStart} on:second={onRecordSecond} on:end={onRecordEnd} time={exercise.time} />
   {:else}
     <Timer className="spin" id="INTRO: {exercise.description}" bind:restart={restartTimer} on:start={onIntroStart} on:second={onIntroSecond} on:end={onIntroEnd} time={time+1} paused={paused} />
   {/if}
-</Row>
+</Block>
 <Row a={{justify: "center"}}>
 
   {#if session.point_of_interest == 'sound'}
@@ -211,43 +211,6 @@
   </Row>
 {/if}
 
-
-
-<style lang="sass">
-  .bar
-    width: 100%
-    height: 5px
-    position: relative
-    margin-top: 10px
-    border-radius: 5px
-    &.status-0 .inner
-      background: lightgreen
-    &.status-1 .inner
-      background: tomato
-    .inner
-      position: absolute
-      top: 0
-      left: 0
-      height: 100%
-      background: white
-      max-width: 100%
-  .circle
-    $size: 30px
-    width: $size
-    height: $size
-    border-radius: $size
-    position: absolute
-    top: 40px
-    right: 40px
-    background: tomato
-    min-height: 0px!important
-    z-index: 0
-    opacity: 0
-    &.active
-      opacity: 1
-
-  /*.recording-session*/
-</style>
 
 <!-- 
 

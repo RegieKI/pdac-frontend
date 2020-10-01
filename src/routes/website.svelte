@@ -1,5 +1,5 @@
 <script>
-	import { AUI, Row, Column, Wrapper, Button, Any } from 'svelte-aui/src/index.js'
+	import { AUI, Row, Column, Block, Button, Any } from 'svelte-aui/src/index.js'
 	import { Defines as d } from 'svelte-aui/src/index.js'
 
 
@@ -10,7 +10,7 @@
 </svelte:head>
 
 <template>
-	<Wrapper className="website">
+	<Block className="website">
 		<Row> 
 			<div class="content">
 				<img src="" />
@@ -24,11 +24,11 @@
 			</div>
 
 		</Row>
-	</Wrapper>
+	</Block>
 </template>
 
 <style lang="sass" global>
-	@import 'svelte-aui/src/styles/Utils'
+	@import 'svelte-aui/src/styles/mixins'
 	.website
 		width: 1600px
 		margin: auto

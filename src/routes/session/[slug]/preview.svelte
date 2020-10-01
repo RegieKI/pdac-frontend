@@ -25,7 +25,7 @@
   // helpers...
 
   import { Back, WebCam, AudioLevels }  from 'svelte-touch-os/src/index.js'
-  import { Any, Button, Column, Row } from 'svelte-aui/src/index.js'
+  import { Any, Button, Column, Row, Block } from 'svelte-aui/src/index.js'
 
   const style = "";//"position:absolute;width:calc( 50% - 20px );bottom:10px;";
 
@@ -37,25 +37,28 @@
 </script>
 
 <!-- check levels and camera... -->
-<Row a={{justify: 'center'}}>
-  <Button a={{stretch: true}}>
+
+<Row className="p06">
+
+  <Button>
     <a href={'/session/'+session.url}>
       <ArrowLeft />
     </a>
   </Button>
-  <Column a={{justify: 'center', stretch: true}} style="font-size: 64px;align-items: center">
+
+  <Block className="no-grow">
     {#if isSound} 
       <AudioLevels style="height: 100%" />
       <Microphone />
     {:else}
       <WebCam width="360px" height="240px" focus={session.point_of_interest} /> 
     {/if}
-  </Column>
-  <Button a={{stretch: true}}>
+  </Block>
+
+  <Button>
     <a href={'/session/'+session.url+'/1'}>
       <Check />
     </a>
   </Button>
+
 </Row>
-<!-- <Row>
-</Row> -->

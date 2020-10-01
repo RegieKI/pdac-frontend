@@ -52,6 +52,7 @@
     "sapper": "^0.27.0",
     "sass": "^1.26.9",
     "svelte": "^3.0.0",
+    "svelte-extras": "^2.0.2",
     "svelte-aui": "file:svelte-aui",
     "svelte-preprocess": "^4.0.8",
     "svelte-preprocess-css-global": "^0.0.1",

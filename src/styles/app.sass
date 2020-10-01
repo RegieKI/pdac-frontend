@@ -1,4 +1,5 @@
 @import "./_colors"
+@import './../sasshand/utilities.sass'
 
 
 $width: 100%
@@ -6,7 +7,6 @@ $height: 100vh
 $topbar: 30px
 $fontsize: 18px 
 $smallfontsize: 14px
-
 
 
 @keyframes spin-fwd
@@ -41,6 +41,9 @@ $smallfontsize: 14px
 
 // PDAC main...
 
+html, *
+	font-size: $fontsize
+
 #pdac
 
 	margin: 0 auto
@@ -49,14 +52,30 @@ $smallfontsize: 14px
 	overflow: auto
 	position: relative
 	box-sizing: border-box
-	font-size: $fontsize
+	padding-top: $topbar
 
 
-	.overlay .spinner span, input[type=text], input[type=password], input[type=email], select, .aui-button button
+	input[type=text], input[type=password], input[type=email], .aui-index-inner
+		border: 1px solid white
+	.overlay .spinner span, input[type=text], input[type=password], input[type=email], .aui-index-inner, .aui-button button
 		border-color: white
 
 	// hostname: text colors...
 
+	// .pdac-main-column
+	// 	max-width: 100vw
+	// .pdac-main-column > *
+	// 	flex-grow: 1
+	// 	flex-basis: 50px
+	// 	display: flex
+	// 	flex-direction: column
+	// 	justify-content: center
+	// 	a
+	// 		display: flex
+	// 		flex-grow: 1
+	// 		flex-basis: 30px
+	// 		padding: 5px 0px
+	// 		justify-content: left
 	.pdac-main-column a
 			&:focus, &:active
 				background: rgba(255,255,255,0.2)
@@ -70,7 +89,7 @@ $smallfontsize: 14px
 						background: $color
 			*, *::placeholder, *::-webkit-input-placeholder
 				color: $color
-			.overlay .spinner span, input[type=text], input[type=password], input[type=email], select, .aui-button button
+			.overlay .spinner span, input[type=text], input[type=password], input[type=email], .aui-index-inner, .aui-button button
 				border-color: $color
 			.pdac-main-column a
 					&:focus, &:active
@@ -82,16 +101,14 @@ $smallfontsize: 14px
 			background-color: map-get($colors, "blue-grey-900")
 	::-webkit-scrollbar
 		display: none
-	*
-		user-select: none
 	#back
 		flex-direction: row
 		justify-content: left 
 		align-items: center
-		flex-basis: 50px
 		flex-grow: 0
+		flex-basis: 50px
 		min-height: 50px
-		max-height: 50px
+		display: flex
 		svg
 			display: inline 
 	.overlay
@@ -155,30 +172,10 @@ $smallfontsize: 14px
 		.aui-column > *
 			display: flex
 			flex-grow: 1
-	.pdac-main-column
-		padding: 10px
-		padding-top: $topbar + 10px
-		max-width: 100vw
-	.pdac-main-column > *
-		flex-grow: 1
-		flex-basis: 50px
-		display: flex
-		flex-direction: column
-		justify-content: center
-		a
-			display: flex
-			flex-grow: 1
-			flex-basis: 30px
-			padding: 5px 0px
-			justify-content: left
 	&.hide-cursor
 		cursor: none!important
 		*, a 
 			cursor: none!important
-	input, button, select
-		font-size: $fontsize
-	input[type=text], input[type=password], input[type=email], select
-		border: 1px solid white
 	.container
 		display: flex
 		height: 100%
@@ -189,6 +186,8 @@ $smallfontsize: 14px
 			a
 				justify-content: center
 				align-items: center
+				display: flex
+				flex-grow: 1
 	.grid
 		display: grid!important
 		justify-content: stretch
