@@ -329,22 +329,36 @@ AutoSetup(
 				  let out = {};
 
 				  try {
-					  stderr.split('\n').forEach( line => {
-					  	const i = line.indexOf('\': ');
-					  	line = line.substring(i + 3, line.length);
-					  	let number = line.match(/(\d+)/);
-					  	if (number) {
-					  		number = number[0];
-						  	console.log('A', line);
-						  	let key = line.replace(new RegExp("[0-9]"),'');
-						  	console.log('B', key);
-						  	key = key.replace(/ /g, '_')
-						  	console.log('C', key);
-						  	key = key.substring(number.length);
-						  	console.log('D', key);
-						  	if (number) out[key] = parseInt( number, 10 );
-						  }
-					  });
+
+				  	
+						/* [START] last-minute-fix 21/09/20 */
+
+						const ids = ['matching_files', 'differences_found', 'files_missing', 'errors_while_checking'];
+						stderr.split('\n').forEach( line => {
+
+							ids.forEach( id => {
+								let i = line.indexOf(id);
+								if (i == -1) i = line.indexOf( id.replace(/_/g, ' ') );
+								if ( i != -1 ) {
+
+									console.log(i);
+									const ii = line.lastIndexOf(':');
+									if (ii != -1) {
+										let num = line.substring(ii + 1, i);
+										out[id] = parseInt(num);
+									}
+								}
+							});
+
+						});
+
+						console.log('----------')
+						console.log(out)
+						console.log('----------')  
+
+						/* [END] last-minute-fix 21/09/20 */
+
+
 					  return resolve( out )
 					} catch(err) {
 						return reject(err);
