@@ -13,7 +13,7 @@
   import { info, overlay } from './../stores.js'
   export let data;
 
-  let dropdown = {options: MiBands, key: 'number'};
+  let dropdown = {options: MiBands, key: 'number', grow: true};
   function strip(str) {
     if (!str) return "";
     return str.replace(/(\r\n|\n|\r)/gm, "").trim()
@@ -63,12 +63,14 @@
 </script>
 
 <Back />
-<div>Current MiBand: { miband ? miband.number : "NONE" } ( { miband ? miband.mac_address : "~" } ) </div>
-<div>
-  Status: 
-  { $info.backend.miband.initialised ? "Initialised" : "Not Initialised" }
-  { $info.backend.miband.connected ? "Connected" : "Not Connected" }
-</div>
-<Dropdown bind:a={dropdown} on:change={onChanged} />
-<Button on:click={setMiBand}>Change MiBand</Button>
-<Button on:click={reconnectHR}>Reconnect MiBand</Button>
+<Column className="mlr06 pb1" a={{grow:true}}>
+  <div>Current MiBand: { miband ? miband.number : "NONE" } ( { miband ? miband.mac_address : "~" } ) </div>
+  <div>
+    Status: 
+    { $info.backend.miband.initialised ? "Initialised" : "Not Initialised" }
+    { $info.backend.miband.connected ? "Connected" : "Not Connected" }
+  </div>
+  <Dropdown bind:a={dropdown} on:change={onChanged} />
+  <Button a={{grow:true}} on:click={setMiBand}>Change MiBand</Button>
+  <Button a={{grow:true}} on:click={reconnectHR}>Reconnect MiBand</Button>
+</Column>

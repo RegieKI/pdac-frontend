@@ -35,7 +35,7 @@ $smallfontsize: 14px
 		background-color: $color
 		.overlay, .header
 			background-color: $color
-		.timer.pulse *
+		.timer.pulse *, .timer.pulse .txt
 			color: $color
 
 
@@ -54,6 +54,11 @@ html, *
 	box-sizing: border-box
 	padding-top: $topbar
 
+	.aui-label
+		display: none!important
+
+	select
+		padding: 0.5em 0em!important
 
 	input[type=text], input[type=password], input[type=email], .aui-index-inner
 		border: 1px solid white

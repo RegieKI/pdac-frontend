@@ -22,8 +22,10 @@
 
 </script>
 
-<div style="margin: 0.5em 0em">Complete: {session.title}</div>
-<Row>
-  <Button><a href="/session">Sessions</a></Button>
-  <Button><a href="/sync">Sync</a></Button>
-</Row>
+<Column a={{grow: true}} className="justify-center align-center" >
+  <div class="mtb1">Complete: {session.title}</div>
+  <Row a={{height: '60px'}}>
+    <Button a={{grow: true}} style="min-width: 160px" ><a href="/session">Sessions</a></Button>
+    <Button a={{grow: true}} style="min-width: 160px" ><a href="/sync">Sync</a></Button>
+  </Row>
+</Column>

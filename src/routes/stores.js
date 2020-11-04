@@ -8,11 +8,20 @@ function createInfoStore() {
 			miband: {} 
 		}, 
 		wlan0: {}, 
-		drives: [] 
+		drives: [],
+		showDrafts: false
 	} );
+
+	const showDrafts = ( b ) => {
+		update( s => {
+			s.showDrafts = b;
+			return s;
+		})
+	}
 
 	return {
 		subscribe,
+		showDrafts,
 		grab: async () => {
 
 			console.log('[stores] ℹ️ getting info... ');

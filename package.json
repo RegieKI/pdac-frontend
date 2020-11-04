@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "sapper dev --no-hot",
     "build": "sapper build --legacy",
+    "postbuild": "cp -R ",
     "rebuild": "sapper build --legacy && node __sapper__/build",
     "export": "sapper export --legacy",
     "start": "node __sapper__/build",

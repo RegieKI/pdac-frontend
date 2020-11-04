@@ -39,7 +39,7 @@
   $: session = data[0] || {};
   $: exercise = (session.exercises[zeroIdx]) ? session.exercises[zeroIdx].exercise_id : { example: { data: {} }};
   $: tags = exercise.tags || [];
-  $: identifier = (`${$info.hostname}_${session.point_of_interest}_${session.url}_${humanIdx}_${tags.map( t => { return t.tag_id.url;  })}`).replace(/,/g, '-');
+  $: identifier = (`${$info.hostname}_${session.point_of_interest}_${session.url}_${humanIdx}_${tags.map( t => { return (t.tage_id) ? t.tag_id.url : false;  })}`).replace(/,/g, '-');
 
 
   onMount( async() => {
@@ -48,8 +48,6 @@
 
   });
 
-
-  let time = 50;
 
   $: recordingConfig = {
     'session-id': `${identifier}_${Timestamp()}`,
@@ -122,12 +120,17 @@
       recording = true;
       overlay.set( null );
     }).catch( err => {
-      console.log('[session:slug:idx] could not start 📸 ❌', err.toString(), Object.keys(err), err.response);
-      stop();
-      // overlay.set({
-      //   type: 'error',
-      //   ...err.response.data
-      // })
+      console.error('[session:slug:idx] could not start 📸 ❌', err.toString(), Object.keys(err), err.response);
+      // stop();
+      axios.post('/camera/stop?as=json', {}).then( res => {
+        console.log('[session:slug:idx] emergency stop was successful...');
+      }).catch( err => {
+        console.error('[session:slug:idx] emergency stop was unsuccessful...', err.toString());
+      })
+      overlay.set({
+        type: 'error',
+        ...err.response.data
+      })
     })
   }
 
@@ -145,7 +148,7 @@
         type: 'wait',
         message: "Successfully Closed"
       })
-      axios.post('/buzz?as=json', { sequence }).finally( () => {
+      axios.post('/buzz?as=json', { sequence }).then( () => {
 
         setTimeout( () => {
           recording = false;
@@ -156,7 +159,7 @@
         },2000)
       });
     }).catch( err => {
-      console.log('[session:slug:idx] could not stop 📸 ❌', err.toString(), Object.keys(err), err.response);
+      console.error('[session:slug:idx] could not stop 📸 ❌', err.toString(), Object.keys(err), err.response);
       overlay.set({
         type: 'error',
         ...err.response.data
@@ -170,42 +173,46 @@
   {#if recording} 
     <Timer className="pulse" id="RECORD: {exercise.description}" on:start={onRecordStart} on:second={onRecordSecond} on:end={onRecordEnd} time={exercise.time} />
   {:else}
-    <Timer className="spin" id="INTRO: {exercise.description}" bind:restart={restartTimer} on:start={onIntroStart} on:second={onIntroSecond} on:end={onIntroEnd} time={time+1} paused={paused} />
+    <Timer className="spin" id="INTRO: {exercise.description}" bind:restart={restartTimer} on:start={onIntroStart} on:second={onIntroSecond} on:end={onIntroEnd} time={session.break_time} paused={paused} />
   {/if}
 </Block>
-<Row a={{justify: "center"}}>
+<Row a={{grow: true}} className="align-center mlr06">
 
-  {#if session.point_of_interest == 'sound'}
-
-    <audio style="margin: 0.6em 0em" src={exercise.example.data.full_url} autoplay controls />
-  {:else}
-    <div style="margin: 0.5em 0em">
-      {humanIdx}/{session.exercises.length}: {exercise.description} <br />
+  {#if session.point_of_interest == 'sound'} 
+    <audio style="max-width:120px" class="mtb06 grow" src={exercise.example.data.full_url} autoplay controls />
+  {/if}
+  <div class="grow">
+    <div>
+      {humanIdx}/{session.exercises.length}: {exercise.description}
+    </div>
+    <div>
       Tags:
       {#each exercise.tags as tag}
         <span>{tag.tag_id.title}&nbsp;</span>  
       {/each}
     </div>
-  {/if}
+  </div>
 </Row>
 
 
 {#if recording} 
-  <Row><Button on:click={ stop }>Panic!</Button></Row>
+  <Row a={{grow: true}} className="mlr06" >
+    <Button a={{grow: true, height: '60px'}} className="pb1" on:click={ stop }>Panic!</Button>
+  </Row>
 {:else}
   <a style="position: absolute; top: 50px; left: 10px;flex-direction: row;align-items: center;" href="/session/{session.url}"><ArrowLeft /> Back</a>
-  <Row> 
-    <Button on:click={ () =>  restartTimer( time+1 ) } >
+  <Row a={{grow: true}} className="mlr06 pb06"> 
+    <Button  a={{grow: true}} on:click={ () =>  restartTimer( session.break_time+1 ) } >
       <span><Refresh /></span>
     </Button>
-    <Button on:click={ () => paused = !paused }>
+    <Button  a={{grow: true}} on:click={ () => paused = !paused }>
       {#if paused}
         <span><Play /></span>
       {:else}
         <span><Pause /></span>
       {/if}
     </Button>
-    <Button on:click={ () =>  restartTimer( 11 ) } >
+    <Button  a={{grow: true}} on:click={ () =>  restartTimer( 11 ) } >
       10s
     </Button>
   </Row>

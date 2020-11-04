@@ -135,7 +135,7 @@
     {/if}
 
     <div class="container">
-      <Column a={{stretch: true}} className="pdac-main-column">
+      <Column a={{grow: true}} className="pdac-main-column">
         <slot />
       </Column>
     </div>

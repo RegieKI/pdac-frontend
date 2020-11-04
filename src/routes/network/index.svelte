@@ -13,13 +13,13 @@
 
 <Back />
 {#if $info}
-  <div>
+  <div class="m06">
     WLAN: { ($info.wlan0.ssid) ? $info.wlan0.ssid : 'NONE' }
     <br />
     USB: {data.ssid ? data.ssid : 'NONE'}
   </div>
   {#if data.ssid}
-    <Button><a href="/network/connect?ssid={data.ssid}&psk={data.psk}">Connect Automatically</a></Button>
+    <Button a={{grow: true}} className="mlr06"><a href="/network/connect?ssid={data.ssid}&psk={data.psk}">Connect Automatically</a></Button>
   {/if}
-  <Button><a href="/network/list">Connect Manually</a></Button>
+  <Button a={{grow: true}} className="mlr06 pb1"><a href="/network/list">Connect Manually</a></Button>
 {/if}

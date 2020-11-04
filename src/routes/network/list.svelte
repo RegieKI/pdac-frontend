@@ -25,8 +25,10 @@
 
 
 {#if data.result == 'FAIL-BUSY'}
-  <div>Resource is busy! Wait a moment and retry:</div>
-  <Button><a href="/network/list">Retry</a></Button>
+  <div class="m06">
+    <div class="mb1">WLAN card reported busy, please retry:</div>
+    <Button a={{height: '80px'}} on:click={ e => window.location = window.location} >Retry</Button>
+  </div>
 
 {:else}
 
@@ -34,8 +36,8 @@
   {#each data as n}
 
     {#if n.ssid}
-      <div>
-        <a href={`/network/connect?ssid=${n.ssid}`}>
+      <div >
+        <a href={`/network/connect?ssid=${n.ssid}`} class="p06 flex blco">
           {n.ssid} 
           ({ freq(n.frequency) })
         </a>

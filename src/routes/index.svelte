@@ -32,6 +32,7 @@
 
     await info.grab();
 
+    console.log('[/:index.svelte] retrying for backend...')
     if (!$info.backend.active && $overlay) {
       if ($overlay.type == "wait" && $overlay.message == waitMsg) {
         console.log('[/:index.svelte] ℹ️⭕️ retrying for backend in 3 seconds')
@@ -51,7 +52,7 @@
     /*display: block*/
 </style>
 
-<Any><a class="grow flex align-center plr06" rel="prefetch" href="/session">Sessions</a></Any>
-<Any><a class="grow flex align-center plr06" rel="prefetch" href="/sync">Sync</a></Any>
-<Any><a class="grow flex align-center plr06" rel="prefetch" href="/network">WLAN</a></Any>
-<Any><a class="grow flex align-center plr06" rel="prefetch" href="/system">System</a></Any>
+<a class="grow flex align-center plr06" rel="prefetch" href="/session">Sessions</a>
+<a class="grow flex align-center plr06" rel="prefetch" href="/sync">Sync</a>
+<a class="grow flex align-center plr06" rel="prefetch" href="/network">WLAN</a>
+<a class="grow flex align-center plr06" rel="prefetch" href="/system">System</a>

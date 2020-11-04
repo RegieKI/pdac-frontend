@@ -31,6 +31,8 @@
 </script>
 
 <Back />
-<div>Current hostname: { ($info) ? $info.hostname : 'LOADING'} </div>
-<Dropdown bind:a={dropdown} on:change={onChanged} />
-<Button on:click={saveHostname}>Change Hostname</Button>
+<Column className="mlr06 pb1" a={{grow: true}} >
+  <div>Current hostname: { ($info) ? $info.hostname : 'LOADING'} </div>
+  <Dropdown bind:a={dropdown} on:change={onChanged} />
+  <Button a={{grow: true}} on:click={saveHostname}>Change Hostname</Button>
+</Column>

@@ -84,18 +84,20 @@
 </script>
 
 <Back />
-<div style="margin: 0em 0em 0.5em 0em">
-Used Memory: {used}<br />
-Available Memory: {available}<br />
-Synced Files: {data.matching_files || 'None'}<br />
-Unsynced Files: {data.differences_found || 'None'} ({data.files_missing || 'None'}) <br />
-Local Files: { (!local) ? 'N/A' : local.length }<br /> 
-Notices: {data.errors_while_checking || 'None'}
+<div class="plr06">
+  <div class="pb1">
+    Used Memory: {used}<br />
+    Available Memory: {available}<br />
+    Synced Files: {data.matching_files || 'None'}<br />
+    Unsynced Files: {data.differences_found || 'None'} ({data.files_missing || 'None'}) <br />
+    Local Files: { (!local) ? 'N/A' : local.length }<br /> 
+    Notices: {data.errors_while_checking || 'None'}
+  </div>
+  {#if !data.differences_found && !data.errors_while_checking && allowDanger && !data.files_missing && local.length != 0 }
+    <Button on:click={clearUp} >Clear Space</Button> 
+  {:else if local.length != 0 }
+    <Button on:click={syncAll} >Sync All</Button> 
+  {:else}
+  	<div style="margin: 1em 0em">Nothing to Sync.</div>
+  {/if}
 </div>
-{#if !data.differences_found && !data.errors_while_checking && allowDanger && !data.files_missing && local.length != 0 }
-  <Button on:click={clearUp} >Clear Space</Button> 
-{:else if local.length != 0 }
-  <Button on:click={syncAll} >Sync All</Button> 
-{:else}
-	<div style="margin: 1em 0em">Nothing to Sync.</div>
-{/if}

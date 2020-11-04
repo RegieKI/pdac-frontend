@@ -24,9 +24,9 @@
 	<h2>{status}</h2>
 	{error.message}
 </div>
-<Row>
-	<Button><a href="/">Home</a></Button>
-	<Button on:click={ () => window.location = window.location } >Refresh</Button>
+<Row a={{grow: true}} className="m06">
+	<Button a={{grow: true}} style="width:100%;"><a href="/">Home</a></Button>
+	<Button a={{grow: true}} style="width:100%;" on:click={ () => window.location = window.location } >Refresh</Button>
 </Row>
 {#if dev && error.stack}
 	<pre>{error.stack}</pre>

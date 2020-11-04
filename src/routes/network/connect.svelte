@@ -12,7 +12,7 @@
   import { onMount } from 'svelte'
   import { info, overlay } from './../stores.js'
   import { Back, Keyboard } from 'svelte-touch-os/src/index.js'
-  import { Any, Boolean, Group, Text, Defines as d } from 'svelte-aui/src/index.js'
+  import { Any, Boolean, Group, Text, Column, Defines as d } from 'svelte-aui/src/index.js'
 
   export let data;
 
@@ -46,4 +46,6 @@
 <style lang="sass">
 </style>
 <Back />
-<Keyboard placeholder={placeholder} text={text} on:submit={submitPassword} />
+<Column className="mlr06" a={{grow: true}}>
+  <Keyboard placeholder={placeholder} text={text} on:submit={submitPassword} />
+</Column>

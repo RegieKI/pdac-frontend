@@ -56,14 +56,16 @@
 </script>
 
 <Back {page} />
-<div class="grid" style="height: 120px;margin-top: 90px;">
-  <Button a={{stretch: true}}  on:click={shutdown}>Shutdown</Button>
-  <Button a={{stretch: true}}  on:click={reboot}>Reboot</Button>
-  <Button a={{stretch: true}}  ><a rel="prefetch" href="/system/miband">MiBand</a></Button>
-  <Button a={{stretch: true}}  on:click={calibrate}>Calibrate Screen</Button>
+<div class="plr06">
+  <div class="grid mt3">
+    <Button a={{height: '80px'}} on:click={shutdown}>Shutdown</Button>
+    <Button a={{height: '80px'}} on:click={reboot}>Reboot</Button>
+    <Button a={{height: '80px'}} ><a rel="prefetch" href="/system/miband">MiBand</a></Button>
+    <Button a={{height: '80px'}} on:click={calibrate}>Calibrate Screen</Button>
+  </div>
+  <div class="mtb2">Admin Only!</div>
+  <Row className="mb1" a={{grow: true}}>
+    <Button a={{height: '80px', grow: true}} ><a rel="prefetch" href="/system/hostname">Hostname</a></Button>
+    <Button a={{height: '80px', grow: true}} ><a rel="prefetch" href="/camera">Test Camera</a></Button>
+  </Row>
 </div>
-<div style="margin: 1em 0em">Admin Only!</div>
-<Row>
-  <Button a={{stretch: true}}  ><a rel="prefetch" href="/system/hostname">Hostname</a></Button>
-  <Button a={{stretch: true}}  ><a rel="prefetch" href="/camera">Test Camera</a></Button>
-</Row>

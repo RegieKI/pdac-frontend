@@ -15,9 +15,9 @@ import path from 'path'
 const config = {
 	directus_url: 'https://api.sinnott.cc/',
 	directus_project: 'pdac',
-	pdac_root: path.resolve('../'),
-	pdac_usb: path.resolve('../usb'),
-	pdac_utils: path.resolve('../system')
+	pdac_root: path.resolve('/home/pi/pdac/'),
+	pdac_usb: path.resolve('/home/pi/pdac/usb'),
+	pdac_utils: path.resolve('/home/pi/pdac/system')
 }
 
 const { PORT, NODE_ENV } = process.env;
@@ -72,7 +72,7 @@ AutoSetup(
 		},
 		SessionsList: async ( req, res, params ) => {
 			return (await directus.getItems( 'session', {
-					"filter[status][eq]": "published",
+					// "filter[status][eq]": "published",
 					"fields": "*,exercises.exercise_id.*,exercises.exercise_id.tags.tag_id.*"
 				}
 			)).data;
@@ -127,22 +127,27 @@ AutoSetup(
 						wifi.status( 'wlan0', function(err, status) {
 							if (err) return reject(err);
 
-							temp.measure(function(err2, temperature) {
-									if (err2) return reject(err2);
-									return resolve( {
-										hostname: os.hostname(),
-										type: os.type(),
-										platform: os.platform(),
-										totalmem: os.totalmem(),
-										freemem: os.freemem(),
-										usedmem: os.totalmem() - os.freemem(),
-										uptime: os.uptime(),
-										wlan0: status || {},
-										drives,
-										backend,
-										temperature
-									} );
-							});
+							try {
+								temp.measure(function(err2, temperature) {
+										if (err2) return reject(err2);
+										return resolve( {
+											hostname: os.hostname(),
+											type: os.type(),
+											platform: os.platform(),
+											totalmem: os.totalmem(),
+											freemem: os.freemem(),
+											usedmem: os.totalmem() - os.freemem(),
+											uptime: os.uptime(),
+											wlan0: status || {},
+											drives,
+											backend,
+											temperature
+										} );
+								});
+							} catch (err3) {
+								console.log('[Info] ❌ error constructing response:', err3.message);
+								return( err3)	
+							}
 						});
 					});
 				}

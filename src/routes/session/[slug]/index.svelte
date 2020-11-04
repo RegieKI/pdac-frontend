@@ -98,7 +98,7 @@
     <Block className="pb06">
       {@html session.description
     }</Block>
-    <Button>
+    <Button a={{height: '80px'}}>
       <a href={$page.path + '/preview'}>Start Session</a>
     </Button>
   </Block>

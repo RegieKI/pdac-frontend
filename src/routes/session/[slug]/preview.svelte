@@ -40,22 +40,22 @@
 
 <Row className="p06">
 
-  <Button>
+  <Button a={{grow: true}}>
     <a href={'/session/'+session.url}>
       <ArrowLeft />
     </a>
   </Button>
 
-  <Block className="no-grow">
+  <Block  a={{grow: false, width: '360px'}} className="align-center" style="height:240px;">
     {#if isSound} 
       <AudioLevels style="height: 100%" />
-      <Microphone />
+      <Microphone size="2em" />
     {:else}
       <WebCam width="360px" height="240px" focus={session.point_of_interest} /> 
     {/if}
   </Block>
 
-  <Button>
+  <Button a={{grow: true}}>
     <a href={'/session/'+session.url+'/1'}>
       <Check />
     </a>
