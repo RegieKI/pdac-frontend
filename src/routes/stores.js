@@ -12,16 +12,17 @@ function createInfoStore() {
 		showDrafts: false
 	} );
 
-	const showDrafts = ( b ) => {
+	const toggleDrafts = () => {
 		update( s => {
-			s.showDrafts = b;
+			s.showDrafts = !s.showDrafts;
+			console.log('[stores] toggling drafts to:', s.showDrafts);
 			return s;
 		})
 	}
 
 	return {
 		subscribe,
-		showDrafts,
+		toggleDrafts,
 		grab: async () => {
 
 			console.log('[stores] ℹ️ getting info... ');

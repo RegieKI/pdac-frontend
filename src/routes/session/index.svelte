@@ -5,6 +5,8 @@
 
 <script>
 
+
+  import { info } from '../stores.js'
   import { Back } from 'svelte-touch-os/src/index.js'
   import { Any } from 'svelte-aui/src/index.js'
   export let data;
@@ -16,7 +18,7 @@
 
 <Back />
 {#each data as d}
-  {#if !dev && d.status == 'published' || dev }
+  {#if d.status == 'published' || $info.showDrafts }
     <a class="grow flex align-center plr06 ptb08" href={`/session/${d.url}`}>{d.title}</a>
   {/if}
 {/each}

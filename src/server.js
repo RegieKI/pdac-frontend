@@ -371,6 +371,14 @@ AutoSetup(
 				});
 			}) 
 		},
+		UpdateSystem: async( req, res, params ) => {
+			return new Promise( (resolve, reject) => {
+				exec(`sh ${config.pdac_utils}/launchLXTerminal.sh ${config.pdac_utils}/updateSystem.sh`, function(err,stdout, stderr) {
+					console.log('[server.js] 🌐  update system...', err, stderr, stdout);
+					resolve();
+				});
+			})
+		},
 		RcloneSync: async( req, res, params ) => {
 			return new Promise( (resolve, reject) => {
 
@@ -445,6 +453,9 @@ AutoSetup(
 		},
 		'/system/shutdown': {
 			POST: 'SystemShutdown'
+		},
+		'/system/update': {
+			POST: 'UpdateSystem'
 		},
 		'/system/calibrate': {
 			POST: 'CalibrateScreen'

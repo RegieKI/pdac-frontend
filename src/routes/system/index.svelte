@@ -32,7 +32,7 @@
     });
 
   }
-  function reboot() {
+  function reboot() { 
     axios.post('/system/reboot?as=json').then( res => {
       console.log('[System] 📠  reboot');
 
@@ -53,19 +53,44 @@
 
   }
 
+  function toggleDrafts() {
+    info.toggleDrafts();
+  }
+
+  function updateSystem() {
+
+    console.log('[System] 📠  updating system...');
+    axios.post('/system/update?as=json').then( res => {
+      console.log('[System] 📠  updating');
+
+    }).catch(err => {
+      console.log('[System] 📠❌  updating', err);
+
+    });
+  }
+
 </script>
 
 <Back {page} />
-<div class="plr06">
-  <div class="grid mt3">
-    <Button a={{height: '80px'}} on:click={shutdown}>Shutdown</Button>
-    <Button a={{height: '80px'}} on:click={reboot}>Reboot</Button>
-    <Button a={{height: '80px'}} ><a rel="prefetch" href="/system/miband">MiBand</a></Button>
-    <Button a={{height: '80px'}} on:click={calibrate}>Calibrate Screen</Button>
-  </div>
+<Column className="mlr06">
+  <Row className="mb04 mt3" a={{grow: true}}>
+    <Button a={{height: '80px', grow: true}} on:click={shutdown}>Shutdown</Button>
+    <Button a={{height: '80px', grow: true}} on:click={reboot}>Reboot</Button>
+  </Row>
+  <Row className="mb04" a={{grow: true}}>
+    <Button a={{height: '80px', grow: true}} on:click={calibrate}>Calibrate Screen</Button>
+    <Button a={{height: '80px', grow: true}} on:click={updateSystem}>Update System</Button>
+  </Row>
   <div class="mtb2">Admin Only!</div>
-  <Row className="mb1" a={{grow: true}}>
+  <Row className="mb04" a={{grow: true}}>
     <Button a={{height: '80px', grow: true}} ><a rel="prefetch" href="/system/hostname">Hostname</a></Button>
     <Button a={{height: '80px', grow: true}} ><a rel="prefetch" href="/camera">Test Camera</a></Button>
   </Row>
-</div>
+  <Row className="mb04 pb1" a={{grow: true}}>
+    <Button a={{height: '80px', grow: true}} ><a rel="prefetch" href="/system/miband">MiBand</a></Button>
+    <Button a={{height: '80px', grow: true}} on:click={toggleDrafts} >
+      {($info.showDrafts) ? 'Hide' : 'Show'}
+      Drafts
+    </Button>
+  </Row>
+</Column>
