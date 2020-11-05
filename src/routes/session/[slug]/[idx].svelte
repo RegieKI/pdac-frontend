@@ -39,7 +39,24 @@
   $: session = data[0] || {};
   $: exercise = (session.exercises[zeroIdx]) ? session.exercises[zeroIdx].exercise_id : { example: { data: {} }};
   $: tags = exercise.tags || [];
-  $: identifier = (`${$info.hostname}_${session.point_of_interest}_${session.url}_${humanIdx}_${tags.map( t => { return (t.tage_id) ? t.tag_id.url : false;  })}`).replace(/,/g, '-');
+
+
+  $: _identifier = () => {
+
+    let str = $info.hostname + '_';
+    str += session.point_of_interest + '_';
+    str += session.url + '_';
+    str += humanIdx + '_';
+    tags.forEach( (t, i) => {
+      if (t.tag_id) {
+        str += t.tag_id.url;
+        if (i < tags.length - 1) str += '-';
+      }
+    });
+    console.log('[SESSION] 🗯🦆  returning ID:', str);
+    return str;
+  }
+  $: identifier = _identifier();
 
 
   onMount( async() => {

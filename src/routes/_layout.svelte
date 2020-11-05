@@ -97,9 +97,9 @@
 
     {#if $overlay}
       <div class="overlay" >
-        <Column a={{stretch: true}} >
+        <Column a={{grow: true}} >
           {#if $overlay.type === 'wait'}
-          <div>
+          <div class="justify-center">
             <div class="spinner">
               <span />
               <span />
@@ -121,14 +121,14 @@
 
           {#if $overlay.actions}
             {#each $overlay.actions as a }
-              <Button on:click={ e => overlay.set(null) }><a href={a[1]}>{a[0]}</a></Button>
+              <Button a={{grow: true}} style="width:100%" on:click={ e => overlay.set(null) }><a href={a[1]}>{a[0]}</a></Button>
             {/each}
           {/if}
           {#if $overlay.type === 'error' || $overlay.refresh}
-            <Button on:click={ e => { window.location = window.location } }>{ $overlay.refresh || "Refresh" }</Button>
+            <Button a={{grow: true}} style="width:100%" on:click={ e => { window.location = window.location } }>{ $overlay.refresh || "Refresh" }</Button>
           {/if}
           {#if $overlay.type === 'error' || $overlay.close} 
-            <Button on:click={ e => overlay.set(null) }>{ $overlay.close || "Close" }</Button>
+            <Button a={{grow: true}} style="width:100%" on:click={ e => overlay.set(null) }>{ $overlay.close || "Close" }</Button>
           {/if} 
         </Column>
       </div>

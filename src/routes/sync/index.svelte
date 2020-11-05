@@ -2,7 +2,7 @@
 
   import axios from 'axios'
   import { onMount } from 'svelte'
-  import { Button, Row } from 'svelte-aui/src/index.js'
+  import { Button, Row, Column } from 'svelte-aui/src/index.js'
   import { Back } from 'svelte-touch-os/src/index.js'
   import { Memory } from 'svelte-touch-os/src/index.js'
   import { info, overlay } from './../stores.js'
@@ -84,7 +84,7 @@
 </script>
 
 <Back />
-<div class="plr06">
+<Column a={{grow: true}} className="p06">
   <div class="pb1">
     Used Memory: {used}<br />
     Available Memory: {available}<br />
@@ -94,10 +94,10 @@
     Notices: {data.errors_while_checking || 'None'}
   </div>
   {#if !data.differences_found && !data.errors_while_checking && allowDanger && !data.files_missing && local.length != 0 }
-    <Button on:click={clearUp} >Clear Space</Button> 
+    <Button a={{grow: true}} on:click={clearUp} >Clear Space</Button> 
   {:else if local.length != 0 }
-    <Button on:click={syncAll} >Sync All</Button> 
+    <Button a={{grow: true}} on:click={syncAll} >Sync All</Button> 
   {:else}
   	<div style="margin: 1em 0em">Nothing to Sync.</div>
   {/if}
-</div>
+</Column>

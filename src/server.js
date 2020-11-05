@@ -12,12 +12,15 @@ import DirectusSDK from "@directus/sdk-js"
 import { exec, spawn } from 'child_process'
 import path from 'path'
 
+// const rootPath = '/home/pi'
+const rootPath = '/Users/gilbertsinnott/Code/RKI'
+
 const config = {
 	directus_url: 'https://api.sinnott.cc/',
 	directus_project: 'pdac',
-	pdac_root: path.resolve('/home/pi/pdac/'),
-	pdac_usb: path.resolve('/home/pi/pdac/usb'),
-	pdac_utils: path.resolve('/home/pi/pdac/system')
+	pdac_root: path.resolve(rootPath+'/pdac/'),
+	pdac_usb: path.resolve(rootPath+'/pdac/usb'),
+	pdac_utils: path.resolve(rootPath+'/pdac/system')
 }
 
 const { PORT, NODE_ENV } = process.env;
