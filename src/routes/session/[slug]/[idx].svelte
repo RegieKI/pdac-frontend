@@ -195,8 +195,10 @@
 </Block>
 <Row a={{grow: true}} className="align-center mlr06">
 
-  {#if session.point_of_interest == 'sound'} 
-    <audio style="max-width:120px" class="mtb06 grow" src={exercise.example.data.full_url} autoplay controls />
+  {#if session.point_of_interest == 'sound' && exercise.example } 
+    {#if exercise.example.data}
+      <audio style="max-width:120px" class="mtb06 grow" src={exercise.example.data.full_url} autoplay controls />
+    {/if}
   {/if}
   <div class="grow">
     <div>

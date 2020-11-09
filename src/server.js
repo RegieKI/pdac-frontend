@@ -12,8 +12,8 @@ import DirectusSDK from "@directus/sdk-js"
 import { exec, spawn } from 'child_process'
 import path from 'path'
 
-// const rootPath = '/home/pi'
-const rootPath = '/Users/gilbertsinnott/Code/RKI'
+const rootPath = '/home/pi'
+// const rootPath = '/Users/gilbertsinnott/Code/RKI'
 
 const config = {
 	directus_url: 'https://api.sinnott.cc/',
@@ -67,9 +67,11 @@ axios.get('http://localhost:8888').then( res => {
 AutoSetup(
 	{ 
 		SessionByID: async ( req, res, params ) => {
+			const filters = "*,exercises.exercise_id.*,exercises.exercise_id.tags.tag_id.*,exercises.exercise_id.example.*";
+			console.log('[server.js] 🐇  directus:', '/session?filter[url][eq]=' + params.session + '&fields=' + filters );
 			return (await directus.getItems( 'session', {
 					"filter[url][eq]": params.session,
-					"fields": "*,exercises.exercise_id.*,exercises.exercise_id.tags.tag_id.*,exercises.exercise_id.example.*"
+					"fields": filters
 				}
 			)).data;
 		},
