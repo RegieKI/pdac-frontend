@@ -11,8 +11,10 @@ import fs from 'fs'
 import DirectusSDK from "@directus/sdk-js"
 import { exec, spawn } from 'child_process'
 import path from 'path'
+import untildify from 'untildify'
 
-const rootPath = '/home/pi'
+
+const rootPath = untildify('~/')
 // const rootPath = '/Users/gilbertsinnott/Code/RKI'
 
 const config = {
