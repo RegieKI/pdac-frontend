@@ -56,4 +56,3 @@
 <a class="grow flex align-center plr06" rel="prefetch" href="/sync">Sync</a>
 <a class="grow flex align-center plr06" rel="prefetch" href="/network">WLAN</a>
 <a class="grow flex align-center plr06" rel="prefetch" href="/system">System</a>
-<a class="grow flex align-center plr06" rel="prefetch" href="/overview">Overview</a>

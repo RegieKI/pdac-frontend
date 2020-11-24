@@ -35,7 +35,7 @@
       const blob = ( exists ) ? config.replace( inject, '' ) : config + inject
       axios.post( `/system/dhcp?as=json`, { blob }).then( (res)=> {
         console.log('[dhcp.svelte] restarted:', res)
-        overlay.set( {type: 'success', 'DHCP Restarted'} )
+        overlay.set( {type: 'success', message: 'DHCP Restarted'} )
       }).catch (err => {
         overlay.set( {type: 'error', ...err.response.data} )
       });
@@ -47,8 +47,8 @@
 <Back />
 {#if txt}
   <div class="plr06">Found USB dhcp.txt:</div>
-  <div class="terminal p1 mtb06" style="white-space: pre">{txt}</div>
-  <div class="grow flex p06">
+  <div class="terminal plr1 ptb04 " style="white-space: pre">{txt}</div>
+  <div class="grow flex plr06 pb06">
     <Button a={{grow: true}} on:click={onClick} >{ (exists) ? 'Disable DHCP Edit' : 'Enable DHCP Edit' } </Button>
   </div>
 {:else}

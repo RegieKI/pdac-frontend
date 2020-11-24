@@ -82,7 +82,7 @@
     <Button a={{height: '60px', grow: true}} on:click={updateSystem}>Update System</Button>
   </Row>
   <Row className="mb04" a={{grow: true}}>
-    <Button a={{height: '60px', grow: true}}><a rel="prefetch" href="/system/overview">Overview</a></Button>
+    <Button a={{height: '60px', grow: true}}><a rel="prefetch" href="/system/overview">Console Overview</a></Button>
     <Button a={{height: '60px', grow: true}}><a rel="prefetch" href="/system/dhcp">DHCP Edit</a></Button>
   </Row>
   <div class="mtb2">Admin Only!</div>

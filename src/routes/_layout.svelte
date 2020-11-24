@@ -12,7 +12,7 @@
 
   import Colors from './db.colors.js'
   import MiBands from './db.mibands.js'
-  import { info, overlay } from './stores.js'
+  import { info, overlay, konsole, backend } from './stores.js'
 
   // helpers modules...
 
@@ -28,6 +28,8 @@
   import Sleep from "svelte-material-icons/Sleep.svelte";
   import WatchVariant from "svelte-material-icons/WatchVariant.svelte";
 
+  let ws;
+  let maxLines = 120
   let PdacEl;
 
   import { stores } from '@sapper/app';
@@ -36,17 +38,54 @@
 
   onMount( async() => {
 
-    // if (typeof window !== "undefined" && typeof document !== "undefined") {
       console.log('[_layout.svelte] 📦 mounted');
-      // await info.grab();
       page.subscribe(({ path, params, query }) => {
 
         console.log('[_layout.svelte] 📄 page changed : subscribe', path);
-        info.grab();
+        info.grab().then( r => {
+
+          const url = `ws://${$info.hostname}.local:8765`
+          console.log('[overview.svelte] 👁 ⚡️  opening websocket...', url)
+          ws = new WebSocket(url);
+          ws.addEventListener('open', onOpen)
+          ws.addEventListener('message', onMessage)
+          ws.addEventListener('error', onError)
+        })
       })
-    // }
+
   });
 
+  function appendToKonsole( str ) {
+
+    try {
+      const j = JSON.parse( str )
+      konsole.update( k => {
+        k.unshift( { timestamp: j.timestamp, type: j.type, message: j.message } )
+        while (k.length > maxLines) k.slice(1)
+        return k
+      })
+      console.log('[overview.svelte] 👁 ✨ ✅  parsed socket message:', $konsole.length, $konsole);
+      backend.update( b => { 
+        b = j.config
+        return b
+      })
+    } catch( err ) {
+      console.log('[overview.svelte] 👁 ✨ ❌  error parsing message:', err.message);
+
+    }
+  }
+
+  function onOpen(e) {
+    console.log('[overview.svelte] 👁 ✅  opened websocket...', e.currentTarget.url);
+  }
+  function onError(err) {
+    console.log('[overview.svelte] 👁 ❌  opened websocket...', err);
+  }
+
+  function onMessage(e) {
+    console.log('[overview.svelte] 👁 ✨  received websocket message...', e.data);
+    appendToKonsole( e.data )
+  }
 
   $: color = ($info) ?  Colors.find( c => Strip(c.hostname) === Strip($info.hostname) ) : undefined;
   $: miband = ($info) ?  MiBands.find( c => Strip(c.mac_address) === Strip($info.backend.mac_address) ) : undefined;

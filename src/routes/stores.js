@@ -42,3 +42,4 @@ export const info = createInfoStore();
 export const overlay = writable( null );
 export const route = writable( {} );
 export const konsole = writable( [] )
+export const backend = writable( {} )
