@@ -41,6 +41,7 @@ $: message = status.message || "No message"
 			<span class="fade">[{m.timestamp}]</span>
 			<span
 				class:success={m.type == API_SUCCESS}
+				class:bright={m.type == API_TRY}
 				class:error={m.type == API_ERROR}>
 				{m.message}
 			</span>

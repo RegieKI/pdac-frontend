@@ -131,25 +131,30 @@ AutoSetup(
 				function getInfo( resolve, reject, backend ) {
 					nodeDiskInfo.getDiskInfo().then( drives => {
 						wifi.status( 'wlan0', function(err, status) {
-							if (err) return reject(err);
+							let ip = "unknown"
 
 							try {
-								temp.measure(function(err2, temperature) {
-										if (err2) return reject(err2);
-										return resolve( {
-											hostname: os.hostname(),
-											type: os.type(),
-											platform: os.platform(),
-											totalmem: os.totalmem(),
-											freemem: os.freemem(),
-											usedmem: os.totalmem() - os.freemem(),
-											uptime: os.uptime(),
-											wlan0: status || {},
-											drives,
-											backend,
-											temperature
-										} );
-								});
+								ip = exec(`sh ${config.pdac_utils}/utilityShowIP.sh`, function(err, stdout, stderr) {
+									ip = stdout.replace('\n', '') || "unknown";
+									console.log('>>>>> IP', ip)
+									temp.measure(function(err2, temperature) {
+											if (err2) return reject(err2);
+											return resolve( {
+												hostname: os.hostname(),
+												type: os.type(),
+												platform: os.platform(),
+												totalmem: os.totalmem(),
+												freemem: os.freemem(),
+												usedmem: os.totalmem() - os.freemem(),
+												uptime: os.uptime(),
+												wlan0: status || {},
+												drives,
+												backend,
+												temperature,
+												ip
+											} );
+									});
+								})
 							} catch (err3) {
 								console.log('[Info] ❌ error constructing response:', err3.message);
 								return( err3)	

@@ -3,7 +3,7 @@
 
   // js modules...
 
-  import { onMount, setContext } from 'svelte'
+  import { onMount, setContext, onDestroy } from 'svelte'
   import { goto } from '@sapper/app'
   import axios from 'axios'
   import cssVars from 'svelte-css-vars'
@@ -44,15 +44,25 @@
         console.log('[_layout.svelte] 📄 page changed : subscribe', path);
         info.grab().then( r => {
 
-          const url = `ws://${$info.hostname}.local:8765`
-          console.log('[overview.svelte] 👁 ⚡️  opening websocket...', url)
-          ws = new WebSocket(url);
-          ws.addEventListener('open', onOpen)
-          ws.addEventListener('message', onMessage)
-          ws.addEventListener('error', onError)
+          if (process.browser && !ws) {
+            const url = `ws://${$info.hostname}.local:8765`
+            console.log('[overview.svelte] 👁 ⚡️  opening websocket...', url)
+            ws = new WebSocket(url);
+            ws.addEventListener('open', onOpen)
+            ws.addEventListener('message', onMessage)
+            ws.addEventListener('error', onError)
+          }
         })
       })
 
+  });
+
+  onDestroy( async() => {
+
+    if (process.browser && ws) {
+      console.log('[overview.svelte] 👁 🛑  closing websocket...')
+      ws.close()
+    }
   });
 
   function appendToKonsole( str ) {
@@ -64,9 +74,15 @@
         while (k.length > maxLines) k.slice(1)
         return k
       })
-      console.log('[overview.svelte] 👁 ✨ ✅  parsed socket message:', $konsole.length, $konsole);
+      console.log('[overview.svelte] 👁 ✨ ✅  parsed socket message:', $konsole.length, $konsole, $page.path);
       backend.update( b => { 
         b = j.config
+        // let s = b.status || {}
+        // if (s.force && $page.path != '/system/overview') {
+        //   console.log('[overview.svelte] 👁 ✨ ⚡️  forcing redirect to:', $page.path)
+        //   b.status.force = false
+        //   goto('/system/overview')
+        // }
         return b
       })
     } catch( err ) {
@@ -87,8 +103,13 @@
     appendToKonsole( e.data )
   }
 
-  $: color = ($info) ?  Colors.find( c => Strip(c.hostname) === Strip($info.hostname) ) : undefined;
-  $: miband = ($info) ?  MiBands.find( c => Strip(c.mac_address) === Strip($info.backend.mac_address) ) : undefined;
+  $: color = Colors.find( c => Strip(c.hostname) === Strip($info.hostname) ) || Colors[ parseInt( Math.random() * (Colors.length - 1) ) ];
+  $: information = $info || {}
+  $: infoBackend = information.backend || {}
+  $: macAddress = infoBackend.mac_address
+  $: wlan = information.wlan0 || {}
+  $: ip = information.ip
+  $: miband = MiBands.find( c => Strip(c.mac_address) === Strip(infoBackend.mac_address) ) || {};
 
 
 
@@ -118,18 +139,22 @@
           <TemperatureCelsius /> 
         </label>
         <label>
-          { $info.hostname || "~" }&nbsp;
+          { information.hostname || "~" }&nbsp;
 
-          {#if $info.backend.miband.connected}
+          {#if miband.number }
             <WatchVariant />
           {:else}
             <Sleep />
           {/if}
-          &nbsp;{ miband ? miband.number : "~" }</label>
+          &nbsp;{ miband.number || "~" }
+        </label>
         <label>
-          <!-- {#if $info.wlan0.ssid} <WatchVariant /> {:else} <WatchVariantOff /> {/if} -->
-          {#if $info.wlan0.ssid} <Wifi /> {:else} <WifiStrengthOffOutline /> {/if}  
-          &nbsp;{$info.wlan0.ssid || ''}
+          {#if wlan.ssid} 
+            <Wifi /> 
+          {:else} 
+            <WifiStrengthOffOutline /> 
+          {/if}
+          &nbsp;{ wlan.ssid || ip }
         </label>
       {/if}
     </header>
