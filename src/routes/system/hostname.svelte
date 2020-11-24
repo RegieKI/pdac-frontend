@@ -5,7 +5,7 @@
 
 <script>
   import axios from 'axios'
-  import { Back } from 'svelte-touch-os/src/index.js'
+  import { Back, Keyboard } from 'svelte-touch-os/src/index.js'
   import { Any, Group, Button, Dropdown, Column } from 'svelte-aui/src/index.js';
 
   import { info, overlay } from './../stores.js'
@@ -14,25 +14,21 @@
   let dropdown = {options: data, key: 'hostname'};
   let hostname;
 
-  $: hostname = (dropdown.value !== undefined) ? dropdown.options[dropdown.value] : undefined;
+  $: hostname = data.hostname;
 
   function onChanged(e) {
     hostname = dropdown.options[dropdown.value].hostname;
   }
   function saveHostname( e ) {
-    if (hostname != undefined) {
-      axios.post( `/system/hostname?as=json`, { hostname }).then( (res)=> {
-      }).catch (err => {
-        overlay.set( {type: 'error', ...err.response.data} )
-      });
-    }
+    overlay.set( { type: 'wait', message: 'Setting hostname to ' + e.detail } )
+    axios.post( `/system/hostname?as=json`, { hostname: e.detail }).then( (res)=> {
+    }).catch (err => {
+      overlay.set( {type: 'error', ...err.response.data} )
+    });
   }
 
 </script>
-
 <Back />
-<Column className="mlr06 pb1" a={{grow: true}} >
-  <div>Current hostname: { ($info) ? $info.hostname : 'LOADING'} </div>
-  <Dropdown bind:a={dropdown} on:change={onChanged} />
-  <Button a={{grow: true}} on:click={saveHostname}>Change Hostname</Button>
+<Column className="mlr06 keyboard-wrapper" a={{grow: true}}>
+  <Keyboard placeholder="Enter a hostname" text={hostname} on:submit={saveHostname} />
 </Column>

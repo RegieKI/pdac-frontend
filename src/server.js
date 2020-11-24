@@ -89,16 +89,6 @@ AutoSetup(
 				}
 			)).data;
 		},
-		SetHostname: async(req, res, params ) => {
-			return new Promise( (resolve, reject ) => {
-
-				// TODO
-				// const cmd = `sh ${config.pdac_utils}/utilitySetHostname.sh ${req.body.hostname}`;
-				console.log('[SetHostname] 🔖  setting with: ', cmd);
-				const r = exec(cmd);
-				resolve({});
-			});
-		},
 		SystemReboot: async(req, res, params ) => {
 			return new Promise( (resolve, reject ) => {
 				exec(`sh ${config.pdac_utils}/utilityRebootNow.sh`, function( err, out, code ) {
@@ -421,6 +411,36 @@ AutoSetup(
 				});
 			}) 
 		},
+		GetHostname: async( req, res ) => {
+			return new Promise( (resolve, reject) => {
+				fs.readFile( config.pdac_usb+'/hostname.txt', 'utf8', function( errB, hostname ) {
+
+					if (errB) return reject( { message: 'could not read usb/hostname.txt' } );
+					return resolve( { hostname } )
+				})
+			});
+		},
+		SetHostname: async(req, res, params ) => {
+			return new Promise( (resolve, reject ) => {
+
+				fs.writeFile( '/etc/hostname', req.body.hostname, (err) => {
+					if (err) {
+						console.log('could not write hostname', err.message)
+						return reject( { message: 'could not write /etc/hostname: ' + err.message } );
+					}
+					const run = `sh ${config.pdac_utils}/utilityRebootNow.sh`
+					console.log('[SetHostname] restarting with:', run);
+					exec(run, function(err, stdout, stderr) {
+						if (err) {
+							console.log('[SetHostname] 😘❌  restart hostname error:', err, stdout, stderr);
+							return reject( { message: 'could not restart' } );
+						}
+						console.log('[SetHostname] 😘✅  restart hostname success:', stderr, stdout);
+						return resolve( stdout );
+					});
+				});
+			});
+		},
 		GetDhcpcd: async( req, res ) => {
 			return new Promise( (resolve, reject) => {
 				fs.readFile( '/etc/dhcpcd.conf', 'utf8', function( errA, dhcpConf ) {
@@ -440,7 +460,7 @@ AutoSetup(
 			return new Promise( (resolve, reject) => {
 				console.log('[SetDhcpcd] setting...', req.body.blob);
 				fs.writeFile( '/etc/dhcpcd.conf', req.body.blob, (err) => {
-					if (err) return reject( { message: 'could not read /etc/dhcpcd.conf' } );
+					if (err) return reject( { message: 'could not write /etc/dhcpcd.conf' } );
 					const run = `sh ${config.pdac_utils}/utilityRebootNow.sh`
 					console.log('[SetDhcpcd] restarting with:', run);
 					exec(run, function(err, stdout, stderr) {
@@ -509,7 +529,7 @@ AutoSetup(
 			POST: 'CalibrateScreen'
 		},
 		'/system/hostname': {
-			GET: 'ParticipantsList',
+			GET: 'GetHostname',
 			POST: 'SetHostname'
 		},
 		'/system/miband/reconnect': {

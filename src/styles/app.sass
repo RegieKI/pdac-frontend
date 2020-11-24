@@ -44,9 +44,10 @@ $smallfontsize: 14px
 
 html, *
 	font-size: $fontsize
+	+fonts( sans-serif, $fontsize)
 
 #pdac
-
+	+helpers()
 	margin: 0 auto
 	width: $width
 	height: $height
@@ -54,6 +55,21 @@ html, *
 	position: relative
 	box-sizing: border-box
 	padding-top: $topbar
+	input[type=text]
+		background: transparent
+	.keyboard-wrapper
+		.aui-text
+			margin-bottom: 0px
+	.keyboard
+		.row
+			button
+				border-right-width: 0px
+				border-bottom-width: 0px
+				&:last-child
+					border-right-width: 1px
+			&:last-child
+				button
+					border-bottom-width: 1px
 
 	.aui-label
 		display: none!important
@@ -95,7 +111,7 @@ html, *
 						background: $color
 			*, *::placeholder, *::-webkit-input-placeholder
 				color: $color
-			.overlay .spinner span, input[type=text], input[type=password], input[type=email], .aui-index-inner, .aui-button button
+			.overlay .spinner span, input[type=text], input[type=password], input[type=email], .aui-index-inner, .aui-button button, .keyboard button
 				border-color: $color
 			.pdac-main-column a
 					&:focus, &:active
@@ -225,6 +241,5 @@ html, *
 
 
 #pdac .konsole, #pdac .terminal
-	+terminal-theme()
-	font-size: 13px
+	+terminal-theme( monospace, 13px )
 	overflow: scroll

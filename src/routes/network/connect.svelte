@@ -46,6 +46,6 @@
 <style lang="sass">
 </style>
 <Back />
-<Column className="mlr06" a={{grow: true}}>
+<Column className="mlr06 keyboard-wrapper" a={{grow: true}}>
   <Keyboard placeholder={placeholder} text={text} on:submit={submitPassword} />
 </Column>

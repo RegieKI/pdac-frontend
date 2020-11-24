@@ -78,10 +78,10 @@
       backend.update( b => { 
         b = j.config
         // let s = b.status || {}
-        // if (s.force && $page.path != '/system/overview') {
+        // if (s.force && $page.path != '/overview') {
         //   console.log('[overview.svelte] 👁 ✨ ⚡️  forcing redirect to:', $page.path)
         //   b.status.force = false
-        //   goto('/system/overview')
+        //   goto('/overview')
         // }
         return b
       })
