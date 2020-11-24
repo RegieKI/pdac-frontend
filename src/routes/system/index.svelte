@@ -73,22 +73,26 @@
 
 <Back {page} />
 <Column className="mlr06">
-  <Row className="mb04 mt3" a={{grow: true}}>
-    <Button a={{height: '80px', grow: true}} on:click={shutdown}>Shutdown</Button>
-    <Button a={{height: '80px', grow: true}} on:click={reboot}>Reboot</Button>
+  <Row className="mb04" a={{grow: true}}>
+    <Button a={{height: '60px', grow: true}} on:click={shutdown}>Shutdown</Button>
+    <Button a={{height: '60px', grow: true}} on:click={reboot}>Reboot</Button>
   </Row>
   <Row className="mb04" a={{grow: true}}>
-    <Button a={{height: '80px', grow: true}} on:click={calibrate}>Calibrate Screen</Button>
-    <Button a={{height: '80px', grow: true}} on:click={updateSystem}>Update System</Button>
+    <Button a={{height: '60px', grow: true}} on:click={calibrate}>Calibrate Screen</Button>
+    <Button a={{height: '60px', grow: true}} on:click={updateSystem}>Update System</Button>
+  </Row>
+  <Row className="mb04" a={{grow: true}}>
+    <Button a={{height: '60px', grow: true}}><a rel="prefetch" href="/system/overview">Overview</a></Button>
+    <Button a={{height: '60px', grow: true}}><a rel="prefetch" href="/system/dhcp">DHCP Edit</a></Button>
   </Row>
   <div class="mtb2">Admin Only!</div>
   <Row className="mb04" a={{grow: true}}>
-    <Button a={{height: '80px', grow: true}} ><a rel="prefetch" href="/system/hostname">Hostname</a></Button>
-    <Button a={{height: '80px', grow: true}} ><a rel="prefetch" href="/camera">Test Camera</a></Button>
+    <Button a={{height: '60px', grow: true}} ><a rel="prefetch" href="/system/hostname">Hostname</a></Button>
+    <Button a={{height: '60px', grow: true}} ><a rel="prefetch" href="/camera">Test Camera</a></Button>
   </Row>
   <Row className="mb04 pb1" a={{grow: true}}>
-    <Button a={{height: '80px', grow: true}} ><a rel="prefetch" href="/system/miband">MiBand</a></Button>
-    <Button a={{height: '80px', grow: true}} on:click={toggleDrafts} >
+    <Button a={{height: '60px', grow: true}} ><a rel="prefetch" href="/system/miband">MiBand</a></Button>
+    <Button a={{height: '60px', grow: true}} on:click={toggleDrafts} >
       {($info.showDrafts) ? 'Hide' : 'Show'}
       Drafts
     </Button>

@@ -7,10 +7,10 @@
 
 	import { Column, Button, Row } from 'svelte-aui/src/index.js'
 	const dev = process.env.NODE_ENV === 'development';
-	console.log(error, status, message ,response);
 
 	export async function preload( page ) {
-			axios.post('/camera/stop?as=json', {});
+		axios.post('/camera/stop?as=json', {});
+		console.log('.....', error, status, message ,response);
 	};
 </script>
 
@@ -20,11 +20,11 @@
 </svelte:head>
 
 <Back history={true} />
-<div>
-	<h2>{status}</h2>
+<div class="m06">
+	<h2>Error ({status})</h2>
 	{error.message}
 </div>
-<Row a={{grow: true}} className="m06">
+<Row a={{grow: true}} className="p06">
 	<Button a={{grow: true}} style="width:100%;"><a href="/">Home</a></Button>
 	<Button a={{grow: true}} style="width:100%;" on:click={ () => window.location = window.location } >Refresh</Button>
 </Row>

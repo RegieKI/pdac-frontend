@@ -15,7 +15,6 @@ import untildify from 'untildify'
 
 
 const rootPath = untildify('~/')
-// const rootPath = '/Users/gilbertsinnott/Code/RKI'
 
 const config = {
 	directus_url: 'https://api.sinnott.cc/',
@@ -416,9 +415,46 @@ AutoSetup(
 					return resolve( stdout );
 				});
 			}) 
+		},
+		GetDhcpcd: async( req, res ) => {
+			return new Promise( (resolve, reject) => {
+				fs.readFile( '/etc/dhcpcd.conf', 'utf8', function( errA, dhcpConf ) {
+
+					if (errA) return reject( { message: 'could not read /etc/dhcpcd.conf' } );
+					fs.readFile( config.pdac_usb+'/dhcp.txt', 'utf8', function( errB, dhcpTxt ) {
+
+						if (errB) return reject( { message: 'could not read usb/dhcp.txt' } );
+						return resolve( { config: dhcpConf, txt: dhcpTxt } )
+					})
+
+				} )
+			});
+		},
+		SetDhcpcd: async( req, res ) => {
+
+			return new Promise( (resolve, reject) => {
+				console.log('[SetDhcpcd] setting...', req.body.blob);
+				fs.writeFile( '/etc/dhcpcd.conf', req.body.blob, (err) => {
+					if (err) return reject( { message: 'could not read /etc/dhcpcd.conf' } );
+					const run = `sh ${config.pdac_utils}/utilityRebootNow.sh`
+					console.log('[SetDhcpcd] restarting with:', run);
+					exec(run, function(err, stdout, stderr) {
+						if (err) {
+							console.log('[SetDhcpcd] 😘❌  restart dhcp error:', err, stdout, stderr);
+							return reject( { message: 'could not restart DHCP' } );
+						}
+						console.log('[SetDhcpcd] 😘✅  restart dhcp success:', stderr, stdout);
+						return resolve( stdout );
+					});
+				});
+			})
 		}
 	}, 
 	{ 
+		'/system/dhcp': {
+			GET: 'GetDhcpcd',
+			POST: 'SetDhcpcd'
+		},
 		'/usb': {
 			GET: `files:${config.pdac_usb}`
 		},
@@ -505,61 +541,3 @@ AutoSetup(
 
 
 
-
-
-
-
-
-
-
-
-// }
-
-
-// import GPIO from 'rpi-gpio'
-// 16 + 26 or 36 + 37
-// GND is 39
-/*
-console.log('[server.js] 📍 attempting pins...');
-GPIO.setup(36, GPIO.DIR_HIGH, function(err) {
-	if (err) throw err;
-  GPIO.write(36, true, function(err) {
-	      if (err) console.error('[server.js] 📍 PIN 36: error', err);
-      console.log('[server.js] 📍 PIN 36: written to pin');
-  });
-});
-GPIO.setup(37, GPIO.DIR_HIGH, function(err) {
-	if (err) throw err;
-	let onoff = true;
-  console.log('[server.js] 📍 PIN 37: setting loop...');
-	setInterval( function() {
-		onoff = !onoff;
-	  GPIO.write(37, onoff, function(err) {
-	      if (err) console.error('[server.js] 📍 PIN 37: error', err);
-	  });
-	}, 2);
-});
-*/
-
-
-// library uses physical ordering of pins!
-
-// gpioButtons( [18, 16, 12] ).on('clicked', function(pin) {
-
-// 	if (pin == 12) {
-// 		console.log('[server.js] 🔘  TOP button pressed', pin);
-
-// 	} else if (pin == 16) {
-// 		console.log('[server.js] 🔘  MIDDLE button pressed', pin);
-
-// 	} else if (pin == 18) {
-// 		console.log('[server.js] 🔘  BOTTOM button pressed', pin);
-
-// 	}
-// });
-
-// ON_DEATH(function(signal, err) {
-// 	if (!isDev) {
-// 		console.log('[server.js] ☠️  exiting  ☠️')
-// 	}
-// })

@@ -10,3 +10,6 @@
 	path = wireless-tools
 	url = https://github.com/autr/wireless-tools.git
 	branch = master
+[submodule "sassis"]
+	path = sassis
+	url = https://github.com/autr/sassis.git

@@ -13,7 +13,6 @@ import { Loop, LoopRoutes, RegExecute, IsFilesPath, IsJsonPath, CleanFilesPath, 
 
 
 export const HandleError = ( res, err ) => {
-
 	const data = (err.length && err) || err.message;
 	let status = err.code || err.status || 500;
 	status = (status >= 100 && status < 600) ? status : 500;
