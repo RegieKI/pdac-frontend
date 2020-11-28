@@ -12,7 +12,7 @@
 
   import Colors from './db.colors.js'
   import MiBands from './db.mibands.js'
-  import { info, overlay, konsole, backend } from './stores.js'
+  import { info, overlay, konsole, backend, eyeball } from './stores.js'
 
   // helpers modules...
 
@@ -27,6 +27,8 @@
   import WifiStrengthOffOutline from "svelte-material-icons/WifiStrengthOffOutline.svelte";
   import Sleep from "svelte-material-icons/Sleep.svelte";
   import WatchVariant from "svelte-material-icons/WatchVariant.svelte";
+
+  import { API_ERROR, API_SUCCESS, API_TRY, API_VIZ } from './types.js'
 
   let ws;
   let maxLines = 120
@@ -70,19 +72,22 @@
     try {
       const j = JSON.parse( str )
       konsole.update( k => {
-        k.unshift( { timestamp: j.timestamp, type: j.type, message: j.message } )
+        k.unshift( { timestamp: j.timestamp || '~', type: j.type || '~', message: j.message || '~', title: j.title || '~' } )
         while (k.length > maxLines) k.slice(1)
         return k
       })
+      if ( j.type == API_VIZ ) {
+        console.log('[overview.svelte] 👁 👁 👁  setting visual:', j.title, j.message);
+        eyeball.update( e => {
+          e.title = j.title
+          e.message = j.message
+          return e
+        })
+
+      }
       console.log('[overview.svelte] 👁 ✨ ✅  parsed socket message:', $konsole.length, $konsole, $page.path);
       backend.update( b => { 
         b = j.config
-        // let s = b.status || {}
-        // if (s.force && $page.path != '/overview') {
-        //   console.log('[overview.svelte] 👁 ✨ ⚡️  forcing redirect to:', $page.path)
-        //   b.status.force = false
-        //   goto('/overview')
-        // }
         return b
       })
     } catch( err ) {

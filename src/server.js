@@ -50,12 +50,13 @@ axios.get('http://localhost:8888').then( res => {
 
 	backend.stdout.pipe(process.stdout)
 	backend.on('exit', function() {
-		console.log('[server.js] ⚰️  backend has exited');
-		if (!isDev) {
-			console.log('[server.js] ⚰️  killing all...');
-			exec(`sh ${config.pdac_utils}/killAll.sh`);
-			process.exit();
-		}
+		console.log('[server.js] ⚰️  backend has exited, restarting...');
+		backend = spawn('sh', [config.pdac_utils + '/runBackend.sh']);
+		// if (!isDev) {
+		// 	console.log('[server.js] ⚰️  killing all...');
+		// 	exec(`sh ${config.pdac_utils}/killAll.sh`);
+		// 	process.exit();
+		// }
 	})
 
 	setTimeout( function() { 

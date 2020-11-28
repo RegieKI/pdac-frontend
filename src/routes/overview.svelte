@@ -8,14 +8,12 @@
 import Eye from "svelte-material-icons/Eye.svelte";
 import Console from "svelte-material-icons/Console.svelte";
 import { onMount } from 'svelte'
-import { info, konsole, backend } from './stores.js'
+import { info, konsole, backend, eyeball } from './stores.js'
 import { Button } from 'svelte-aui/src/index.js'
 import { Back } from 'svelte-touch-os/src/index.js'
+import { API_ERROR, API_SUCCESS, API_TRY, API_VIZ } from './types.js'
 export let data;
 
-const API_ERROR = "❌"
-const API_SUCCESS = "✅"
-const API_TRY = "⚡️"
 
 let presentation = false
 
@@ -23,12 +21,10 @@ onMount( async() => {
 
 	console.log('[overview.svelte] 👁 mounted overview...')
 
-});
+}); 
 
 
-$: status = $backend.status || {}
-$: title = status.title || "No title"
-$: message = status.message || "No message"
+$: viz = $eyeball || { title: 'No visualisation', message: 'No visualisation' }
 $: infoStyles = presentation ? 'flex flex-column align-center f5' : ''
 $: lastKonsole = $konsole[0] || {}
 	
@@ -45,8 +41,8 @@ $: lastKonsole = $konsole[0] || {}
 	</Button>
 </div>
 <div class="plr1 {infoStyles}">
-	<div>{title}</div>
-	<div>{message}</div>
+	<div>{viz.title}</div>
+	<div>{viz.message}</div>
 	{#if presentation}
 		<div 
 			style="font-size: 14px"
