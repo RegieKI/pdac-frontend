@@ -1,7 +1,7 @@
 @import "./_colors"
 @import 'svelte-aui/src/styles/utilities.sass'
 
-@import '../../sassis/sassis.sass'
+@import '../../sassis/src/_index'
 
 $width: 100%
 $height: 100vh
@@ -9,7 +9,7 @@ $topbar: 30px
 $fontsize: 18px 
 $smallfontsize: 14px
 
-
+ 
 @keyframes spin-fwd
 	from 
 		transform: rotate(0deg)
@@ -43,11 +43,11 @@ $smallfontsize: 14px
 // PDAC main...
 
 html, *
-	font-size: $fontsize
-	+fonts( sans-serif, $fontsize)
+	font-family: sans-serif
+	+fontsize( $fontsize)
 
 #pdac
-	+helpers()
+	+shorthand
 	margin: 0 auto
 	width: $width
 	height: $height
@@ -241,5 +241,6 @@ html, *
 
 
 #pdac .konsole, #pdac .terminal
-	+terminal-theme( monospace, 13px )
+	+terminal-theme
+	font-family: monospace
 	overflow: scroll

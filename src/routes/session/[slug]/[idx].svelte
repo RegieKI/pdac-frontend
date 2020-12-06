@@ -39,6 +39,7 @@
   $: session = data[0] || {};
   $: exercise = (session.exercises[zeroIdx]) ? session.exercises[zeroIdx].exercise_id : { example: { data: {} }};
   $: tags = exercise.tags || [];
+  $: tags_mapped = tags.map( t => t.tag_id.url )
 
 
   $: _identifier = () => {
@@ -53,7 +54,7 @@
         if (i < tags.length - 1) str += '-';
       }
     });
-    console.log('[SESSION] 🗯🦆  returning ID:', str);
+    console.log('[SESSION] 🗯 🦆  returning ID:', str);
     return str;
   }
   $: identifier = _identifier();
@@ -129,6 +130,40 @@
 
     overlay.set({
       type: 'wait',
+      status: '🤖',
+      message: "Sending to AI..."
+    })
+
+    const tags = [ 'liebe', 'trauer', 'wut', 'freude', 'uberraschung', 'verachtung', 'angst' ]
+    let sTitle = 'none'
+    tags_mapped.forEach( t => {
+      if ( tags.indexOf( t ) != -1 ) sTitle = t
+    })
+
+    const conf = { action: 'start', title: sTitle, tags: tags_mapped, type: '🤖', length: exercise.time }
+    console.log('[idx.svelte] 🤖 ⚡️ 💅  sending config START to AI...', conf)
+
+    if ( window.websocketsClient ) {
+
+      window.websocketsClient.send( JSON.stringify( conf ) )
+      recording = true;
+      overlay.set( null );
+
+    } else {
+
+      overlay.set({
+        type: 'error',
+        status: '🤖',
+        message: 'No connection to AI...'
+      })
+
+    };
+
+
+    return;
+
+    overlay.set({
+      type: 'wait',
       message: "Opening Camera<br />Please wait..."
     })
     axios.post('/camera/start?as=json', recordingConfig).then( res => {
@@ -152,6 +187,36 @@
   }
 
   function stop( e ) {
+
+
+    overlay.set({
+      type: 'wait',
+      message: "Sending to AI..."
+    })
+
+    const conf = { action: 'stop', type: '🤖' }
+    console.log('[idx.svelte] 🤖 ⚡️ 💅  sending config STOP to AI...', conf)
+
+    if ( window.websocketsClient ) {
+
+      window.websocketsClient.send( JSON.stringify( config ) )
+      recording = false;
+      overlay.set( null );
+      const url = (zeroIdx >= session.exercises.length - 1) ? '/session/' + session.url + '/complete' : '/session/' + session.url + '/' + ( humanIdx + 1);
+      console.log( '[session:slug:idx] 🛫  goto: ', url, zeroIdx, session.exercises.length)
+      goto( url ); 
+
+    } else {
+
+      overlay.set({
+        type: 'error',
+        message: 'No connection to AI...'
+      })
+
+    };
+
+
+    return;
 
     overlay.set({
       type: 'wait',

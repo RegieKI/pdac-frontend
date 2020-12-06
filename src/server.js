@@ -13,6 +13,7 @@ import { exec, spawn } from 'child_process'
 import path from 'path'
 import untildify from 'untildify'
 
+console.log('USING OPERATING SYSTEM:', os.type());
 
 const rootPath = untildify('~/')
 
@@ -44,24 +45,32 @@ axios.get('http://localhost:8888').then( res => {
 	console.log('[server.js] 🥚  backend is running! not starting.')
 }).catch( err => {
 	
+	console.log('[server.js] 🥚  spawning runBackend.sh ....');
 
-	backend = spawn('sh', [config.pdac_utils + '/runBackend.sh']);
-	console.log('[server.js] 🥚  spawning runBackend.sh with PID', backend.pid );
-
-	backend.stdout.pipe(process.stdout)
-	backend.on('exit', function() {
-		console.log('[server.js] ⚰️  backend has exited, restarting...');
+	try {
 		backend = spawn('sh', [config.pdac_utils + '/runBackend.sh']);
-		// if (!isDev) {
-		// 	console.log('[server.js] ⚰️  killing all...');
-		// 	exec(`sh ${config.pdac_utils}/killAll.sh`);
-		// 	process.exit();
-		// }
-	})
+		console.log('[server.js] 🥚 ✅  runBackend.sh opened with PID', backend.pid );
 
+		backend.stdout.pipe(process.stdout)
+
+		backend.on('error', function(err) {
+			console.log('[server.js] 🥚 ❌  could not start backend', err.message );
+		})
+
+		backend.on('exit', function() {
+			console.log('[server.js] ⚰️ 🛑  backend has exited...');
+			// backend = spawn('sh', [config.pdac_utils + '/runBackend.sh']);
+		})
+	} catch( err ) {
+		console.log('[server.js] 🥚 ❌  could not start backend', err.message );
+	}
+	console.log('[server.js] 🌐 🕰  launching browser in 10 seconds... please wait.' );
 	setTimeout( function() { 
 		browser = spawn('sh', [config.pdac_utils + '/launchBrowser.sh']);
-		console.log('[server.js] 🥚  spawning launchBrowser.sh >>>>>', browser.pid );
+		browser.on('error', function(err) {
+			console.log('[server.js] 🌐 ❌  could not start web browser', err.message );
+		})
+		console.log('[server.js] 🌐  spawning launchBrowser.sh >>>>>', browser.pid );
 	}, 10000)
 
 })
@@ -119,6 +128,21 @@ AutoSetup(
 			return new Promise( (resolve, reject) => {
 
 
+				if (os.type() == 'Darwin') return resolve( {
+					hostname: os.hostname(),
+					type: os.type(),
+					platform: os.platform(),
+					totalmem: os.totalmem(),
+					freemem: os.freemem(),
+					usedmem: os.totalmem() - os.freemem(),
+					uptime: os.uptime(),
+					wlan0: {},
+					drives: {},
+					backend: { miband: {} },
+					temperature: {},
+					ip: 'unknown'
+				} )
+
 				function getInfo( resolve, reject, backend ) {
 					nodeDiskInfo.getDiskInfo().then( drives => {
 						wifi.status( 'wlan0', function(err, status) {
@@ -127,24 +151,28 @@ AutoSetup(
 							try {
 								ip = exec(`sh ${config.pdac_utils}/utilityShowIP.sh`, function(err, stdout, stderr) {
 									ip = stdout.replace('\n', '') || "unknown";
-									console.log('>>>>> IP', ip)
-									temp.measure(function(err2, temperature) {
-											if (err2) return reject(err2);
-											return resolve( {
-												hostname: os.hostname(),
-												type: os.type(),
-												platform: os.platform(),
-												totalmem: os.totalmem(),
-												freemem: os.freemem(),
-												usedmem: os.totalmem() - os.freemem(),
-												uptime: os.uptime(),
-												wlan0: status || {},
-												drives,
-												backend,
-												temperature,
-												ip
-											} );
-									});
+									try {
+										temp.measure(function(err2, temperature) {
+												if (err2) return reject(err2);
+												return resolve( {
+													hostname: os.hostname(),
+													type: os.type(),
+													platform: os.platform(),
+													totalmem: os.totalmem(),
+													freemem: os.freemem(),
+													usedmem: os.totalmem() - os.freemem(),
+													uptime: os.uptime(),
+													wlan0: status || {},
+													drives,
+													backend,
+													temperature,
+													ip
+												} );
+										});
+									} catch( err4 ) {
+										console.log('[Info] ❌ error measuring temperature:', err4.message);
+										return( err4)	
+									}
 								})
 							} catch (err3) {
 								console.log('[Info] ❌ error constructing response:', err3.message);

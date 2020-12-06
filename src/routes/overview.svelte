@@ -8,6 +8,7 @@
 import Eye from "svelte-material-icons/Eye.svelte";
 import Console from "svelte-material-icons/Console.svelte";
 import { onMount } from 'svelte'
+import { Button } from 'svelte-aui/src/index.js'
 import { info, konsole, backend, eyeball } from './stores.js'
 import { Button } from 'svelte-aui/src/index.js'
 import { Back } from 'svelte-touch-os/src/index.js'
@@ -23,8 +24,18 @@ onMount( async() => {
 
 }); 
 
+function onButtonPress() {
 
-$: viz = $eyeball || { title: 'No visualisation', message: 'No visualisation' }
+	if (window.websocketsClient) {
+		console.log('[overview.svelte] 👈  🌐 sending websockets button press')
+		window.websocketsClient.send( JSON.stringify( { type: '👈', title: 'button', message: 'pressed' }  ) )
+	} else {
+		console.log('[overview.svelte] ❌ no websockets client!')
+	}
+}
+
+
+$: viz = $eyeball || { title: 'No visualisation', message: 'No visualisation', button: null }
 $: infoStyles = presentation ? 'flex flex-column align-center f5' : ''
 $: lastKonsole = $konsole[0] || {}
 	
@@ -43,6 +54,9 @@ $: lastKonsole = $konsole[0] || {}
 <div class="plr1 {infoStyles}">
 	<div>{viz.title}</div>
 	<div>{viz.message}</div>
+	{#if viz.button }
+		<Button on:click={onButtonPress}>{viz.button}</Button>
+	{/if}
 	{#if presentation}
 		<div 
 			style="font-size: 14px"

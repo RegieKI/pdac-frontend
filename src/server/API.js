@@ -57,7 +57,7 @@ const FindRoutesMatch = ( inputPath, Routes, inputType ) => {
 		const clean = CleanJsonPath(inputPath);
 		const match = reg.match( clean );
 		const didMatch = ( match !== null && inputType.toLowerCase() === type.toLowerCase());
-		console.log( '[API]', didMatch ? `✅` : '🌀', inputPath, index, type, url );
+		// console.log( '[API]', didMatch ? `✅` : '🌀', inputPath, index, type, url );
 
 		if (didMatch) route = { url, func, match, type }
 

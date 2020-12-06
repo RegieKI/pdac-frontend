@@ -42,5 +42,5 @@ export const info = createInfoStore();
 export const overlay = writable( null );
 export const route = writable( {} );
 export const konsole = writable( [] )
-export const eyeball = writable( { title: 'Title (pending)', message: 'Message (pending)' } )
+export const eyeball = writable( { title: 'Title (pending)', message: 'Message (pending)', button: null } )
 export const backend = writable( {} )
