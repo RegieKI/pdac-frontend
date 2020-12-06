@@ -15,7 +15,7 @@ import { API_ERROR, API_SUCCESS, API_TRY, API_VIZ } from './types.js'
 export let data;
 
 
-let presentation = false
+let presentation = true
 
 onMount( async() => {
 
@@ -53,19 +53,9 @@ $: lastKonsole = $konsole[0] || {}
 <div class="plr1 {infoStyles}">
 	<div>{viz.title}</div>
 	<div>{viz.message}</div>
-	{#if viz.button }
+	{#if viz.button && presentation }
 		<Button className="align-self-stretch mtb08" a={{grow: true}} on:click={onButtonPress}>{viz.button}</Button>
 	{/if}
-<!-- 	{#if presentation}
-		<div 
-			style="font-size: 14px"
-			class="konsole f3 mt08 ptb02 plr1"
-			class:success={lastKonsole.type == API_SUCCESS}
-			class:bright={lastKonsole.type == API_TRY}
-			class:error={lastKonsole.type == API_ERROR}>
-			{ lastKonsole.message || "~"  }
-		</div>
-	{/if} -->
 </div>
 
 {#if !presentation}
