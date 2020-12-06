@@ -128,7 +128,39 @@
     appendToKonsole( e.data )
   }
 
-  $: color = Colors.find( c => Strip(c.hostname) === Strip($info.hostname) ) || Colors[ parseInt( Math.random() * (Colors.length - 1) ) ];
+  $: _color = () => {
+
+    const t = { 
+      'liebe': { color: 'deep-purple-700', text_color: 'deep-purple-100' },
+      'trauer': { color:'blue-800', text_color: 'blue-100' },
+      'wut': { color:'red-800', text_color: 'red-100' },
+      'freude': { color:'yellow-900', text_color: 'yellow-100' },
+      'uberraschung': { color:'cyan-a700', text_color: 'cyan-a100' },
+      'verachtung': { color:'light-green-800', text_color: 'light-green-100' },
+      'angst': { color:'blue-grey-600', text_color: 'blue-grey-100' }
+    }
+
+    let c = Colors.find( c => Strip(c.hostname) === Strip($info.hostname) )
+    if (!c) c = t[$eyeball.title]
+    if (!c) c = { color: 'blue-grey-900', text_color: 'blue-grey-50' }
+    console.log('returning color', c)
+    return c
+  }
+
+
+  function debugColor() {
+
+      eyeball.update( e => {
+        const tt = [ 'liebe', 'trauer', 'wut', 'freude', 'uberraschung', 'verachtung', 'angst' ]
+        e.title = tt[ parseInt(Math.random() * 7) ]
+        console.log('SETTING TITLE TO:', e.title)
+        return e
+      })
+  }
+
+  if (process.browser) window.debugColour = debugColor
+
+  $: color = _color();
   $: information = $info || {}
   $: infoBackend = information.backend || {}
   $: macAddress = infoBackend.mac_address

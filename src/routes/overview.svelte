@@ -8,7 +8,6 @@
 import Eye from "svelte-material-icons/Eye.svelte";
 import Console from "svelte-material-icons/Console.svelte";
 import { onMount } from 'svelte'
-import { Button } from 'svelte-aui/src/index.js'
 import { info, konsole, backend, eyeball } from './stores.js'
 import { Button } from 'svelte-aui/src/index.js'
 import { Back } from 'svelte-touch-os/src/index.js'
@@ -35,13 +34,13 @@ function onButtonPress() {
 }
 
 
-$: viz = $eyeball || { title: 'No visualisation', message: 'No visualisation', button: null }
-$: infoStyles = presentation ? 'flex flex-column align-center f5' : ''
+$: viz = $eyeball || { title: 'No visualisation', message: 'No visualisation', button: 'No button' }
+$: infoStyles = presentation ? 'flex flex-column align-center f5 grow' : ''
 $: lastKonsole = $konsole[0] || {}
 	
 </script>
 
-<div class="flex-row flex justify-between mr06">
+<div class="flex-row flex justify-content-between mr06">
 	<Back />
 	<Button on:click={ e => presentation = !presentation }>
 		{#if !presentation}
@@ -55,9 +54,9 @@ $: lastKonsole = $konsole[0] || {}
 	<div>{viz.title}</div>
 	<div>{viz.message}</div>
 	{#if viz.button }
-		<Button on:click={onButtonPress}>{viz.button}</Button>
+		<Button className="align-self-stretch mtb08" a={{grow: true}} on:click={onButtonPress}>{viz.button}</Button>
 	{/if}
-	{#if presentation}
+<!-- 	{#if presentation}
 		<div 
 			style="font-size: 14px"
 			class="konsole f3 mt08 ptb02 plr1"
@@ -66,11 +65,11 @@ $: lastKonsole = $konsole[0] || {}
 			class:error={lastKonsole.type == API_ERROR}>
 			{ lastKonsole.message || "~"  }
 		</div>
-	{/if}
+	{/if} -->
 </div>
 
 {#if !presentation}
-	<div class="konsole p04">
+	<div class="konsole p04 grow">
 
 		{#each $konsole as m, i }
 			<div>
