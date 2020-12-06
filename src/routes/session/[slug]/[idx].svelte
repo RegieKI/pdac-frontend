@@ -140,7 +140,15 @@
       if ( tags.indexOf( t ) != -1 ) sTitle = t
     })
 
-    const conf = { action: 'start', title: sTitle, tags: tags_mapped, type: '🤖', length: exercise.time }
+    const conf = { 
+      action: 'start', 
+      title: sTitle, 
+      tags: tags_mapped, 
+      type: '🤖', 
+      length: exercise.time, 
+      timestamp: new Date().toISOString().substr(11, 8),
+      message: `starting exercise: "${sTitle}" ${exercise.time}s`
+    }
     console.log('[idx.svelte] 🤖 ⚡️ 💅  sending config START to AI...', conf)
 
     if ( window.websocketsClient ) {
@@ -194,12 +202,12 @@
       message: "Sending to AI..."
     })
 
-    const conf = { action: 'stop', type: '🤖' }
+    const conf = { action: 'stop', type: '🤖', timestamp: new Date().toISOString().substr(11, 8), message: 'stopping exercise' }
     console.log('[idx.svelte] 🤖 ⚡️ 💅  sending config STOP to AI...', conf)
 
     if ( window.websocketsClient ) {
 
-      window.websocketsClient.send( JSON.stringify( config ) )
+      window.websocketsClient.send( JSON.stringify( conf ) )
       recording = false;
       overlay.set( null );
       const url = (zeroIdx >= session.exercises.length - 1) ? '/session/' + session.url + '/complete' : '/session/' + session.url + '/' + ( humanIdx + 1);
