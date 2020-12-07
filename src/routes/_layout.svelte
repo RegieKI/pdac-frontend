@@ -37,6 +37,7 @@
   import { stores } from '@sapper/app';
   const { page } = stores();
 
+  let wsConnecting = true
 
   onMount( async() => {
 
@@ -46,24 +47,30 @@
         console.log('[_layout.svelte] 📄 page changed : subscribe', path);
         info.grab().then( r => {
 
-          if (process.browser && !ws) {
-            const url = `ws://${$info.hostname}.local:8765`
-            console.log('[overview.svelte] 👁 ⚡️  opening websocket...', url)
-            ws = new WebSocket(url);
-            ws.addEventListener('open', onOpen)
-            ws.addEventListener('message', onMessage)
-            ws.addEventListener('error', onError)
-          }
+          wsConnect();
         })
       })
 
   });
+
+
+  function wsConnect() {
+    if (process.browser && !ws) {
+      const url = `ws://${$info.hostname}.local:8765`
+      console.log('[overview.svelte] 👁 ⚡️  opening websocket...', url)
+      ws = new WebSocket(url);
+      ws.addEventListener('open', onOpen)
+      ws.addEventListener('message', onMessage)
+      ws.addEventListener('error', onError)
+    }
+  }
 
   onDestroy( async() => {
 
     if (process.browser && ws) {
       console.log('[overview.svelte] 👁 🛑  closing websocket...')
       ws.close()
+      window.websocketsClient = null;
     }
   });
 
@@ -77,10 +84,11 @@
         return k
       })
       if ( j.type == API_VIZ || j.type == "viz" || j.type == "visual" ) {
-        console.log('[overview.svelte] 👁 👁 👁  setting visual:', j.title, j.message);
+        console.log('[overview.svelte] 👁 👁 👁  setting visual:', j.title, j.message, j.button);
         eyeball.update( e => {
           e.title = j.title
           e.message = j.message
+          e.button = j.button
           return e
         })
 
@@ -98,9 +106,21 @@
 
   function onOpen(e) {
     console.log('[overview.svelte] 👁 ✅  opened websocket...', e.currentTarget.url);
+    wsConnecting = false
+    window.websocketsClient = ws;
   }
   function onError(err) {
-    console.log('[overview.svelte] 👁 ❌  opened websocket...', err);
+    console.log('[overview.svelte] 👁 ❌  error opening websocket...', err);
+    if (wsConnecting) {
+
+      console.log('[overview.svelte] 👁 ⚡️  trying again in 2 seconds...');
+      ws.close()
+      ws = null
+      window.websocketsClient = null;
+      setTimeout( () => {
+        wsConnect();
+      }, 2000)
+    }
   }
 
   function onMessage(e) {
@@ -108,7 +128,39 @@
     appendToKonsole( e.data )
   }
 
-  $: color = Colors.find( c => Strip(c.hostname) === Strip($info.hostname) ) || Colors[ parseInt( Math.random() * (Colors.length - 1) ) ];
+  $: _color = () => {
+
+    const t = { 
+      'liebe': { color: 'deep-purple-700', text_color: 'deep-purple-100' },
+      'trauer': { color:'blue-800', text_color: 'blue-100' },
+      'wut': { color:'red-800', text_color: 'red-100' },
+      'freude': { color:'yellow-900', text_color: 'yellow-100' },
+      'uberraschung': { color:'cyan-a700', text_color: 'cyan-a100' },
+      'verachtung': { color:'light-green-800', text_color: 'light-green-100' },
+      'angst': { color:'blue-grey-600', text_color: 'blue-grey-100' }
+    }
+
+    let c = Colors.find( c => Strip(c.hostname) === Strip($info.hostname) )
+    if (!c) c = t[$eyeball.title]
+    if (!c) c = { color: 'blue-grey-900', text_color: 'blue-grey-50' }
+    console.log('returning color', c)
+    return c
+  }
+
+
+  function debugColor() {
+
+      eyeball.update( e => {
+        const tt = [ 'liebe', 'trauer', 'wut', 'freude', 'uberraschung', 'verachtung', 'angst' ]
+        e.title = tt[ parseInt(Math.random() * 7) ]
+        console.log('SETTING TITLE TO:', e.title)
+        return e
+      })
+  }
+
+  if (process.browser) window.debugColour = debugColor
+
+  $: color = _color();
   $: information = $info || {}
   $: infoBackend = information.backend || {}
   $: macAddress = infoBackend.mac_address

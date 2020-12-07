@@ -15,7 +15,7 @@ import { API_ERROR, API_SUCCESS, API_TRY, API_VIZ } from './types.js'
 export let data;
 
 
-let presentation = false
+let presentation = true
 
 onMount( async() => {
 
@@ -23,14 +23,24 @@ onMount( async() => {
 
 }); 
 
+function onButtonPress() {
 
-$: viz = $eyeball || { title: 'No visualisation', message: 'No visualisation' }
-$: infoStyles = presentation ? 'flex flex-column align-center f5' : ''
+	if (window.websocketsClient) {
+		console.log('[overview.svelte] 👈  🌐 sending websockets button press')
+		window.websocketsClient.send( JSON.stringify( { type: '👈', title: 'button', timestamp: new Date().toISOString().substr(11, 8), message: 'button pressed' }  ) )
+	} else {
+		console.log('[overview.svelte] ❌ no websockets client!')
+	}
+}
+
+
+$: viz = $eyeball || { title: 'No visualisation', message: 'No visualisation', button: 'No button' }
+$: infoStyles = presentation ? 'flex flex-column align-center f5 grow' : ''
 $: lastKonsole = $konsole[0] || {}
 	
 </script>
 
-<div class="flex-row flex justify-between mr06">
+<div class="flex-row flex justify-content-between mr06">
 	<Back />
 	<Button on:click={ e => presentation = !presentation }>
 		{#if !presentation}
@@ -43,20 +53,13 @@ $: lastKonsole = $konsole[0] || {}
 <div class="plr1 {infoStyles}">
 	<div>{viz.title}</div>
 	<div>{viz.message}</div>
-	{#if presentation}
-		<div 
-			style="font-size: 14px"
-			class="konsole f3 mt08 ptb02 plr1"
-			class:success={lastKonsole.type == API_SUCCESS}
-			class:bright={lastKonsole.type == API_TRY}
-			class:error={lastKonsole.type == API_ERROR}>
-			{ lastKonsole.message || "~"  }
-		</div>
+	{#if viz.button && presentation }
+		<Button className="align-self-stretch mtb08" a={{grow: true}} on:click={onButtonPress}>{viz.button}</Button>
 	{/if}
 </div>
 
 {#if !presentation}
-	<div class="konsole p04">
+	<div class="konsole p04 grow">
 
 		{#each $konsole as m, i }
 			<div>

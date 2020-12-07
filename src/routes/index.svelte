@@ -12,7 +12,7 @@
     console.log('[/:index.svelte] 📊 onMount main menu...')
     // await info.grab();
     // if (!infoBackend.active) {
-    //   console.log('[/:index.svelte] ℹ❌ no backend, looping...')
+    //   console.log('[/:index.svelte] ℹ ❌  no backend, looping...')
     //   overlay.set({type: "wait", message: waitMsg, close: "Skip"}) 
     //   setTimeout( loopUntilBackend, 3000);
     // } else if ( !wlan.ssid && ( $page.path == "/" || $page.path == "" )  ) {
@@ -38,10 +38,10 @@
     console.log('[/:index.svelte] retrying for backend...')
     if (!infoBackend.active && $overlay) {
       if ($overlay.type == "wait" && $overlay.message == waitMsg) {
-        console.log('[/:index.svelte] ℹ️⭕️ retrying for backend in 3 seconds')
+        console.log('[/:index.svelte] ℹ️ ⭕️  retrying for backend in 3 seconds')
         setTimeout( loopUntilBackend, 3000);
       } else {
-        console.log('[/:index.svelte] ℹ️✅ cancelled wait for backend')
+        console.log('[/:index.svelte] ℹ️ ✅  cancelled wait for backend')
       }
     } else {
       overlay.set( undefined )
