@@ -76,7 +76,7 @@
         while (k.length > maxLines) k.slice(1)
         return k
       })
-      if ( j.type == API_VIZ ) {
+      if ( j.type == API_VIZ || j.type == "viz" || j.type == "visual" ) {
         console.log('[overview.svelte] 👁 👁 👁  setting visual:', j.title, j.message);
         eyeball.update( e => {
           e.title = j.title
