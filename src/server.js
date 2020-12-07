@@ -145,15 +145,19 @@ AutoSetup(
 
 				function getInfo( resolve, reject, backend ) {
 					nodeDiskInfo.getDiskInfo().then( drives => {
-						wifi.status( 'wlan0', function(err, status) {
-							let ip = "unknown"
+						wifi.status( 'wlan0', function(err, statusWlan0) {
 
-							try {
-								ip = exec(`sh ${config.pdac_utils}/utilityShowIP.sh`, function(err, stdout, stderr) {
-									ip = stdout.replace('\n', '') || "unknown";
+								let ip = 'unknown'
+
+								exec(`sh ${config.pdac_utils}/utilityShowIP.sh`, function(err, stdout, stderr) {
+
 									try {
-										temp.measure(function(err2, temperature) {
-												if (err2) return reject(err2);
+										ip = stdout.substring( stdout.indexOf('\n') + 1 ).replace('\n', '')
+									} catch (err5) {
+
+									}
+									try {
+										temp.measure(function(err3, temperature) {
 												return resolve( {
 													hostname: os.hostname(),
 													type: os.type(),
@@ -162,22 +166,18 @@ AutoSetup(
 													freemem: os.freemem(),
 													usedmem: os.totalmem() - os.freemem(),
 													uptime: os.uptime(),
-													wlan0: status || {},
+													wlan0: statusWlan0 || {},
+													temperature: temperature || {},
 													drives,
 													backend,
-													temperature,
 													ip
 												} );
 										});
-									} catch( err4 ) {
-										console.log('[Info] ❌ error measuring temperature:', err4.message);
-										return( err4)	
+									} catch( errTry ) {
+										console.log('[Info] ❌ error measuring temperature:', errTry.message);
+										return( errTry )	
 									}
 								})
-							} catch (err3) {
-								console.log('[Info] ❌ error constructing response:', err3.message);
-								return( err3)	
-							}
 						});
 					});
 				}

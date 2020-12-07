@@ -56,7 +56,7 @@
 
   function wsConnect() {
     if (process.browser && !ws) {
-      const url = `ws://${$info.hostname}.local:8765`
+      const url = `ws://${$info.ip}:8765` 
       console.log('[overview.svelte] 👁 ⚡️  opening websocket...', url)
       ws = new WebSocket(url);
       ws.addEventListener('open', onOpen)
