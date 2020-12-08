@@ -147,15 +147,19 @@ AutoSetup(
 					nodeDiskInfo.getDiskInfo().then( drives => {
 						wifi.status( 'wlan0', function(err, statusWlan0) {
 
-								let ip = 'unknown'
 
 								exec(`sh ${config.pdac_utils}/utilityShowIP.sh`, function(err, stdout, stderr) {
 
+									let ip = 'unknown'
 									try {
-										ip = stdout.substring( stdout.indexOf('\n') + 1 ).replace('\n', '')
+										const idx = stdout.indexOf('10.0.8.')
+										ip = stdout.substring( idx, idx + 10  )
+										console.log('[Info] ✅  got IP address - MUST be 10.0.8.NNN', ip, idx);
 									} catch (err5) {
-
+										console.log('[Info] ❌  error getting IP address:', err5.message);
 									}
+
+									console.log('------> IP Address:', ip)
 									try {
 										temp.measure(function(err3, temperature) {
 												return resolve( {
@@ -170,11 +174,11 @@ AutoSetup(
 													temperature: temperature || {},
 													drives,
 													backend,
-													ip
+													ip: ip
 												} );
 										});
 									} catch( errTry ) {
-										console.log('[Info] ❌ error measuring temperature:', errTry.message);
+										console.log('[Info] ❌  error measuring temperature:', errTry.message);
 										return( errTry )	
 									}
 								})
