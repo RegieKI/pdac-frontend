@@ -71,7 +71,7 @@ axios.get('http://localhost:8888').then( res => {
 			console.log('[server.js] 🌐 ❌  could not start web browser', err.message );
 		})
 		console.log('[server.js] 🌐  spawning launchBrowser.sh >>>>>', browser.pid );
-	}, 10000)
+	}, 10)
 
 })
 

@@ -31,13 +31,17 @@
   import { API_ERROR, API_SUCCESS, API_TRY, API_VIZ } from './types.js'
 
   let ws;
-  let maxLines = 120
+  let maxLines = 60
   let PdacEl;
 
   import { stores } from '@sapper/app';
   const { page } = stores();
 
-  let wsConnecting = true
+
+  if (process.browser) {
+    window.safelySend = safelySend;
+  }
+  // ---------------------
 
   onMount( async() => {
 
@@ -46,24 +50,88 @@
 
         console.log('[_layout.svelte] 📄 page changed : subscribe', path);
         info.grab().then( r => {
-
-          wsConnect();
+          wsPoll()
+          bufferPoll()
         })
       })
 
   });
 
 
+  function bufferPoll() {
+
+    if (buffer.length > 0) { 
+      console.log('[overview.svelte] ⛑  buffersize...', buffer.length);
+      buffer.forEach( data => appendToKonsole( data ))
+      buffer = []
+    }
+
+    setTimeout( () => {
+      bufferPoll()
+    }, 100)
+  }
+  function wsPoll() {
+
+    if (!ws) {
+      wsConnect()
+    } else if (ws.readyState == ws.CLOSED) {
+      console.log('[overview.svelte] 👁 🛑  remove CLOSED websocket...');
+      ws = null
+      window.websocketsClient = null
+    }
+
+    setTimeout( () => {
+      wsPoll()
+    }, 2000)
+  }
+
   function wsConnect() {
     if (process.browser && !ws) {
-      const url = `ws://${$info.ip}:8765` 
+      const url = `ws://${$info.ip}:8765`
       console.log('[overview.svelte] 👁 ⚡️  opening websocket...', url)
       ws = new WebSocket(url);
       ws.addEventListener('open', onOpen)
       ws.addEventListener('message', onMessage)
       ws.addEventListener('error', onError)
+      ws.addEventListener('close', onClose)
+      window.websocketsClient = ws;
     }
   }
+
+  function safelySend( str ) {
+    if (ws) {
+
+      if (ws.readyState == 1) {
+        console.log('[overview.svelte] ⚡️😮⚡️  safely send');
+        ws.send( str )
+      } else{
+        console.log('[overview.svelte] 🤯⚡️😮⚡️🤯  not ready to send'); 
+      }
+    } else {
+      console.log('[overview.svelte] ❌⚡️😮⚡️❌  not websockets object to send with');
+    }
+  }
+
+  function onOpen(e) {
+    console.log('[overview.svelte] 👁 ✅  opened websocket...', e.currentTarget.url);
+  }
+  function onError(err) {
+    console.log('[overview.svelte] 👁 ❌  error with websocket...', err);
+    ws.close()
+  }
+  function onClose(err) {
+    console.log('[overview.svelte] 👁 🛑  closed and delete websockets...');
+  }
+
+  let buffer = []
+
+  function onMessage(e) {
+    console.log('[overview.svelte] 👁 ✨  received websocket message...', e.data);
+    buffer.push( e.data )
+  }
+
+
+  // ---------------------
 
   onDestroy( async() => {
 
@@ -78,11 +146,11 @@
 
     try {
       const j = JSON.parse( str )
-      konsole.update( k => {
-        k.unshift( { timestamp: j.timestamp || '~', type: j.type || '~', message: j.message || '~', title: j.title || '~' } )
-        while (k.length > maxLines) k.slice(1)
-        return k
-      })
+      // konsole.update( k => {
+      //   k.unshift( { timestamp: j.timestamp || '~', type: j.type || '~', message: j.message || '~', title: j.title || '~' } )
+      //   while (k.length > maxLines) k.slice(1)
+      //   return k
+      // })
       if ( j.type == API_VIZ || j.type == "viz" || j.type == "visual" ) {
         console.log('[overview.svelte] 👁 👁 👁  setting visual:', j.title, j.message, j.button);
         eyeball.update( e => {
@@ -93,39 +161,15 @@
         })
 
       }
-      console.log('[overview.svelte] 👁 ✨ ✅  parsed socket message:', $konsole.length, $konsole, $page.path);
-      backend.update( b => { 
-        b = j.config
-        return b
-      })
+      // console.log('[overview.svelte] 👁 ✨ ✅  parsed socket message:');
+      // backend.update( b => { 
+      //   b = j.config
+      //   return b
+      // })
     } catch( err ) {
       console.log('[overview.svelte] 👁 ✨ ❌  error parsing message:', err.message);
 
     }
-  }
-
-  function onOpen(e) {
-    console.log('[overview.svelte] 👁 ✅  opened websocket...', e.currentTarget.url);
-    wsConnecting = false
-    window.websocketsClient = ws;
-  }
-  function onError(err) {
-    console.log('[overview.svelte] 👁 ❌  error opening websocket...', err);
-    if (wsConnecting) {
-
-      console.log('[overview.svelte] 👁 ⚡️  trying again in 2 seconds...');
-      ws.close()
-      ws = null
-      window.websocketsClient = null;
-      setTimeout( () => {
-        wsConnect();
-      }, 2000)
-    }
-  }
-
-  function onMessage(e) {
-    console.log('[overview.svelte] 👁 ✨  received websocket message...', e.data);
-    appendToKonsole( e.data )
   }
 
   $: _color = () => {

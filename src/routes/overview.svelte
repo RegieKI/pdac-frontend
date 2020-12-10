@@ -25,11 +25,15 @@ onMount( async() => {
 
 function onButtonPress() {
 
-	if (window.websocketsClient) {
-		console.log('[overview.svelte] 👈  🌐 sending websockets button press')
-		window.websocketsClient.send( JSON.stringify( { type: '👈', title: 'button', timestamp: new Date().toISOString().substr(11, 8), message: 'button pressed' }  ) )
-	} else {
-		console.log('[overview.svelte] ❌ no websockets client!')
+	try {
+		if (window.websocketsClient) {
+			console.log('[overview.svelte] 👈  🌐 sending websockets button press')
+			window.websocketsClient.send( JSON.stringify( { type: '👈', title: 'button', timestamp: new Date().toISOString().substr(11, 8), message: 'button pressed' }  ) )
+		} else {
+			console.log('[overview.svelte] ❌ no websockets client!')
+		}
+	} catch(err) {
+
 	}
 }
 
